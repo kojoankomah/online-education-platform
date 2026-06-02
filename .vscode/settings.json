@@ -1,0 +1,17 @@
+{
+    "sqltools.connections": [
+        {
+            "pgOptions": {
+                "ssl": {
+                    "rejectUnauthorized": true
+                }
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "driver": "PostgreSQL",
+            "name": "Render.com",
+            "connectString": "postgresql://forge:AcOjjwzjaHgNPTi570F2MbdQqA2hbPM8@dpg-d8f2lo6gvqtc738r4do0-a.virginia-postgres.render.com/forge_by8z"
+        }
+    ]
+}
