@@ -7,6 +7,7 @@
     "accepts": "^2.0.0",
     "anymatch": "^3.1.3",
     "balanced-match": "^4.0.4",
+    "bcrypt": "^6.0.0",
     "binary-extensions": "^2.3.0",
     "body-parser": "^2.2.2",
     "brace-expansion": "^5.0.6",
@@ -54,6 +55,7 @@
     "is-glob": "^4.0.3",
     "is-number": "^7.0.0",
     "is-promise": "^4.0.0",
+    "jsonwebtoken": "^9.0.3",
     "math-intrinsics": "^1.1.0",
     "media-typer": "^1.1.0",
     "merge-descriptors": "^2.0.0",
@@ -112,10 +114,10 @@
     "wrappy": "^1.0.2",
     "xtend": "^4.0.2"
   },
-"scripts": {
-  "start": "node server.js",
-  "dev": "nodemon server.js"
-},
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
