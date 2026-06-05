@@ -18,4 +18,12 @@ app.get("/", (req, res) => {
  */
 app.use("/api/auth", require("./routes/authRoutes"));
 
+app.use(
+  "/api/protected",
+  require("./routes/protectedRoutes")
+);
+
+
+app.use("/api/protected", require("./routes/protectedRoutes"));
+
 module.exports = app;
