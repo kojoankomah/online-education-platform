@@ -24,6 +24,8 @@ app.use(
 );
 
 
+app.use("/api/courses", require("./routes/courseRoutes"));
+
 app.use("/api/protected", require("./routes/protectedRoutes"));
 
 module.exports = app;
