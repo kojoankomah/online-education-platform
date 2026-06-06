@@ -1,10 +1,14 @@
 const express = require("express");
+
+
 const router = express.Router();
 
 const {
   createCourse,
   getAllCourses,
-  getCourseById
+  getCourseById,
+  updateCourse,
+  deleteCourse
 } = require("../controllers/courseController");
 
 const authMiddleware = require("../middleware/authMiddleware");
@@ -28,6 +32,28 @@ router.post(
   authMiddleware,
   roleMiddleware("instructor"),
   createCourse
+);
+
+/**
+ * Update course
+ * Instructor owner only
+ */
+router.put(
+  "/:id",
+  authMiddleware,
+  roleMiddleware("instructor"),
+  updateCourse
+);
+
+/**
+ * Delete course
+ * Instructor owner only
+ */
+router.delete(
+  "/:id",
+  authMiddleware,
+  roleMiddleware("instructor"),
+  deleteCourse
 );
 
 module.exports = router;
