@@ -28,4 +28,9 @@ app.use("/api/courses", require("./routes/courseRoutes"));
 
 app.use("/api/protected", require("./routes/protectedRoutes"));
 
+app.use(
+  "/api/enrollments",
+  require("./routes/enrollmentRoutes")
+);
+
 module.exports = app;
