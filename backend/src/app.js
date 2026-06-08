@@ -18,19 +18,27 @@ app.get("/", (req, res) => {
  */
 app.use("/api/auth", require("./routes/authRoutes"));
 
+// Protected route example
 app.use(
   "/api/protected",
   require("./routes/protectedRoutes")
 );
 
-
+// Course routes
 app.use("/api/courses", require("./routes/courseRoutes"));
 
+// Protected route example
 app.use("/api/protected", require("./routes/protectedRoutes"));
 
+// Enrollment routes
 app.use(
   "/api/enrollments",
   require("./routes/enrollmentRoutes")
 );
 
+// Lessons routes
+app.use(
+  "/api/lessons",
+  require("./routes/lessonRoutes")
+);
 module.exports = app;
