@@ -50,6 +50,16 @@ app.use(
 );
 
 
+// Progress routes
+app.use(
+  "/api/progress",
+   require("./routes/progressRoutes"));
+
+
+// Dashboard routes
+   app.use(
+    "/api/dashboard",
+     require("./routes/dashboardRoutes"));
 
 
 

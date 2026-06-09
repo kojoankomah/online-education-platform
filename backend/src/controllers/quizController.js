@@ -137,9 +137,71 @@ const getQuizQuestions = async (req, res) => {
 };
 
 
+const submitQuiz = async (req, res) => {
+  try {
+    const { quizId } = req.params;
+    const studentId = req.user.id;
+    const { answers } = req.body;
+
+    // Get all correct answers
+    const questionsResult = await pool.query(
+      "SELECT id, correct_answer FROM quiz_questions WHERE quiz_id = $1",
+      [quizId]
+    );
+
+    const questions = questionsResult.rows;
+
+    if (questions.length === 0) {
+      return res.status(404).json({
+        message: "No questions found for this quiz"
+      });
+    }
+
+    let score = 0;
+
+    // Compare answers
+    questions.forEach((q) => {
+      const studentAnswer = answers.find(a => a.questionId === q.id);
+
+      if (studentAnswer && studentAnswer.answer === q.correct_answer) {
+        score++;
+      }
+    });
+
+    const totalQuestions = questions.length;
+
+    // Save attempt
+    const attempt = await pool.query(
+      `INSERT INTO quiz_attempts
+      (quiz_id, student_id, score, total_questions, passed)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING *`,
+      [quizId, studentId, score, totalQuestions, passed]
+    );
+
+    res.json({
+      message: "Quiz submitted successfully",
+      score,
+      totalQuestions,
+      percentage: Math.round((score / totalQuestions) * 100),
+      attempt: attempt.rows[0]
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: error.message
+    });
+  }
+
+  const percentage = Math.round((score / totalQuestions) * 100);
+
+  const passed = percentage >= 50;
+};
+
 
 module.exports = {
   createQuiz,
   addQuestion,
-  getQuizQuestions
+  getQuizQuestions,
+  submitQuiz
 };

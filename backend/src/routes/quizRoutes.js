@@ -7,7 +7,8 @@ const roleMiddleware = require("../middleware/roleMiddleware");
 const {
   createQuiz,
   addQuestion,
-  getQuizQuestions
+  getQuizQuestions,
+  submitQuiz
 } = require("../controllers/quizController");
 
 /**
@@ -37,5 +38,14 @@ router.get(
   "/:quizId/questions",
   getQuizQuestions
 );
+
+
+router.post(
+  "/:quizId/submit",
+  authMiddleware,
+  roleMiddleware("student"),
+  submitQuiz
+);
+
 
 module.exports = router;
