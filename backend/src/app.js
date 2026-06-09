@@ -41,4 +41,16 @@ app.use(
   "/api/lessons",
   require("./routes/lessonRoutes")
 );
+
+
+// Quiz routes
+app.use(
+  "/api/quizzes",
+  require("./routes/quizRoutes")
+);
+
+
+
+
+
 module.exports = app;
