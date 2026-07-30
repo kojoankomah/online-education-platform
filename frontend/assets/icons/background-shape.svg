@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" fill="none" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="forgeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8B5CF6"></stop>
+      <stop offset="100%" stop-color="#6D28D9"></stop>
+    </linearGradient>
+
+    <filter id="blur">
+      <feGaussianBlur stdDeviation="40"></feGaussianBlur>
+    </filter>
+  </defs>
+
+  <g opacity="0.18" filter="url(#blur)">
+    <path fill="url(#forgeGradient)" d="M1080 250
+         C1160 420 1110 700 930 860
+         C760 1010 470 1010 280 860
+         C100 710 70 420 220 240
+         C370 60 650 20 860 90
+         C980 130 1040 170 1080 250Z"></path>
+  </g>
+
+  <circle cx="980" cy="180" r="90" fill="#A78BFA" opacity="0.12"></circle>
+
+  <circle cx="240" cy="980" r="120" fill="#8B5CF6" opacity="0.10"></circle>
+</svg>
