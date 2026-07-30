@@ -1,0 +1,97 @@
+/* Global CSS Reset*/
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* Root Variables (Shared across the project) */
+
+:root {
+
+    --primary-color: #2563EB;
+    --secondary-color: #1E293B;
+    --accent-color: #F59E0B;
+
+    --background-color: #F8FAFC;
+    --white: #FFFFFF;
+    --text-color: #334155;
+
+    --border-radius: 8px;
+
+    --container-width: 1200px;
+}
+
+
+/* Body Styling*/
+
+body {
+
+    font-family: "Inter", Arial, sans-serif;
+
+    background-color: var(--background-color);
+
+    color: var(--text-color);
+
+    line-height: 1.6;
+}
+
+
+/* Container (Keeps content centered) */
+
+.container {
+
+    width: 90%;
+
+    max-width: var(--container-width);
+
+    margin: auto;
+}
+
+
+/* Links */
+
+a {
+
+    text-decoration: none;
+
+    color: inherit;
+}
+
+
+/*  Buttons */
+
+.btn {
+
+    display: inline-block;
+
+    background-color: var(--primary-color);
+
+    color: var(--white);
+
+    padding: 12px 25px;
+
+    border-radius: var(--border-radius);
+
+    font-weight: 600;
+
+    transition: 0.3s;
+}
+
+
+.btn:hover {
+
+    opacity: 0.85;
+}
+
+
+.btn-outline {
+
+    background: transparent;
+
+    border: 2px solid var(--primary-color);
+
+    color: var(--primary-color);
+}

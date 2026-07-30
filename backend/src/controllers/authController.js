@@ -5,9 +5,20 @@ const jwt = require("jsonwebtoken");
 const pool = require("../db/connection");
 require("dotenv").config();
 
+
 /**
  * REGISTER USER
+ * ------------------------------------------
+ * Creates a new user account.
+ * Steps:
+ * 1. Receive user data from request body.
+ * 2. Check if email already exists.
+ * 3. Hash the password using bcrypt.
+ * 4. Save the user to PostgreSQL.
+ * 5. Return the created user (excluding password).
  */
+
+
 const register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -40,9 +51,18 @@ const register = async (req, res) => {
   }
 };
 
+
 /**
  * LOGIN USER
+ * ------------------------------------------
+ * Authenticates a user.
+ * Steps:
+ * 1. Find user by email.
+ * 2. Compare password with hashed password.
+ * 3. Generate JWT token.
+ * 4. Return token and user details.
  */
+
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;

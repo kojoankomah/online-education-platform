@@ -1,0 +1,154 @@
+/* AUTHENTICATION PAGES
+   Used by:
+   - login.html
+   - register.html*/
+
+body{
+    background:#f5f7fb;
+    font-family:Inter, Arial, Helvetica, sans-serif;
+}
+
+/* Main container */
+
+.auth-container{
+
+    min-height:100vh;
+
+    display:flex;
+}
+
+/* Left side */
+
+.auth-left{
+
+    flex:1;
+
+    background:linear-gradient(135deg,#2563EB,#1E40AF);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:40px;
+}
+
+.auth-left img{
+
+    width:85%;
+
+    max-width:500px;
+}
+
+/* Right side */
+
+.auth-right{
+
+    flex:1;
+
+    background:white;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    padding:60px;
+}
+
+.auth-right h1{
+
+    color:#1E293B;
+
+    margin-bottom:10px;
+}
+
+.auth-right p{
+
+    color:#64748B;
+
+    margin-bottom:25px;
+}
+
+/* Form */
+
+.form-group{
+
+    margin-bottom:20px;
+}
+
+.form-group label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    font-weight:600;
+}
+
+.form-group input,
+.form-group select{
+
+    width:100%;
+
+    padding:14px;
+
+    border:1px solid #CBD5E1;
+
+    border-radius:8px;
+
+    font-size:15px;
+
+    outline:none;
+
+    transition:.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus{
+
+    border-color:#2563EB;
+
+    box-shadow:0 0 5px rgba(37,99,235,.2);
+}
+
+/* Button */
+
+button{
+
+    width:100%;
+
+    margin-top:10px;
+}
+
+/* Bottom text */
+
+.auth-right a{
+
+    color:#2563EB;
+
+    font-weight:600;
+}
+
+/* Responsive */
+
+@media(max-width:900px){
+
+    .auth-container{
+
+        flex-direction:column;
+    }
+
+    .auth-left{
+
+        display:none;
+    }
+
+    .auth-right{
+
+        padding:40px 25px;
+    }
+
+}
