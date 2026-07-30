@@ -32,4 +32,7 @@ function renderCourses(courses, stats) {
   });
 }
 
+
+localStorage.setItem("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6Imluc3RydWN0b3IiLCJpYXQiOjE3ODA5NzI5NjksImV4cCI6MTc4MTA1OTM2OX0.SM5Mt_cJeBMC8ctG_n0kEVvcb4O4KdQyJxNEnhIHFvQ", response.token);
+
 loadDashboard();
