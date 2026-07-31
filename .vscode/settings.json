@@ -1,17 +1,17 @@
 {
-    "sqltools.connections": [
-        {
-            "pgOptions": {
-                "ssl": {
-                    "rejectUnauthorized": true
-                }
-            },
-            "ssh": "Disabled",
-            "previewLimit": 50,
-            "server": "localhost",
-            "driver": "PostgreSQL",
-            "name": "Render.com",
-            "connectString": "postgresql://forge:AcOjjwzjaHgNPTi570F2MbdQqA2hbPM8@dpg-d8f2lo6gvqtc738r4do0-a.virginia-postgres.render.com/forge_by8z"
+  "sqltools.connections": [
+    {
+      "pgOptions": {
+        "ssl": {
+          "rejectUnauthorized": true
         }
-    ]
+      },
+      "ssh": "Disabled",
+      "previewLimit": 50,
+      "server": "localhost",
+      "driver": "PostgreSQL",
+      "name": "Render.com",
+      "connectString": "postgresql://ryan:3Qg3HIITE8zmMzFoRU9Wn3OMBQ006ZVk@dpg-d9lv53gae00c73b4nj90-a.virginia-postgres.render.com/finalprojectdatabase_0pqd"
+    }
+  ]
 }
