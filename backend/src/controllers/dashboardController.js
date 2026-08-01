@@ -4,7 +4,7 @@ const pool = require("../db/connection");
  * Student dashboard summary
  */
 const getStudentDashboard = async (req, res) => {
-  try {
+  try { 
     const studentId = req.user.id;
 
     // ---------------- ENROLLED COURSES ----------------
@@ -31,10 +31,13 @@ const getStudentDashboard = async (req, res) => {
       [studentId]
     );
 
-    res.json({
-      courses: courses.rows,
-      recentAttempts: attempts.rows
-    });
+res.json({
+
+    courses: courses.rows,
+    courseCount: courses.rows.length,
+    recentAttempts: attempts.rows,
+    quizAttemptCount: attempts.rows.length
+});
 
   } catch (error) {
     res.status(500).json({ error: error.message });
