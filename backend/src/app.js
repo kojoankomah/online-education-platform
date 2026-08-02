@@ -27,8 +27,6 @@ app.use(
 // Course routes
 app.use("/api/courses", require("./routes/courseRoutes"));
 
-// Protected route example
-app.use("/api/protected", require("./routes/protectedRoutes"));
 
 // Enrollment routes
 app.use(

@@ -66,7 +66,12 @@ const getCourseLessons = async (req, res) => {
       [courseId]
     );
 
-    res.json(lessons.rows);
+
+    res.json({
+        courseId,
+        lessons: lessons.rows
+    });
+
 
   } catch (error) {
     res.status(500).json({

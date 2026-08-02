@@ -14,6 +14,7 @@ const {
  */
 router.get(
   "/course/:courseId",
+  authMiddleware,
   getCourseLessons
 );
 
