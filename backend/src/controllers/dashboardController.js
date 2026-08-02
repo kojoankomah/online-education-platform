@@ -31,13 +31,27 @@ const getStudentDashboard = async (req, res) => {
       [studentId]
     );
 
-res.json({
 
-    courses: courses.rows,
-    courseCount: courses.rows.length,
-    recentAttempts: attempts.rows,
-    quizAttemptCount: attempts.rows.length
-});
+    // ---------------- COMPLETED LESSONS ----------------
+    const progress = await pool.query(
+      `
+      SELECT COUNT(*) AS completed
+      FROM lesson_progress
+      WHERE student_id = $1
+      `,
+      [studentId]
+    );
+
+
+    res.json({
+      courses: courses.rows,
+      courseCount: courses.rows.length,
+
+      recentAttempts: attempts.rows,
+      quizAttemptCount: attempts.rows.length,
+
+      completedLessons: Number(progress.rows[0].completed)
+    });
 
   } catch (error) {
     res.status(500).json({ error: error.message });
