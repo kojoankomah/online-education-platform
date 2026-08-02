@@ -115,9 +115,11 @@ async function loadStudentDashboard() {
                 <p>${course.description}</p>
 
                 <button
-                    class="continue-btn"
-                    data-course-id="${course.id}">
-                    Continue Learning
+                class="continue-btn"
+                onclick="openCourse(${course.id})">
+
+                Continue Learning
+
                 </button>
             `;
 
@@ -126,6 +128,7 @@ async function loadStudentDashboard() {
         });
 
     }
+
 
     catch (error) {
 
@@ -137,6 +140,14 @@ async function loadStudentDashboard() {
 
 }
 
+
+// Open course details page
+    function openCourse(courseId){
+
+    window.location.href =
+    `../courses/course-details.html?courseId=${courseId}`;
+
+    }
 
 // Logout functionality
 

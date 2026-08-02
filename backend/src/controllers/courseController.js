@@ -51,25 +51,66 @@ const getCourseById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const result = await pool.query(
-      `SELECT 
+
+    // Get course information
+    const courseResult = await pool.query(
+      `
+      SELECT 
         courses.*,
         users.name AS instructor_name
-       FROM courses
-       JOIN users ON users.id = courses.instructor_id
-       WHERE courses.id = $1`,
+      FROM courses
+      JOIN users 
+        ON users.id = courses.instructor_id
+      WHERE courses.id = $1
+      `,
       [id]
     );
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ message: "Course not found" });
+
+    if (courseResult.rows.length === 0) {
+      return res.status(404).json({
+        message: "Course not found"
+      });
     }
 
-    res.json(result.rows[0]);
+
+    // Get lessons belonging to the course
+    const lessonsResult = await pool.query(
+      `
+      SELECT
+        id,
+        title,
+        content,
+        lesson_order
+      FROM lessons
+      WHERE course_id = $1
+      ORDER BY lesson_order ASC
+      `,
+      [id]
+    );
+
+
+    const course = courseResult.rows[0];
+
+
+    res.json({
+
+      ...course,
+
+      lessons: lessonsResult.rows
+
+    });
+
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
+
+    res.status(500).json({
+      error: error.message
+    });
+
   }
 };
+
 
 /**
  * Update a course
