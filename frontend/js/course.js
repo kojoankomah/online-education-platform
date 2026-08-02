@@ -143,8 +143,11 @@ ${lesson.content.substring(0,150)}...
 </p>
 
 
-<button>
+<button
+onclick="openLesson(${lesson.id})">
+
 Open Lesson
+
 </button>
 
 `;
@@ -162,3 +165,10 @@ lessonList.appendChild(item);
 
 
 loadCourse();
+
+function openLesson(lessonId){
+
+    window.location.href =
+    `../lessons/lesson.html?lessonId=${lessonId}`;
+
+}

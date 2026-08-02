@@ -6,7 +6,8 @@ const roleMiddleware = require("../middleware/roleMiddleware");
 
 const {
   createLesson,
-  getCourseLessons
+  getCourseLessons,
+  getLessonById
 } = require("../controllers/lessonController");
 
 /**
@@ -26,6 +27,13 @@ router.post(
   authMiddleware,
   roleMiddleware("instructor"),
   createLesson
+);
+
+// Get lesson by ID
+router.get(
+"/:id",
+authMiddleware,
+getLessonById
 );
 
 module.exports = router;
