@@ -49,6 +49,94 @@ if(user){
 }
 
 
+/**
+ * Load student dashboard data
+ */
+async function loadStudentDashboard() {
+
+    try {
+
+        const response = await fetch(
+
+            apiUrl("/dashboard/student"),
+
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+
+            throw new Error(data.error || "Unable to load dashboard");
+
+        }
+
+        // Update statistics
+
+        document.getElementById("courseCount").textContent =
+            data.courseCount;
+
+        document.getElementById("lessonCount").textContent =
+            data.completedLessons;
+
+        document.getElementById("quizCount").textContent =
+            data.quizAttemptCount;
+
+        // Display courses
+
+        const courseList =
+            document.getElementById("courseList");
+
+        courseList.innerHTML = "";
+
+        if (data.courses.length === 0) {
+
+            courseList.innerHTML =
+                "<p>You are not enrolled in any courses yet.</p>";
+
+            return;
+
+        }
+
+        data.courses.forEach(course => {
+
+            const card = document.createElement("div");
+
+            card.className = "card";
+
+            card.innerHTML = `
+                <h3>${course.title}</h3>
+
+                <p>${course.description}</p>
+
+                <button
+                    class="continue-btn"
+                    data-course-id="${course.id}">
+                    Continue Learning
+                </button>
+            `;
+
+            courseList.appendChild(card);
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        alert("Failed to load dashboard.");
+
+    }
+
+}
+
 
 // Logout functionality
 
@@ -81,3 +169,7 @@ logoutBtn.addEventListener(
 
 
 });
+
+
+
+loadStudentDashboard();
