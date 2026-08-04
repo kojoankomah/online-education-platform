@@ -1,0 +1,26 @@
+#lessonContent{
+
+    line-height:1.8;
+
+    font-size:18px;
+
+}
+
+
+#completeBtn{
+
+    margin-top:20px;
+
+    padding:12px 20px;
+
+    border:none;
+
+    border-radius:8px;
+
+    background:#2563EB;
+
+    color:white;
+
+    cursor:pointer;
+
+}
