@@ -6,10 +6,23 @@ const roleMiddleware = require("../middleware/roleMiddleware");
 
 const {
   createQuiz,
+  getLessonQuizzes,
   addQuestion,
   getQuizQuestions,
   submitQuiz
 } = require("../controllers/quizController");
+
+
+
+/**
+ * Get quizzes for a lesson
+ */
+router.get(
+  "/lesson/:lessonId",
+  authMiddleware,
+  getLessonQuizzes
+);
+
 
 /**
  * Create quiz

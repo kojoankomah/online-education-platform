@@ -39,6 +39,44 @@ const createQuiz = async (req, res) => {
 };
 
 
+
+
+/**
+ * Get quizzes for a lesson
+ */
+const getLessonQuizzes = async (req, res) => {
+
+  try {
+
+    const { lessonId } = req.params;
+
+
+    const quizzes = await pool.query(
+      `
+      SELECT *
+      FROM quizzes
+      WHERE lesson_id = $1
+      ORDER BY created_at ASC
+      `,
+      [lessonId]
+    );
+
+
+    res.json(quizzes.rows);
+
+
+  } catch(error){
+
+    res.status(500).json({
+      error:error.message
+    });
+
+  }
+
+};
+
+
+
 /**
  * Add question to quiz
  */
@@ -173,11 +211,10 @@ const submitQuiz = async (req, res) => {
     // Save attempt
     const attempt = await pool.query(
       `INSERT INTO quiz_attempts
-      (quiz_id, student_id, score, total_questions, passed)
-      VALUES ($1, $2, $3, $4, $5)
+        (quiz_id, student_id, score, total_questions)
+        VALUES ($1, $2, $3, $4)
       RETURNING *`,
-      [quizId, studentId, score, totalQuestions, passed]
-    );
+      [quizId, studentId, score, totalQuestions]    );
 
     res.json({
       message: "Quiz submitted successfully",
@@ -201,6 +238,7 @@ const submitQuiz = async (req, res) => {
 
 module.exports = {
   createQuiz,
+  getLessonQuizzes,
   addQuestion,
   getQuizQuestions,
   submitQuiz
