@@ -24,7 +24,7 @@ params.get("lessonId");
 
 
 
-
+// Load lesson details
 async function loadLesson(){
 
 try{
@@ -94,9 +94,49 @@ alert(
 
 
 
+// Check if the lesson is completed
+async function checkCompletion(){
+
+const response =
+await fetch(
+
+apiUrl(`/progress/lesson/${lessonId}`),
+
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+
+);
+
+
+const data =
+await response.json();
+
+
+const button =
+document.getElementById(
+"completeBtn"
+);
 
 
 
+if(data.completed){
+
+    button.textContent =
+    "✅ Lesson Completed";
+
+    button.disabled = true;
+
+}
+
+
+}
+
+
+
+// Mark lesson as completed
 async function completeLesson(){
 
 try{
@@ -105,7 +145,7 @@ try{
 const response =
 await fetch(
 
-apiUrl(`/progress/lesson/${lessonId}`),
+apiUrl(`/progress/lesson/${lessonId}/complete`),
 
 {
 
@@ -124,24 +164,27 @@ Authorization:
 
 
 
-const data =
-await response.json();
+const data = await response.json();
 
-
-
-if(!response.ok){
-
-throw new Error(
-data.error
-);
-
+if (!response.ok) {
+    throw new Error(
+        data.error || data.message || "Unable to complete lesson"
+    );
 }
 
 
 
-alert(
-"Lesson completed!"
+const button =
+document.getElementById(
+"completeBtn"
 );
+
+
+button.textContent =
+"✅ Lesson Completed";
+
+
+button.disabled = true;
 
 
 
@@ -149,16 +192,13 @@ alert(
 
 catch(error){
 
-console.error(error);
+    console.error(error);
 
-alert(
-"Unable to complete lesson"
-);
+    alert(error.message);
 
 }
 
 }
-
 
 
 
@@ -171,6 +211,5 @@ completeLesson
 );
 
 
-
-
 loadLesson();
+checkCompletion();

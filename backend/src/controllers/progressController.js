@@ -28,6 +28,52 @@ const completeLesson = async (req, res) => {
 
 
 
+/**
+ * Check if a specific lesson is completed
+ */
+const checkLessonCompletion = async (req, res) => {
+
+  try {
+
+    const studentId = req.user.id;
+    const { lessonId } = req.params;
+
+
+    const result = await pool.query(
+      `
+      SELECT *
+      FROM lesson_progress
+      WHERE student_id = $1
+      AND lesson_id = $2
+      `,
+      [
+        studentId,
+        lessonId
+      ]
+    );
+
+
+    res.json({
+
+      completed:
+      result.rows.length > 0
+
+    });
+
+
+  } catch(error){
+
+    res.status(500).json({
+      error:error.message
+    });
+
+  }
+
+};
+
+
+
+// Get course progress
 const getCourseProgress = async (req, res) => {
   try {
     const studentId = req.user.id;
@@ -68,16 +114,22 @@ const getCourseProgress = async (req, res) => {
 
     const passedQuizzesResult = await pool.query(
       `
-      SELECT COUNT(*)
-      FROM quiz_attempts qa
-      WHERE qa.student_id = $1
-      AND qa.passed = true
-      AND qa.quiz_id IN (
+    SELECT COUNT(*)
+    FROM quiz_attempts qa
+    WHERE qa.student_id = $1
+    AND (
+        CASE
+            WHEN qa.total_questions = 0 THEN FALSE
+            ELSE (qa.score::decimal / qa.total_questions) >= 0.7
+        END
+    )
+    AND qa.quiz_id IN (
         SELECT q.id
         FROM quizzes q
-        JOIN lessons l ON q.lesson_id = l.id
+        JOIN lessons l
+            ON q.lesson_id = l.id
         WHERE l.course_id = $2
-      )
+    )
       `,
       [studentId, courseId]
     );
@@ -88,9 +140,29 @@ const getCourseProgress = async (req, res) => {
     const quizPercent =
       totalQuizzes === 0 ? 0 : Math.round((passedQuizzes / totalQuizzes) * 100);
 
-    // ---------------- OVERALL ----------------
-    const overallProgress = Math.round((lessonPercent + quizPercent) / 2);
+    
+      // ---------------- OVERALL ----------------
 
+// Calculate overall progress as the average of lesson and quiz progress
+let overallProgress;
+
+
+if(totalQuizzes === 0){
+
+    overallProgress = lessonPercent;
+
+}
+else{
+
+    overallProgress =
+    Math.round(
+        (lessonPercent + quizPercent) / 2
+    );
+
+}
+
+
+// Send the response
     res.json({
       courseId,
       lessonProgress: {
@@ -142,5 +214,6 @@ const getCompletedLessons = async (req, res) => {
 module.exports = {
   completeLesson,
   getCompletedLessons,
-  getCourseProgress
+  getCourseProgress,
+  checkLessonCompletion
 };

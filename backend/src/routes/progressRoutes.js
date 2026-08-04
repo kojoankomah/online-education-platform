@@ -2,24 +2,32 @@ const express = require("express");
 const router = express.Router();
 
 const auth = require("../middleware/authMiddleware");
+
 const {
   completeLesson,
   getCompletedLessons,
-  getCourseProgress
+  getCourseProgress,
+  checkLessonCompletion
 } = require("../controllers/progressController");
 
-/**
- * Mark lesson complete
- */
+
+// Mark lesson complete
 router.post(
   "/lesson/:lessonId/complete",
   auth,
   completeLesson
 );
 
-/**
- * Get completed lessons in a course
- */
+
+// Check lesson completion
+router.get(
+  "/lesson/:lessonId",
+  auth,
+  checkLessonCompletion
+);
+
+
+// Get completed lessons in a course
 router.get(
   "/course/:courseId/lessons",
   auth,
@@ -27,15 +35,12 @@ router.get(
 );
 
 
-/**
- * Full course progress
- */
+// Full course progress
 router.get(
   "/course/:courseId",
   auth,
   getCourseProgress
 );
-
 
 
 module.exports = router;
