@@ -160,8 +160,13 @@ const addQuestion = async (req, res) => {
     );
 
 
-    // Check if quiz exists
-    const quiz = quizResult.rows[0];
+        // Verify that the quiz belongs to a lesson owned by the instructor
+    if (quizResult.rows.length === 0) {
+      return res.status(404).json({
+        message: "Quiz not found"
+      });
+    }
+
 
     // Verify ownership of the quiz by checking the instructor_id of the course associated with the lesson of the quiz
     const ownershipCheck = await pool.query(
@@ -190,13 +195,6 @@ const addQuestion = async (req, res) => {
 
     }
 
-
-    // Verify that the quiz belongs to a lesson owned by the instructor
-    if (quizResult.rows.length === 0) {
-      return res.status(404).json({
-        message: "Quiz not found"
-      });
-    }
 
     // Verify ownership
     const result = await pool.query(
