@@ -48,8 +48,9 @@ router.post(
  * View questions
  */
 router.get(
-  "/:quizId/questions",
-  getQuizQuestions
+ "/:quizId/questions",
+ authMiddleware,
+ getQuizQuestions
 );
 
 

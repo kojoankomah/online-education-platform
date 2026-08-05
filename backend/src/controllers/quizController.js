@@ -13,6 +13,28 @@ const createQuiz = async (req, res) => {
       [lessonId]
     );
 
+    // Check if lesson exists
+    const lesson = lessonResult.rows[0];
+
+    // Verify that the lesson belongs to a course owned by the instructor
+    const courseResult = await pool.query(
+      "SELECT instructor_id FROM courses WHERE id = $1",
+      [lesson.course_id]
+    );
+
+
+    const course = courseResult.rows[0];
+
+    // Verify ownership
+    if(Number(course.instructor_id) !== Number(req.user.id)){
+
+        return res.status(403).json({
+            message:"You can only create quizzes for your own courses"
+        });
+
+    }
+
+    // Check if lesson exists
     if (lessonResult.rows.length === 0) {
       return res.status(404).json({
         message: "Lesson not found"
@@ -93,17 +115,52 @@ const addQuestion = async (req, res) => {
       correct_answer
     } = req.body;
 
+    // Check if quiz exists
     const quizResult = await pool.query(
       "SELECT * FROM quizzes WHERE id = $1",
       [quizId]
     );
 
+
+    // Check if quiz exists
+    const quiz = quizResult.rows[0];
+
+    // Verify ownership of the quiz by checking the instructor_id of the course associated with the lesson of the quiz
+    const ownershipCheck = await pool.query(
+    `
+    SELECT courses.instructor_id
+    FROM quizzes
+    JOIN lessons
+    ON quizzes.lesson_id = lessons.id
+    JOIN courses
+    ON lessons.course_id = courses.id
+    WHERE quizzes.id=$1
+    `,
+    [quizId]
+    );
+
+
+    const instructorId =
+    ownershipCheck.rows[0].instructor_id;
+
+
+    if(Number(instructorId)!==Number(req.user.id)){
+
+        return res.status(403).json({
+            message:"You can only add questions to your own quizzes"
+        });
+
+    }
+
+
+    // Verify that the quiz belongs to a lesson owned by the instructor
     if (quizResult.rows.length === 0) {
       return res.status(404).json({
         message: "Quiz not found"
       });
     }
 
+    // Verify ownership
     const result = await pool.query(
       `
       INSERT INTO quiz_questions
