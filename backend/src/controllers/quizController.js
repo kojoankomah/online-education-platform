@@ -50,6 +50,7 @@ const createQuiz = async (req, res) => {
 
     }
 
+
     // Create quiz
     const quiz = await pool.query(
 
