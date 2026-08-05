@@ -136,7 +136,7 @@ const updateCourse = async (req, res) => {
     const course = courseResult.rows[0];
 
     // Verify ownership
-    if (course.instructor_id !== req.user.id) {
+    if (Number(course.instructor_id) !== Number(req.user.id)) {
       return res.status(403).json({
         message: "You can only update your own courses"
       });
@@ -186,7 +186,7 @@ const deleteCourse = async (req, res) => {
     const course = courseResult.rows[0];
 
     // Verify ownership
-    if (course.instructor_id !== req.user.id) {
+    if (Number(course.instructor_id) !== Number(req.user.id))) {
       return res.status(403).json({
         message: "You can only delete your own courses"
       });
