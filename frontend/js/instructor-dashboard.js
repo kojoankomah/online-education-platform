@@ -31,9 +31,7 @@ async function loadInstructorDashboard(){
             apiUrl(API.endpoints.instructorDashboard),
 
             {
-                headers:{
-                    Authorization:`Bearer ${token}`
-                }
+                headers: authHeaders()
             }
 
         );
@@ -67,11 +65,17 @@ async function loadInstructorDashboard(){
 // Display dashboard data
 function displayDashboard(data){
 
+    const courses =
+    data.courses || [];
+
+    const courseStats =
+    data.courseStats || [];
+
     document.getElementById("courseCount").textContent =
-    data.courses.length;
+    courses.length;
 
     const totalStudents =
-    data.courseStats.reduce(
+    courseStats.reduce(
 
         (total,course)=>
 
@@ -89,7 +93,7 @@ function displayDashboard(data){
 
     courseList.innerHTML = "";
 
-    if(data.courses.length===0){
+    if(data.courseStats.length===0){
 
         courseList.innerHTML =
         "<p>No courses created yet.</p>";
@@ -98,7 +102,7 @@ function displayDashboard(data){
 
     }
 
-    data.courseStats.forEach(course=>{
+      courseStats.forEach(course=>{
 
         const card =
         document.createElement("div");

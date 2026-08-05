@@ -7,6 +7,16 @@ if(!token){
 
 }
 
+const user =
+JSON.parse(localStorage.getItem("user"));
+
+if(user && user.role !== "instructor"){
+
+    window.location.href =
+    "../dashboard/student-dashboard.html";
+
+}
+
 document
 .getElementById("courseForm")
 .addEventListener(
@@ -18,11 +28,18 @@ async function createCourse(e){
 
     e.preventDefault();
 
-    const title =
-    document.getElementById("title").value;
+    const button = e.target.querySelector("button");
 
-    const description =
-    document.getElementById("description").value;
+    button.disabled = true;
+
+    button.textContent =
+    "Creating...";
+
+const title =
+document.getElementById("title").value.trim();
+
+const description =
+document.getElementById("description").value.trim();
 
     try{
 
@@ -76,5 +93,14 @@ async function createCourse(e){
         alert(error.message);
 
     }
+
+    finally{
+
+    button.disabled = false;
+
+    button.textContent =
+    "Create Course";
+
+}
 
 }

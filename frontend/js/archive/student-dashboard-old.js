@@ -49,5 +49,5 @@ function renderAttempts(attempts) {
 }
 
 
-localstorage.setItem("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6InN0dWRlbnQiLCJpYXQiOjE3ODA5NzMwNDIsImV4cCI6MTc4MTA1OTQ0Mn0.WZ3XPQmfuntaa7I8C-Qca5n7T0IwneIZJe8T3CjgZMY", response.token);
+localStorage.setItem("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6InN0dWRlbnQiLCJpYXQiOjE3ODA5NzMwNDIsImV4cCI6MTc4MTA1OTQ0Mn0.WZ3XPQmfuntaa7I8C-Qca5n7T0IwneIZJe8T3CjgZMY", response.token);
 loadDashboard();
