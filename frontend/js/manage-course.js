@@ -1,5 +1,16 @@
 const token = getToken();
 
+const user =
+JSON.parse(localStorage.getItem("user"));
+
+
+if(user && user.role !== "instructor"){
+
+    window.location.href =
+    "../dashboard/student-dashboard.html";
+
+}
+
 if(!token){
 
     window.location.href =
@@ -15,6 +26,14 @@ window.location.search
 const courseId =
 params.get("courseId");
 
+if(!courseId){
+
+    alert("No course selected.");
+
+    window.location.href =
+    "../dashboard/instructor-dashboard.html";
+
+}
 
 
 // Load course details
@@ -60,7 +79,7 @@ async function loadCourse(){
         course.description;
 
         displayLessons(
-            course.lessons
+            course.lessons || []
         );
 
     }
@@ -119,6 +138,10 @@ function displayLessons(lessons){
 
         </p>
 
+        <p>
+        ${lesson.content.substring(0,100)}...
+        </p>
+        
         <button
         onclick="editLesson(${lesson.id})">
 

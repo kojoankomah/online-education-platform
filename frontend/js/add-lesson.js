@@ -15,6 +15,15 @@ window.location.search
 const courseId =
 params.get("courseId");
 
+if(!courseId){
+
+    alert("No course selected.");
+
+    window.location.href =
+    "manage-course.html";
+
+}
+
 document
 .getElementById("lessonForm")
 .addEventListener(
@@ -26,18 +35,38 @@ async function createLesson(e){
 
     e.preventDefault();
 
-    const title =
-    document.getElementById("title").value;
+    const button = e.target.querySelector("button");
 
-    const content =
-    document.getElementById("content").value;
+    button.disabled = true;
 
+    button.textContent =
+    "Creating...";
+
+const title =
+document.getElementById("title").value.trim();
+
+const content =
+document.getElementById("content").value.trim();
+
+
+// (Validate lesson order) Get the lesson order as an integer
     const lesson_order =
     parseInt(
         document.getElementById(
             "lessonOrder"
         ).value
     );
+
+
+    if(!lesson_order || lesson_order <= 0){
+
+        alert(
+        "Lesson order must be greater than zero."
+        );
+
+        return;
+
+    }
 
     try{
 
@@ -92,6 +121,15 @@ async function createLesson(e){
         console.error(error);
 
         alert(error.message);
+
+    }
+
+    finally{
+
+        button.disabled = false;
+
+        button.textContent =
+        "Create Lesson";
 
     }
 
