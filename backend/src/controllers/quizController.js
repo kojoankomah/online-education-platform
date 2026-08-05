@@ -5,59 +5,96 @@ const pool = require("../db/connection");
  */
 const createQuiz = async (req, res) => {
   try {
+
     const { lessonId } = req.params;
     const { title } = req.body;
 
+
+    // Check lesson and course ownership
     const lessonResult = await pool.query(
-      "SELECT * FROM lessons WHERE id = $1",
+      `
+      SELECT 
+        lessons.id,
+        courses.instructor_id
+
+      FROM lessons
+
+      JOIN courses
+      ON lessons.course_id = courses.id
+
+      WHERE lessons.id = $1
+      `,
       [lessonId]
     );
 
-    // Check if lesson exists
-    const lesson = lessonResult.rows[0];
 
-    // Verify that the lesson belongs to a course owned by the instructor
-    const courseResult = await pool.query(
-      "SELECT instructor_id FROM courses WHERE id = $1",
-      [lesson.course_id]
-    );
-
-
-    const course = courseResult.rows[0];
-
-    // Verify ownership
-    if(Number(course.instructor_id) !== Number(req.user.id)){
-
-        return res.status(403).json({
-            message:"You can only create quizzes for your own courses"
-        });
-
-    }
-
-    // Check if lesson exists
     if (lessonResult.rows.length === 0) {
+
       return res.status(404).json({
         message: "Lesson not found"
       });
+
     }
 
+
+    const lesson = lessonResult.rows[0];
+
+
+    // Verify instructor owns the course
+    if (lesson.instructor_id !== req.user.id) {
+
+      return res.status(403).json({
+        message:
+        "You can only create quizzes for your own courses"
+      });
+
+    }
+
+    // Create quiz
     const quiz = await pool.query(
-      `INSERT INTO quizzes (lesson_id, title)
-       VALUES ($1, $2)
-       RETURNING *`,
-      [lessonId, title]
+
+      `
+      INSERT INTO quizzes
+      (
+        lesson_id,
+        title
+      )
+
+      VALUES ($1,$2)
+
+      RETURNING *
+      `,
+
+      [
+        lessonId,
+        title
+      ]
+
     );
 
+
     res.status(201).json({
-      message: "Quiz created successfully",
-      quiz: quiz.rows[0]
+
+      message:
+      "Quiz created successfully",
+
+      quiz:
+      quiz.rows[0]
+
     });
 
-  } catch (error) {
+
+  } catch(error) {
+
     res.status(500).json({
-      error: error.message
+
+      error:
+      error.message
+
     });
+
   }
+
 };
 
 
