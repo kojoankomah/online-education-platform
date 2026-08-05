@@ -217,10 +217,17 @@ const submitQuiz = async (req, res) => {
     // Save attempt
     const attempt = await pool.query(
       `INSERT INTO quiz_attempts
-        (quiz_id, student_id, score, total_questions)
-        VALUES ($1, $2, $3, $4)
-      RETURNING *`,
-      [quizId, studentId, score, totalQuestions]    );
+        (quiz_id, student_id, score, total_questions, passed)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING *`,
+      [
+        quizId,
+        studentId,
+        score,
+        totalQuestions,
+        passed
+      ]
+    );
 
 res.json({
   message: "Quiz submitted successfully",
