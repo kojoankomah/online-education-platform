@@ -53,6 +53,17 @@ function authHeaders() {
 }
 
 
+function jsonHeaders(){
+
+    return {
+
+        "Content-Type":
+        "application/json"
+
+    };
+
+}
+
 
 function requireAuth(){
 

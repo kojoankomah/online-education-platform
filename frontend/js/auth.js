@@ -17,11 +17,18 @@ async function registerUser(event){
 
     event.preventDefault();
 
+    const button =
+    event.target.querySelector("button");
+
+    button.disabled = true;
+
+    button.textContent = "Registering...";
+
     const user = {
 
-        name:document.getElementById("name").value,
+        name:document.getElementById("name").value.trim(),
 
-        email:document.getElementById("email").value,
+        email:document.getElementById("email").value.trim(),
 
         password:document.getElementById("password").value,
 
@@ -39,9 +46,7 @@ async function registerUser(event){
 
                 method:"POST",
 
-                headers:{
-                    "Content-Type":"application/json"
-                },
+                headers: jsonHeaders(),
 
                 body:JSON.stringify(user)
 
@@ -72,6 +77,14 @@ async function registerUser(event){
         console.error(error);
 
         alert("Unable to connect to the server.");
+
+    }
+
+    finally{
+
+        button.disabled = false;
+
+        button.textContent = "Register";
 
     }
 
@@ -109,10 +122,17 @@ async function loginUser(event){
     event.preventDefault();
 
 
+        const button =
+    event.target.querySelector("button");
+
+    button.disabled = true;
+
+    button.textContent = "Logging in...";
+
     const credentials = {
 
         email:
-        document.getElementById("loginEmail").value,
+        document.getElementById("loginEmail").value.trim(),
 
 
         password:
@@ -132,9 +152,7 @@ async function loginUser(event){
 
                 method:"POST",
 
-                headers:{
-                    "Content-Type":"application/json"
-                },
+                headers: jsonHeaders(),
 
 
                 body:
@@ -203,7 +221,9 @@ async function loginUser(event){
 
             }
 
-
+            else{
+                alert("Unknown user role.");
+            }
         }
 
 
@@ -214,21 +234,22 @@ async function loginUser(event){
             );
 
         }
-
-
     }
-
 
     catch(error){
 
-
         console.error(error);
-
 
         alert(
             "Unable to connect to the server."
         );
+    }
 
+    finally{
+
+        button.disabled = false;
+
+        button.textContent = "Login";
 
     }
 
