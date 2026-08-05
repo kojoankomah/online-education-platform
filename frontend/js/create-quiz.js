@@ -136,8 +136,9 @@ async function createQuiz(e){
             "Quiz created successfully!"
         );
 
+
         window.location.href =
-        `manage-course.html?courseId=${courseId}`;
+        `add-question.html?quizId=${data.quiz.id}&courseId=${courseId}`;
 
     }
 
