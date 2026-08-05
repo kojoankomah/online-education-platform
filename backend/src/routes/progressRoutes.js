@@ -3,6 +3,9 @@ const router = express.Router();
 
 const auth = require("../middleware/authMiddleware");
 
+const roleMiddleware =
+require("../middleware/roleMiddleware");
+
 const {
   completeLesson,
   getCompletedLessons,
@@ -13,9 +16,10 @@ const {
 
 // Mark lesson complete
 router.post(
-  "/lesson/:lessonId/complete",
-  auth,
-  completeLesson
+"/lesson/:lessonId/complete",
+auth,
+roleMiddleware("student"),
+completeLesson
 );
 
 

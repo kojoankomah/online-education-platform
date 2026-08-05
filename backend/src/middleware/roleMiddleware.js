@@ -8,8 +8,18 @@ const roleMiddleware = (...allowedRoles) => {
   return (req, res, next) => {
 
     // User info comes from authMiddleware
-    const userRole = req.user.role;
+    if(!req.user){
 
+    return res.status(401).json({
+
+    message:"Authentication required"
+
+    });
+
+    }
+
+
+      const userRole = req.user.role;
     if (!allowedRoles.includes(userRole)) {
       return res.status(403).json({
         message: "Forbidden. Insufficient permissions."
