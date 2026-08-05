@@ -20,12 +20,26 @@ window.location.search
 const quizId =
 params.get("quizId");
 
+if(!quizId){
 
+    alert("No quiz selected.");
+
+    window.location.href =
+    "create-quiz.html";
+
+}
 
 const courseId =
 params.get("courseId");
 
+if(!courseId){
 
+    alert("Course information missing.");
+
+    window.location.href =
+    "../dashboard/instructor-dashboard.html";
+
+}
 
 document
 .getElementById("questionForm")
@@ -40,45 +54,67 @@ async function addQuestion(e){
 
     e.preventDefault();
 
+    const button =document.getElementById(
+        "addQuestionBtn"
+    );
 
+    button.disabled = true;
+
+
+    button.textContent =
+    "Adding...";
 
     const question =
     document.getElementById(
         "question"
-    ).value;
+    ).value.trim();
 
 
 
     const option_a =
     document.getElementById(
         "option_a"
-    ).value;
+    ).value.trim();
 
 
     const option_b =
     document.getElementById(
         "option_b"
-    ).value;
+    ).value.trim();
 
 
     const option_c =
     document.getElementById(
         "option_c"
-    ).value;
+    ).value.trim();
 
 
     const option_d =
     document.getElementById(
         "option_d"
-    ).value;
+    ).value.trim();
 
 
     const correct_answer =
     document.getElementById(
         "correct_answer"
-    ).value;
+    ).value.trim();
 
+    if(
+        !question ||
+        !option_a ||
+        !option_b ||
+        !option_c ||
+        !option_d
+    ){
 
+        alert(
+            "All fields are required."
+        );
+
+        return;
+
+    }
 
     try{
 
@@ -141,8 +177,6 @@ async function addQuestion(e){
         )
         .reset();
 
-
-
     }
 
 
@@ -156,4 +190,28 @@ async function addQuestion(e){
 
     }
 
+    finally{
+
+        button.disabled = false;
+
+        button.textContent =
+        "Add Question";
+
+    }
+
 }
+
+
+document
+.getElementById("finishQuizBtn")
+.addEventListener(
+"click",
+()=>{
+
+
+    window.location.href =
+    `manage-course.html?courseId=${courseId}`;
+
+
+}
+);
