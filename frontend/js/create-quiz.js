@@ -15,6 +15,15 @@ window.location.search
 const courseId =
 params.get("courseId");
 
+// Check if courseId is present
+if(!courseId){
+
+    alert("No course selected.");
+
+    window.location.href =
+    "manage-course.html";
+
+}
 
 // Load course details
 async function loadLessons(){
@@ -46,7 +55,27 @@ async function loadLessons(){
 
         select.innerHTML="";
 
-        data.lessons.forEach(lesson=>{
+
+        const lessons =
+        data.lessons || data;
+
+
+        if(lessons.length === 0){
+
+            select.innerHTML =
+            `
+            <option>
+            No lessons available
+            </option>
+            `;
+
+            return;
+
+        }
+
+
+        lessons.forEach(lesson=>{
+
 
             const option =
             document.createElement("option");
@@ -85,15 +114,36 @@ async function createQuiz(e){
 
     e.preventDefault();
 
-    const lessonId =
-    document.getElementById(
-        "lessonSelect"
-    ).value;
+// Validate lesson selection
+const lessonId = document.getElementById(
+    "lessonSelect"
+).value;
+
+
+if(!lessonId){
+
+    alert(
+    "Please select a lesson."
+    );
+
+    return;
+
+}
+
+
+const button =
+e.target.querySelector("button");
+
+button.disabled = true;
+
+button.textContent =
+"Creating...";
+
 
     const title =
     document.getElementById(
-        "quizTitle"
-    ).value;
+    "quizTitle"
+    ).value.trim();
 
     try{
 
@@ -147,6 +197,15 @@ async function createQuiz(e){
         console.error(error);
 
         alert(error.message);
+
+    }
+
+    finally{
+
+        button.disabled = false;
+
+        button.textContent =
+        "Create Quiz";
 
     }
 
