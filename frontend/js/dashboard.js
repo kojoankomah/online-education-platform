@@ -87,8 +87,9 @@ async function loadStudentDashboard() {
         document.getElementById("quizCount").textContent =
             data.quizAttemptCount;
 
-        displayQuizHistory(data.recentAttempts);
-
+        displayQuizHistory(
+        data.recentAttempts || []
+        );
         // Display courses
         const courseList =
             document.getElementById("courseList");
@@ -191,6 +192,10 @@ card.className =
 
 
 const percentage =
+attempt.total_questions === 0
+?
+0
+:
 Math.round(
 (attempt.score / attempt.total_questions) * 100
 );
