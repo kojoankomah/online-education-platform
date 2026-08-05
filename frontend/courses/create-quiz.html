@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Create Quiz</title>
+
+<link rel="stylesheet"
+href="../css/global.css">
+
+</head>
+
+<body>
+
+<header class="dashboard-header">
+
+<h2>EduPlatform</h2>
+
+<a href="javascript:history.back()">
+
+Back
+
+</a>
+
+</header>
+
+<main class="container">
+
+<div class="card">
+
+<h1>Create Quiz</h1>
+
+<form id="quizForm">
+
+<label>
+
+Select Lesson
+
+</label>
+
+<select id="lessonSelect" required>
+
+<option value="">
+
+Loading lessons...
+
+</option>
+
+</select>
+
+<label>
+
+Quiz Title
+
+</label>
+
+<input
+type="text"
+id="quizTitle"
+required>
+
+<button type="submit">
+
+Create Quiz
+
+</button>
+
+</form>
+
+</div>
+
+</main>
+
+<script src="../js/api.js"></script>
+
+<script src="../js/create-quiz.js"></script>
+
+</body>
+
+</html>
