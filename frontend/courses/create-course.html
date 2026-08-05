@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Create Course</title>
+
+<link rel="stylesheet"
+href="../css/global.css">
+
+<link rel="stylesheet"
+href="../css/form.css">
+
+</head>
+
+<body>
+
+<header class="dashboard-header">
+
+<h2>EduPlatform</h2>
+
+<a href="../dashboard/instructor-dashboard.html">
+
+Back to Dashboard
+
+</a>
+
+</header>
+
+<main class="container">
+
+<div class="card">
+
+<h1>Create Course</h1>
+
+<form id="courseForm">
+
+<label>
+
+Course Title
+
+</label>
+
+<input
+type="text"
+id="title"
+required>
+
+<label>
+
+Description
+
+</label>
+
+<textarea
+id="description"
+rows="6"
+required>
+
+</textarea>
+
+<button type="submit">
+
+Create Course
+
+</button>
+
+</form>
+
+</div>
+
+</main>
+
+<script src="../js/api.js"></script>
+<script src="../js/create-course.js"></script>
+
+</body>
+
+</html>
