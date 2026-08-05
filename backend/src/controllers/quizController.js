@@ -208,6 +208,12 @@ const submitQuiz = async (req, res) => {
 
     const totalQuestions = questions.length;
 
+
+    const percentage = Math.round((score / totalQuestions) * 100);
+
+    const passed = percentage >= 70;
+
+
     // Save attempt
     const attempt = await pool.query(
       `INSERT INTO quiz_attempts
@@ -216,13 +222,15 @@ const submitQuiz = async (req, res) => {
       RETURNING *`,
       [quizId, studentId, score, totalQuestions]    );
 
-    res.json({
-      message: "Quiz submitted successfully",
-      score,
-      totalQuestions,
-      percentage: Math.round((score / totalQuestions) * 100),
-      attempt: attempt.rows[0]
-    });
+res.json({
+  message: "Quiz submitted successfully",
+  score,
+  totalQuestions,
+  percentage,
+  passed,
+  attempt: attempt.rows[0]
+});
+
 
   } catch (error) {
     res.status(500).json({
@@ -230,9 +238,7 @@ const submitQuiz = async (req, res) => {
     });
   }
 
-  const percentage = Math.round((score / totalQuestions) * 100);
 
-  const passed = percentage >= 50;
 };
 
 

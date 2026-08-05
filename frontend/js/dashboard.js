@@ -87,8 +87,9 @@ async function loadStudentDashboard() {
         document.getElementById("quizCount").textContent =
             data.quizAttemptCount;
 
-        // Display courses
+        displayQuizHistory(data.recentAttempts);
 
+        // Display courses
         const courseList =
             document.getElementById("courseList");
 
@@ -149,6 +150,90 @@ async function loadStudentDashboard() {
 
     }
 
+
+
+ // Display quiz history   
+function displayQuizHistory(attempts){
+
+
+const container =
+document.getElementById(
+"quizHistory"
+);
+
+
+
+container.innerHTML = "";
+
+
+
+if(attempts.length === 0){
+
+    container.innerHTML =
+    "<p>No quiz attempts yet.</p>";
+
+    return;
+
+}
+
+
+
+attempts.forEach(attempt=>{
+
+
+const card =
+document.createElement("div");
+
+
+card.className =
+"card";
+
+
+
+const percentage =
+Math.round(
+(attempt.score / attempt.total_questions) * 100
+);
+
+
+
+card.innerHTML = `
+
+<h3>
+${attempt.quiz_title}
+</h3>
+
+
+<p>
+Score:
+${attempt.score}/${attempt.total_questions}
+</p>
+
+
+<p>
+Percentage:
+${percentage}%
+</p>
+
+
+<p>
+Date:
+${new Date(
+attempt.submitted_at
+).toLocaleDateString()}
+</p>
+
+`;
+
+
+
+container.appendChild(card);
+
+
+});
+
+
+}
 // Logout functionality
 
 const logoutBtn =

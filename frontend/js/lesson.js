@@ -76,6 +76,7 @@ document.getElementById(
 lesson.content;
 
 
+loadQuizButton();
 
 }
 
@@ -89,6 +90,88 @@ alert(
 
 }
 
+
+}
+
+
+// Load quiz button if a quiz exists for the lesson
+async function loadQuizButton(){
+
+try{
+
+
+const response =
+await fetch(
+
+apiUrl(`/quizzes/lesson/${lessonId}`),
+
+{
+headers:{
+Authorization:
+`Bearer ${token}`
+}
+}
+
+);
+
+
+const quizzes =
+await response.json();
+
+
+
+const quizBtn =
+document.getElementById(
+"quizBtn"
+);
+
+
+
+if(quizzes.length > 0){
+
+
+const quizId =
+quizzes[0].id;
+
+
+
+quizBtn.style.display =
+"block";
+
+
+
+quizBtn.onclick = ()=>{
+
+
+window.location.href =
+`../quizzes/quiz.html?quizId=${quizId}`;
+
+
+};
+
+
+}
+else{
+
+
+quizBtn.style.display =
+"none";
+
+
+}
+
+
+
+}
+
+catch(error){
+
+console.error(
+"Quiz loading error:",
+error
+);
+
+}
 
 }
 

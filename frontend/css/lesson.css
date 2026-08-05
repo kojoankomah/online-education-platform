@@ -7,6 +7,12 @@
 }
 
 
+#quizBtn{
+
+display:none;
+
+}
+
 #completeBtn{
 
     margin-top:20px;
