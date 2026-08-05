@@ -44,8 +44,36 @@ function getToken() {
  * Standard headers for authenticated requests.
  */
 function authHeaders() {
+
     return {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${getToken()}`
+        "Authorization": `Bearer ${getToken()}`,
+        "Content-Type": "application/json"
     };
+
+}
+
+
+
+function requireAuth(){
+
+    const token = getToken();
+
+    if(!token){
+
+        window.location.href =
+        "../auth/login.html";
+
+    }
+
+}
+
+
+
+function logout(){
+
+    localStorage.removeItem("token");
+
+    window.location.href =
+    "../auth/login.html";
+
 }
