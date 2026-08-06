@@ -240,33 +240,118 @@ const addQuestion = async (req, res) => {
  * Get questions for a quiz
  */
 const getQuizQuestions = async (req, res) => {
+
   try {
+
     const { quizId } = req.params;
 
-    const questions = await pool.query(
+    /*
+     * Find the quiz together with its course
+     */
+    const quizResult = await pool.query(
       `
       SELECT
-        id,
-        question,
-        option_a,
-        option_b,
-        option_c,
-        option_d
-      FROM quiz_questions
-      WHERE quiz_id = $1
+        quizzes.id,
+        courses.id AS course_id,
+        courses.instructor_id
+      FROM quizzes
+      JOIN lessons
+        ON quizzes.lesson_id = lessons.id
+      JOIN courses
+        ON lessons.course_id = courses.id
+      WHERE quizzes.id = $1
       `,
       [quizId]
     );
 
-    res.json(questions.rows);
+    if (quizResult.rows.length === 0) {
 
-  } catch (error) {
-    res.status(500).json({
-      error: error.message
+      return res.status(404).json({
+        message: "Quiz not found"
+      });
+
+    }
+
+const quiz = quizResult.rows[0];
+
+
+// Instructor authorization
+if (req.user.role === "instructor") {
+
+  if (
+    Number(quiz.instructor_id) !== Number(req.user.id)
+  ) {
+
+    return res.status(403).json({
+      message:
+      "You can only view questions for your own quizzes"
     });
-  }
-};
 
+  }
+
+}
+
+
+// Student authorization
+else if (req.user.role === "student") {
+
+
+  const enrollmentResult = await pool.query(
+    `
+    SELECT *
+    FROM enrollments
+    WHERE student_id = $1
+    AND course_id = $2
+    `,
+    [
+      req.user.id,
+      quiz.course_id
+    ]
+  );
+
+
+  if (enrollmentResult.rows.length === 0) {
+
+    return res.status(403).json({
+      message:
+      "You are not enrolled in this course"
+    });
+
+  }
+
+}
+
+
+
+// Get questions after authorization passes
+const questions = await pool.query(
+  `
+  SELECT
+    id,
+    question,
+    option_a,
+    option_b,
+    option_c,
+    option_d
+  FROM quiz_questions
+  WHERE quiz_id = $1
+  `,
+  [quizId]
+);
+
+
+res.json(questions.rows);
+
+
+} catch (error) {
+
+  res.status(500).json({
+    error: error.message
+  });
+
+}
+
+};
 
 const submitQuiz = async (req, res) => {
   try {
