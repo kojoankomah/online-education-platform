@@ -113,6 +113,82 @@ const getCourseById = async (req, res) => {
 
 
 /**
+ * Get course for management
+ * Instructor owner only
+ */
+const getCourseForManagement = async (req, res) => {
+  try {
+
+    const { id } = req.params;
+
+    // Get course
+    const courseResult = await pool.query(
+      `
+      SELECT
+        courses.*,
+        users.name AS instructor_name
+      FROM courses
+      JOIN users
+        ON users.id = courses.instructor_id
+      WHERE courses.id = $1
+      `,
+      [id]
+    );
+
+    if (courseResult.rows.length === 0) {
+
+      return res.status(404).json({
+        message: "Course not found"
+      });
+
+    }
+
+    const course = courseResult.rows[0];
+
+    // Verify ownership
+    if (
+      Number(course.instructor_id) !==
+      Number(req.user.id)
+    ) {
+
+      return res.status(403).json({
+        message:
+          "You can only manage your own courses"
+      });
+
+    }
+
+    // Get lessons only after ownership is verified
+    const lessonsResult = await pool.query(
+      `
+      SELECT
+        id,
+        title,
+        content,
+        lesson_order
+      FROM lessons
+      WHERE course_id = $1
+      ORDER BY lesson_order ASC
+      `,
+      [id]
+    );
+
+    res.json({
+      ...course,
+      lessons: lessonsResult.rows
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      error: error.message
+    });
+
+  }
+};
+
+
+/**
  * Update a course
  * Only the course owner can update it
  */
@@ -213,6 +289,7 @@ module.exports = {
   createCourse,
   getAllCourses,
   getCourseById,
+  getCourseForManagement,
   updateCourse,
   deleteCourse
 };

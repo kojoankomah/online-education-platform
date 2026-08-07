@@ -45,9 +45,10 @@ async function loadCourse(){
         await fetch(
 
             apiUrl(
-                API.endpoints.courses +
-                "/" +
-                courseId
+            API.endpoints.courses +
+            "/" +
+            courseId +
+            "/manage"
             ),
 
             {
@@ -61,11 +62,16 @@ async function loadCourse(){
 
         if(!response.ok){
 
-            throw new Error(
+            alert(
                 course.message ||
-                course.error
+                course.error ||
+                "Unable to access this course."
             );
 
+            window.location.href =
+            "../dashboard/instructor-dashboard.html";
+
+            return;
         }
 
         document.getElementById(

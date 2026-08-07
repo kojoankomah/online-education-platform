@@ -7,6 +7,7 @@ const {
   createCourse,
   getAllCourses,
   getCourseById,
+  getCourseForManagement,
   updateCourse,
   deleteCourse
 } = require("../controllers/courseController");
@@ -18,6 +19,18 @@ const roleMiddleware = require("../middleware/roleMiddleware");
  * PUBLIC: View all courses
  */
 router.get("/", getAllCourses);
+
+/**
+ * PROTECTED:
+ * Instructor can manage only their own course
+ */
+router.get(
+  "/:id/manage",
+  authMiddleware,
+  roleMiddleware("instructor"),
+  getCourseForManagement
+);
+
 
 /**
  * PUBLIC: View single course
