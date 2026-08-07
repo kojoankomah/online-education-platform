@@ -107,22 +107,75 @@ async function loadStudentDashboard() {
 
         data.courses.forEach(course => {
 
+            const progress =
+            course.total_lessons == 0
+            ?
+            0
+            :
+            Math.round(
+            (course.completed_lessons /
+            course.total_lessons) * 100
+            );
+
+
             const card = document.createElement("div");
 
-            card.className = "card";
-
+            card.className = "course-card";
             card.innerHTML = `
-                <h3>${course.title}</h3>
 
-                <p>${course.description}</p>
+            <div class="course-image">
 
-                <button
-                class="continue-btn"
-                onclick="openCourse(${course.id})">
+                📚
 
-                Continue Learning
+            </div>
 
-                </button>
+
+            <div class="course-body">
+
+
+            <h3>
+            ${course.title}
+            </h3>
+
+
+            <p>
+            ${course.description}
+            </p>
+
+
+
+            <div class="course-progress">
+
+                <div class="progress-bar">
+
+                    <div
+                    class="progress"
+                    style="width:${progress}%">
+                    </div>
+
+                </div>
+
+                <small>
+                ${course.completed_lessons}/${course.total_lessons}
+                lessons completed
+                (${progress}%)
+                </small>
+
+            </div>
+
+
+
+            <button
+            class="continue-btn"
+            onclick="openCourse(${course.id})">
+
+            Continue Learning
+
+            </button>
+
+
+            </div>
+
             `;
 
             courseList.appendChild(card);
@@ -156,89 +209,86 @@ async function loadStudentDashboard() {
  // Display quiz history   
 function displayQuizHistory(attempts){
 
+    const container =
+    document.getElementById(
+        "quizHistory"
+    );
 
-const container =
-document.getElementById(
-"quizHistory"
-);
+    container.innerHTML = "";
 
+    if(attempts.length === 0){
 
+        container.innerHTML =
+        "<p>No quiz attempts yet.</p>";
 
-container.innerHTML = "";
+        return;
 
+    }
 
+    attempts.forEach(attempt=>{
 
-if(attempts.length === 0){
+        const card =
+        document.createElement("div");
 
-    container.innerHTML =
-    "<p>No quiz attempts yet.</p>";
+        card.className =
+        "quiz-card";
 
-    return;
+        const percentage =
+        attempt.total_questions === 0
+        ?
+        0
+        :
+        Math.round(
+            (attempt.score /
+            attempt.total_questions) * 100
+        );
 
-}
+        const status =
+        attempt.passed
+        ?
+        "Passed ✅"
+        :
+        "Failed ❌";
 
+        const date =
+        new Date(
+            attempt.submitted_at
+        ).toLocaleDateString();
 
+        card.innerHTML = `
 
-attempts.forEach(attempt=>{
+            <h3>
+                ${attempt.quiz_title}
+            </h3>
 
+            <p>
+                Score:
+                ${attempt.score}/${attempt.total_questions}
+            </p>
 
-const card =
-document.createElement("div");
+            <p>
+                Percentage:
+                ${percentage}%
+            </p>
 
+            <p>
+                Status:
+                <strong>${status}</strong>
+            </p>
 
-card.className =
-"card";
+            <small>
+                ${date}
+            </small>
 
+        `;
 
+        container.appendChild(card);
 
-const percentage =
-attempt.total_questions === 0
-?
-0
-:
-Math.round(
-(attempt.score / attempt.total_questions) * 100
-);
-
-
-
-card.innerHTML = `
-
-<h3>
-${attempt.quiz_title}
-</h3>
-
-
-<p>
-Score:
-${attempt.score}/${attempt.total_questions}
-</p>
-
-
-<p>
-Percentage:
-${percentage}%
-</p>
-
-
-<p>
-Date:
-${new Date(
-attempt.submitted_at
-).toLocaleDateString()}
-</p>
-
-`;
-
-
-
-container.appendChild(card);
-
-
-});
-
+    });
 
 }
+
+
 // Logout functionality
 
 const logoutBtn =

@@ -9,13 +9,40 @@ const getStudentDashboard = async (req, res) => {
 
     // ---------------- ENROLLED COURSES ----------------
     const courses = await pool.query(
-      `
-      SELECT c.id, c.title, c.description
-      FROM courses c
-      JOIN enrollments e ON c.id = e.course_id
-      WHERE e.student_id = $1
-      `,
-      [studentId]
+    `
+    SELECT 
+        c.id,
+        c.title,
+        c.description,
+
+        COUNT(l.id) AS total_lessons,
+
+        COUNT(lp.id) AS completed_lessons
+
+
+    FROM courses c
+
+
+    JOIN enrollments e
+    ON c.id = e.course_id
+
+
+    LEFT JOIN lessons l
+    ON c.id = l.course_id
+
+
+    LEFT JOIN lesson_progress lp
+    ON l.id = lp.lesson_id
+    AND lp.student_id = $1
+
+
+    WHERE e.student_id = $1
+
+
+    GROUP BY c.id
+
+    `,
+    [studentId]
     );
 
     // ---------------- RECENT QUIZ ATTEMPTS ----------------
@@ -31,6 +58,15 @@ const getStudentDashboard = async (req, res) => {
       [studentId]
     );
 
+    // ---------------- TOTAL QUIZZES ATTEMPTED ----------------
+    const attemptCount = await pool.query(
+      `
+      SELECT COUNT(*) AS total
+      FROM quiz_attempts
+      WHERE student_id = $1
+      `,
+      [studentId]
+    );
 
     // ---------------- COMPLETED LESSONS ----------------
     const progress = await pool.query(
@@ -48,7 +84,7 @@ const getStudentDashboard = async (req, res) => {
       courseCount: courses.rows.length,
 
       recentAttempts: attempts.rows,
-      quizAttemptCount: attempts.rows.length,
+      quizAttemptCount: Number(attemptCount.rows[0].total),
 
       completedLessons: Number(progress.rows[0].completed)
     });

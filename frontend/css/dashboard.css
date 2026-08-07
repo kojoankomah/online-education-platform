@@ -19,7 +19,7 @@ header {
   padding: 15px;
   margin-bottom: 15px;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(42, 253, 42, 0.1);
 }
 
 .progress-bar {
@@ -140,6 +140,275 @@ header {
     background:#1D4ED8;
 
 }
+
+
+/* Dashboard Layout */
+
+.dashboard-layout{
+
+    display:flex;
+    min-height:100vh;
+
+}
+
+
+
+/* Sidebar */
+
+
+.sidebar{
+
+    width:250px;
+
+    background:#1f2937;
+
+    color:white;
+
+    padding:25px;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+
+.sidebar h2{
+
+    margin-bottom:40px;
+
+}
+
+
+
+.sidebar nav{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:20px;
+
+}
+
+
+
+.sidebar a{
+
+    color:white;
+
+    text-decoration:none;
+
+    font-size:16px;
+
+}
+
+
+
+.sidebar a:hover{
+
+    opacity:0.7;
+
+}
+
+
+
+.sidebar button{
+
+    margin-top:auto;
+
+}
+
+
+
+
+
+/* Main Content */
+
+
+.dashboard-content{
+    flex:1;
+    padding:40px;
+    background:#f4f6f8;
+}
+
+.dashboard-content section{
+    padding:0;
+}
+
+
+.dashboard-section{
+    margin-top:40px;
+}
+
+
+/* Course Cards */
+
+.course-card{
+    display:flex;
+    gap:20px;
+    align-items:center;
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+    margin-bottom:20px;
+}
+
+.course-image{
+    height:120px;
+    background:#2563EB;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:50px;
+    border-radius:12px 12px 0 0;
+}
+
+.course-body{
+    flex:1;
+    padding:20px;
+}
+
+#courseList{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(280px,1fr));
+
+    gap:25px;
+
+}
+
+
+
+#courseList .course-card{
+    padding:0;
+    overflow:hidden;
+}
+
+
+
+.course-body h3{
+
+    margin-bottom:10px;
+
+}
+
+
+
+.course-body p{
+
+    color:#6b7280;
+
+    min-height:50px;
+
+}
+
+
+
+/* Progress */
+
+.course-progress{
+
+    margin:20px 0;
+
+}
+
+
+
+.course-progress .progress-bar{
+
+    height:10px;
+
+    background:#e5e7eb;
+
+    border-radius:10px;
+
+}
+
+
+
+.course-progress .progress{
+
+    width:60%;
+
+    height:100%;
+
+    background:#2563EB;
+
+    border-radius:10px;
+
+}
+
+
+
+.course-progress small{
+
+    color:#6b7280;
+
+}
+
+
+
+
+.dashboard-card h3{
+
+    color:#6b7280;
+
+    font-size:15px;
+
+}
+
+
+
+.dashboard-card p{
+
+    color:#111827;
+
+    font-size:35px;
+
+}
+
+
+
+/* Quiz Card */
+.quiz-card{
+
+    background:white;
+
+    padding:20px;
+
+    margin-bottom:20px;
+
+    border-radius:12px;
+
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+
+}
+
+.quiz-card h3{
+
+    margin-top:0;
+
+    color:#2563EB;
+
+}
+
+.quiz-card p{
+
+    margin:8px 0;
+
+}
+
+.quiz-card small{
+
+    color:#777;
+
+}  
 
 
 /* Logout Button Styles */

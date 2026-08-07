@@ -1,97 +1,451 @@
-/* Global CSS Reset*/
+/* =========================================
+   EDU PLATFORM - GLOBAL STYLES
+========================================= */
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+
+/* ---------- RESET ---------- */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
 
-/* Root Variables (Shared across the project) */
-
-:root {
-
-    --primary-color: #2563EB;
-    --secondary-color: #1E293B;
-    --accent-color: #F59E0B;
-
-    --background-color: #F8FAFC;
-    --white: #FFFFFF;
-    --text-color: #334155;
-
-    --border-radius: 8px;
-
-    --container-width: 1200px;
+html{
+    scroll-behavior:smooth;
 }
 
 
-/* Body Styling*/
+body{
 
-body {
+    font-family:
+    "Inter",
+    "Segoe UI",
+    Arial,
+    sans-serif;
 
-    font-family: "Inter", Arial, sans-serif;
+    background:#F8FAFC;
 
-    background-color: var(--background-color);
+    color:#141922;
 
-    color: var(--text-color);
+    line-height:1.6;
 
-    line-height: 1.6;
 }
 
 
-/* Container (Keeps content centered) */
+/* ---------- GLOBAL ELEMENTS ---------- */
 
-.container {
 
-    width: 90%;
+a{
 
-    max-width: var(--container-width);
+    text-decoration:none;
 
-    margin: auto;
+    color:inherit;
+
 }
 
 
-/* Links */
+img{
 
-a {
+    max-width:100%;
 
-    text-decoration: none;
+    display:block;
 
-    color: inherit;
 }
 
 
-/*  Buttons */
+button{
 
-.btn {
+    font-family:inherit;
 
-    display: inline-block;
-
-    background-color: var(--primary-color);
-
-    color: var(--white);
-
-    padding: 12px 25px;
-
-    border-radius: var(--border-radius);
-
-    font-weight: 600;
-
-    transition: 0.3s;
 }
 
 
-.btn:hover {
 
-    opacity: 0.85;
+/* ---------- CONTAINER ---------- */
+
+
+.container{
+
+    width:90%;
+
+    max-width:1200px;
+
+    margin:auto;
+
 }
 
 
-.btn-outline {
 
-    background: transparent;
+/* ---------- HEADINGS ---------- */
 
-    border: 2px solid var(--primary-color);
 
-    color: var(--primary-color);
+h1{
+
+    font-size:3rem;
+
+    line-height:1.2;
+
+}
+
+
+h2{
+
+    font-size:2rem;
+
+}
+
+
+h3{
+
+    font-size:1.3rem;
+
+}
+
+
+p{
+
+    color:#23354e;
+    
+}
+
+
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+
+.btn{
+
+    display:inline-block;
+
+    padding:12px 24px;
+
+    background:#2563EB;
+
+    color:white;
+
+    border-radius:8px;
+
+    border:none;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+
+.btn:hover{
+
+    background:#1D4ED8;
+
+}
+
+
+
+.btn-outline{
+
+    background:transparent;
+
+    color:#2563EB;
+
+    border:2px solid #2563EB;
+
+}
+
+
+.btn-outline:hover{
+
+    background:#2563EB;
+
+    color:white;
+
+}
+
+
+
+/* =========================================
+   CARDS
+========================================= */
+
+
+.card{
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:15px;
+
+
+    box-shadow:
+
+    0 5px 20px rgba(0,0,0,0.06);
+
+
+    transition:.3s;
+
+}
+
+
+.card:hover{
+
+    transform:translateY(-4px);
+
+}
+
+
+
+/* =========================================
+   NAVBAR
+========================================= */
+
+
+.navbar{
+
+    background:white;
+
+    padding:20px 0;
+
+    box-shadow:
+
+    0 2px 10px rgba(0,0,0,0.05);
+
+}
+
+
+.navbar .container{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+}
+
+
+.logo{
+
+    font-size:1.5rem;
+
+    font-weight:800;
+
+    color:#2563EB;
+
+}
+
+.navbar nav{
+    display:flex;
+    gap:30px;
+}
+
+.navbar nav a{
+    color:#475569;
+    font-weight:500;
+}
+
+
+.navbar nav a:hover{
+    color:#2563EB;
+}
+
+
+
+.nav-buttons{
+
+    display:flex;
+
+    gap:15px;
+
+}
+
+
+
+/* =========================================
+   FORMS
+========================================= */
+
+
+input,
+textarea,
+select{
+
+
+    width:100%;
+
+    padding:12px 15px;
+
+    border:1px solid #CBD5E1;
+
+    border-radius:8px;
+
+    outline:none;
+
+    font-size:1rem;
+
+}
+
+
+
+input:focus,
+textarea:focus,
+select:focus{
+
+
+    border-color:#2563EB;
+
+
+}
+
+
+
+textarea{
+
+    resize:none;
+
+    min-height:150px;
+
+}
+
+
+
+/* =========================================
+   DASHBOARD LAYOUT
+========================================= */
+
+
+.dashboard-grid{
+
+
+    display:grid;
+
+
+    grid-template-columns:
+
+    repeat(3,1fr);
+
+
+    gap:20px;
+
+
+}
+
+
+.stat-card{
+
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:15px;
+
+    text-align:center;
+
+
+}
+
+
+.stat-card h2{
+
+    color:#2563EB;
+
+}
+
+
+
+/* =========================================
+   PAGE SPACING
+========================================= */
+
+
+section{
+
+    padding:70px 0;
+
+}
+
+
+
+/* =========================================
+   FOOTER
+========================================= */
+
+
+footer{
+
+
+    background:#0F172A;
+
+
+    color:white;
+
+
+    padding:30px;
+
+
+    text-align:center;
+
+
+}
+
+
+footer p{
+
+    color:#CBD5E1;
+
+}
+
+
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+
+
+@media(max-width:900px){
+
+    h1{
+
+        font-size:2.2rem;
+
+    }
+
+    .dashboard-grid{
+        grid-template-columns:1fr;
+    }
+
+    .navbar nav{
+    display:none;
+    }
+
+}
+
+
+
+@media(max-width:600px){
+
+    .navbar .container{
+        flex-direction:column;
+        gap:20px;
+
+    }
+
+    .nav-buttons{
+        width:100%;
+        justify-content:center;
+    }
+
+    .btn{
+        width:100%;
+        text-align:center;
+    }
+
+
 }

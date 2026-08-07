@@ -51,7 +51,23 @@ const createQuiz = async (req, res) => {
     }
 
 
-    // Create quiz
+    // Check if this lesson already has a quiz
+    const existingQuiz = await pool.query(
+      `
+      SELECT id
+      FROM quizzes
+      WHERE lesson_id = $1
+      `,
+      [lessonId]
+    );
+
+    if (existingQuiz.rows.length > 0) {
+      return res.status(400).json({
+        message: "This lesson already has a quiz."
+      });
+    }
+
+  // Insert quiz into database
     const quiz = await pool.query(
 
       `
@@ -394,17 +410,50 @@ const submitQuiz = async (req, res) => {
 
     // Save attempt
     const attempt = await pool.query(
-      `INSERT INTO quiz_attempts
-        (quiz_id, student_id, score, total_questions, passed)
-        VALUES ($1, $2, $3, $4, $5)
-        RETURNING *`,
-      [
+
+    `
+    INSERT INTO quiz_attempts
+    (
+        quiz_id,
+        student_id,
+        score,
+        total_questions,
+        passed
+    )
+
+    VALUES
+    (
+        $1,
+        $2,
+        $3,
+        $4,
+        $5
+    )
+
+    ON CONFLICT
+    (student_id, quiz_id)
+
+    DO UPDATE SET
+
+    score = EXCLUDED.score,
+
+    total_questions = EXCLUDED.total_questions,
+
+    passed = EXCLUDED.passed,
+
+    submitted_at = CURRENT_TIMESTAMP
+
+    RETURNING *;
+    `,
+
+    [
         quizId,
         studentId,
         score,
         totalQuestions,
         passed
-      ]
+    ]
+
     );
 
 res.json({

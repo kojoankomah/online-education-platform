@@ -23,134 +23,182 @@
 <body>
 
 
-<header class="dashboard-header">
-
-    <h2>
-        EduPlatform
-    </h2>
-
-    <a href="../courses/courses.html">
-         Browse Courses
-    </a>
-
-    <button id="logoutBtn">
-        Logout
-    </button>
-
-</header>
+<div class="dashboard-layout">
 
 
+    <!-- SIDEBAR -->
 
-<main class="dashboard-container">
+    <aside class="sidebar">
 
-
-    <section class="welcome-card">
-
-
-        <h1>
-            Welcome,
-            <span id="studentName">
-            Student
-            </span>
-        </h1>
-
-
-        <p>
-            Continue your learning journey.
-        </p>
-
-
-    </section>
-
-
-
-    <section class="dashboard-grid">
-
-
-        <div class="dashboard-card">
-
-
-            <h3>
-                Enrolled Courses
-            </h3>
-
-
-            <p id="courseCount">
-                0
-            </p>
-
-
-        </div>
-
-
-
-
-        <div class="dashboard-card">
-
-
-            <h3>
-                Completed Lessons
-            </h3>
-
-
-            <p id="lessonCount">
-                0
-            </p>
-
-
-        </div>
-
-
-
-
-        <div class="dashboard-card">
-
-
-            <h3>
-                Quiz Attempts
-            </h3>
-
-
-            <p id="quizCount">
-                0
-            </p>
-
-
-        </div>
-
-
-    </section>
-
-    <section class="card">
-
-        <h2>My Courses</h2>
-
-        <div id="courseList">
-
-            <p>No enrolled courses.</p>
-
-        </div>
-
-    </section>
-        <section class="card">
 
         <h2>
-            Recent Quiz Attempts
+            EduPlatform
         </h2>
 
 
-        <div id="quizHistory">
-
-            <p>
-                No quiz attempts yet.
-            </p>
-
-        </div>
+        <nav>
 
 
-    </section>
+            <a href="student-dashboard.html">
+                🏠 Dashboard
+            </a>
 
-</main>
+
+            <a href="../courses/courses.html">
+                📚 Courses
+            </a>
+
+
+            <a href="#">
+                📊 Progress
+            </a>
+
+
+            <a href="#">
+                📝 Quiz History
+            </a>
+
+
+        </nav>
+
+
+        <button id="logoutBtn">
+            Logout
+        </button>
+
+
+    </aside>
+
+
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="dashboard-content">
+
+
+        <header class="dashboard-header">
+
+
+            <h2>
+                Welcome,
+                <span id="studentName">
+                Student
+                </span>
+            </h2>
+
+
+        </header>
+
+
+
+
+
+        <!-- Statistics -->
+
+
+        <section class="dashboard-grid">
+
+
+            <div class="dashboard-card">
+
+                <h3>
+                    Courses
+                </h3>
+
+                <p id="courseCount">
+                    0
+                </p>
+
+            </div>
+
+
+
+            <div class="dashboard-card">
+
+                <h3>
+                    Lessons Completed
+                </h3>
+
+                <p id="lessonCount">
+                    0
+                </p>
+
+            </div>
+
+
+
+
+            <div class="dashboard-card">
+
+                <h3>
+                    Quiz Attempts
+                </h3>
+
+                <p id="quizCount">
+                    0
+                </p>
+
+            </div>
+
+
+        </section>
+
+
+
+
+
+        <!-- COURSES -->
+
+        <section class="dashboard-section">
+
+
+            <h2>
+                My Courses
+            </h2>
+
+
+            <div id="courseList">
+
+
+            </div>
+
+
+        </section>
+
+
+
+
+
+        <!-- QUIZ HISTORY -->
+
+
+        <section class="dashboard-section">
+
+
+            <h2>
+                Quiz History
+            </h2>
+
+
+            <div id="quizHistory">
+
+
+            </div>
+
+
+        </section>
+
+
+
+    </main>
+
+
+
+</div>
+
+
+
 
 
 <script src="../js/api.js"></script>
@@ -159,5 +207,4 @@
 
 
 </body>
-
 </html>

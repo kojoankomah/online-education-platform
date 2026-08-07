@@ -1,349 +1,452 @@
-/*  Navigation Bar*/
-
-.navbar {
-
-    background-color: var(--white);
-
-    padding: 20px 0;
-
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-
-}
+/* =========================================
+   EDU PLATFORM LANDING PAGE
+========================================= */
 
 
-.navbar .container {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-}
+/* ---------- HERO SECTION ---------- */
 
 
-.logo {
+.hero{
 
-    font-size: 24px;
+    background:
 
-    font-weight: 700;
+    linear-gradient(
+        135deg,
+        #EFF6FF,
+        #FFFFFF
+    );
 
-    color: var(--primary-color);
+    padding:90px 0;
 
 }
 
 
-nav {
+.hero-content{
 
-    display: flex;
+    display:flex;
 
-    gap: 25px;
+    align-items:center;
 
-}
+    justify-content:space-between;
 
-
-nav a:hover {
-
-    color: var(--primary-color);
+    gap:60px;
 
 }
 
 
-/* Navigation Buttons */
 
-.nav-buttons {
+.hero-text{
 
-    display: flex;
-
-    gap: 15px;
+    flex:1;
 
 }
 
 
-/* Hero Section */
+.hero-text h1{
 
-.hero {
+    font-size:3.2rem;
 
-    padding: 80px 0;
+    color:#0F172A;
 
-}
-
-
-.hero-content {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 40px;
+    margin-bottom:20px;
 
 }
 
 
-.hero-text {
+.hero-text p{
 
-    flex: 1;
+    font-size:1.1rem;
 
-}
+    margin-bottom:30px;
 
-
-.hero-text h1 {
-
-    font-size: 48px;
-
-    line-height: 1.2;
-
-    color: var(--secondary-color);
-
-    margin-bottom: 20px;
+    max-width:550px;
 
 }
 
 
-.hero-text p {
 
-    font-size: 18px;
+.hero-image{
 
-    margin-bottom: 30px;
+    flex:1;
 
-}
+    display:flex;
 
-
-.hero-image {
-
-    flex: 1;
+    justify-content:center;
 
 }
 
 
-.hero-image img {
 
-    width: 100%;
+.hero-image img{
 
-}
+    width:500px;
 
-
-/* Features */
-
-.features {
-
-    padding: 60px 0;
+    max-width:100%;
 
 }
 
 
-.features h2 {
 
-    text-align: center;
-
-    margin-bottom: 40px;
-
-    color: var(--secondary-color);
-
-}
+/* ---------- FEATURES ---------- */
 
 
-.feature-grid {
+.features{
 
-    display: grid;
-
-    grid-template-columns: repeat(4, 1fr);
-
-    gap: 20px;
+    background:#FFFFFF;
 
 }
 
 
-.card {
+.features h2{
 
-    background: var(--white);
+    text-align:center;
 
-    padding: 25px;
-
-    border-radius: var(--border-radius);
-
-    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    margin-bottom:50px;
 
 }
 
 
-.card h3 {
 
-    margin-bottom: 10px;
+.feature-grid{
 
-    color: var(--secondary-color);
+    display:grid;
 
-}
+    grid-template-columns:
 
-
-/* Statistics Section*/
-
-.stats {
-
-    padding: 70px 0;
-
-    background: white;
-}
-
-.stats .container {
-
-    display: grid;
-
-    grid-template-columns: repeat(4, 1fr);
-
-    gap: 20px;
-}
-
-.stat-card {
-
-    text-align: center;
-
-    padding: 30px;
-
-    border-radius: 10px;
-
-    background: #f8fafc;
-
-    transition: 0.3s;
-}
-
-.stat-card:hover {
-
-    transform: translateY(-6px);
-
-    box-shadow: 0 8px 20px rgba(0,0,0,.1);
-}
-
-.stat-card h2 {
-
-    font-size: 40px;
-
-    color: var(--primary-color);
-}
-
-.stat-card p {
-
-    margin-top: 10px;
-
-    font-weight: 600;
-}
+    repeat(4,1fr);
 
 
-
-/* About Section*/
-
-.about {
-
-    padding: 80px 0;
-}
-
-.about-content {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 60px;
-}
-
-.about img {
-
-    width: 100%;
-}
-
-.about h2 {
-
-    margin-bottom: 20px;
-
-    color: var(--secondary-color);
-}
-
-.about p {
-
-    margin-bottom: 15px;
-}
-
-
-/* Call To Action */
-
-.cta {
-
-    background-color: var(--secondary-color);
-
-    color: white;
-
-    padding: 60px 0;
-
-    text-align: center;
+    gap:25px;
 
 }
 
 
-.cta h2 {
 
-    margin-bottom: 15px;
+.feature-grid .card{
+
+
+    text-align:center;
+
 
 }
 
 
-/*  Footer */
+.feature-grid h3{
 
-footer {
+    margin-bottom:15px;
 
-    padding: 20px;
-
-    text-align: center;
-
-    background: #0f172a;
-
-    color: white;
+    color:#1E293B;
 
 }
 
 
 
 
+/* ---------- STATISTICS ---------- */
+
+
+.stats{
+
+    background:#2563EB;
+
+}
+
+
+.stats .container{
+
+    display:grid;
+
+
+    grid-template-columns:
+
+    repeat(4,1fr);
+
+
+    gap:25px;
+
+
+}
 
 
 
-/* Responsive Design */
+.stat-card{
 
-@media (max-width: 768px) {
 
-    .navbar .container {
+    background:white;
 
-        flex-direction: column;
 
-        gap: 20px;
+    border-radius:15px;
+
+
+    padding:30px;
+
+
+    text-align:center;
+
+
+}
+
+
+
+.stat-card h2{
+
+    color:#2563EB;
+
+    font-size:2.5rem;
+
+    margin-bottom:5px;
+
+}
+
+
+
+/* ---------- ABOUT ---------- */
+
+
+.about{
+
+    background:white;
+
+}
+
+
+
+.about-content{
+
+
+    display:flex;
+
+
+    align-items:center;
+
+
+    gap:60px;
+
+
+}
+
+
+
+.about-content > div{
+
+
+    flex:1;
+
+
+}
+
+
+
+.about-content h2{
+
+
+    margin-bottom:20px;
+
+
+}
+
+
+
+.about-content p{
+
+
+    margin-bottom:15px;
+
+
+}
+
+
+
+.about-content img{
+
+
+    border-radius:20px;
+
+
+}
+
+
+
+/* ---------- CTA ---------- */
+
+
+.cta{
+
+
+    background:
+
+
+    linear-gradient(
+
+    135deg,
+
+    #2563EB,
+
+    #1D4ED8
+
+    );
+
+
+    text-align:center;
+
+
+    color:white;
+
+
+}
+
+
+
+.cta h2{
+
+
+    color:white;
+
+
+    margin-bottom:15px;
+
+
+}
+
+
+
+.cta p{
+
+
+    color:#DBEAFE;
+
+
+    margin-bottom:30px;
+
+
+}
+
+
+
+.cta .btn{
+
+
+    background:white;
+
+
+    color:#2563EB;
+
+
+}
+
+
+
+.cta .btn:hover{
+
+
+    background:#EFF6FF;
+
+
+}
+
+
+
+/* ---------- RESPONSIVE ---------- */
+
+
+@media(max-width:1000px){
+
+
+    .hero-content{
+
+
+        flex-direction:column;
+
+
+        text-align:center;
+
+
     }
 
-    nav {
 
-        flex-direction: column;
 
-        align-items: center;
+    .hero-text p{
+
+
+        margin-left:auto;
+
+        margin-right:auto;
+
+
     }
 
-    .hero-content {
 
-        flex-direction: column;
+
+    .feature-grid{
+
+
+        grid-template-columns:
+
+        repeat(2,1fr);
+
+
     }
 
-    .feature-grid {
 
-        grid-template-columns: 1fr;
+
+    .stats .container{
+
+
+        grid-template-columns:
+
+        repeat(2,1fr);
+
+
     }
 
-    .stats .container {
 
-        grid-template-columns: repeat(2, 1fr);
+
+    .about-content{
+
+
+        flex-direction:column;
+
+
+        text-align:center;
+
+
     }
 
-    .about-content {
 
-        flex-direction: column;
+}
+
+
+
+@media(max-width:600px){
+
+
+    .hero-text h1{
+
+
+        font-size:2.2rem;
+
+
     }
+
+
+
+    .feature-grid{
+
+
+        grid-template-columns:1fr;
+
+
+    }
+
+
+
+    .stats .container{
+
+
+        grid-template-columns:1fr;
+
+
+    }
+
 
 }

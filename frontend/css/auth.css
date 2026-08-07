@@ -1,83 +1,137 @@
-/* AUTHENTICATION PAGES
-   Used by:
-   - login.html
-   - register.html*/
+/* =========================================
+   AUTHENTICATION PAGES
+========================================= */
 
-body{
-    background:#f5f7fb;
-    font-family:Inter, Arial, Helvetica, sans-serif;
-}
 
-/* Main container */
-
-.auth-container{
+.auth-page{
 
     min-height:100vh;
 
     display:flex;
-}
-
-/* Left side */
-
-.auth-left{
-
-    flex:1;
-
-    background:linear-gradient(135deg,#2563EB,#1E40AF);
-
-    display:flex;
-
-    justify-content:center;
 
     align-items:center;
 
-    padding:40px;
+    justify-content:center;
+
+    background:
+
+    linear-gradient(
+        135deg,
+        #EFF6FF,
+        #F8FAFC
+    );
+
 }
 
-.auth-left img{
 
-    width:85%;
 
-    max-width:500px;
-}
+.auth-container{
 
-/* Right side */
+    width:90%;
 
-.auth-right{
-
-    flex:1;
-
-    background:white;
+    max-width:1000px;
 
     display:flex;
 
-    flex-direction:column;
+    background:white;
 
-    justify-content:center;
+    border-radius:20px;
 
-    padding:60px;
+    overflow:hidden;
+
+    box-shadow:
+    0 15px 40px rgba(0,0,0,0.1);
+
 }
 
-.auth-right h1{
 
-    color:#1E293B;
+
+.auth-image{
+
+    flex:1;
+
+    background:#EFF6FF;
+
+}
+
+
+
+.auth-image img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+}
+
+
+
+.auth-card{
+
+    flex:1;
+
+    box-shadow:none;
+
+    border-radius:0;
+
+}
+/* ---------- AUTH CARD ---------- */
+
+
+.auth-card{
+
+    background:white;
+
+    width:100%;
+
+    max-width:420px;
+
+    padding:40px;
+
+    border-radius:18px;
+
+
+    box-shadow:
+
+    0 10px 30px rgba(0,0,0,0.08);
+
+}
+
+
+
+.auth-card h1{
+
+    text-align:center;
 
     margin-bottom:10px;
+
+    color:#0F172A;
+
 }
 
-.auth-right p{
 
-    color:#64748B;
 
-    margin-bottom:25px;
+.auth-card .subtitle{
+
+    text-align:center;
+
+    margin-bottom:30px;
+
 }
 
-/* Form */
+
+
+/* ---------- FORM ---------- */
+
 
 .form-group{
 
     margin-bottom:20px;
+
 }
+
+
 
 .form-group label{
 
@@ -86,69 +140,95 @@ body{
     margin-bottom:8px;
 
     font-weight:600;
+
+    color:#334155;
+
 }
 
-.form-group input,
-.form-group select{
+
+
+.auth-card button{
 
     width:100%;
 
-    padding:14px;
-
-    border:1px solid #CBD5E1;
-
-    border-radius:8px;
-
-    font-size:15px;
-
-    outline:none;
-
-    transition:.3s;
 }
 
-.form-group input:focus,
-.form-group select:focus{
 
-    border-color:#2563EB;
 
-    box-shadow:0 0 5px rgba(37,99,235,.2);
+/* ---------- EXTRA LINKS ---------- */
+
+
+.auth-link{
+
+    text-align:center;
+
+    margin-top:20px;
+
 }
 
-/* Button */
 
-button{
 
-    width:100%;
-
-    margin-top:10px;
-}
-
-/* Bottom text */
-
-.auth-right a{
+.auth-link a{
 
     color:#2563EB;
 
     font-weight:600;
+
 }
 
-/* Responsive */
 
-@media(max-width:900px){
+
+/* ---------- LOGO ---------- */
+
+
+.auth-logo{
+
+    text-align:center;
+
+    margin-bottom:25px;
+
+    font-size:2rem;
+
+    font-weight:800;
+
+    color:#2563EB;
+
+}
+
+
+
+/* ---------- MOBILE ---------- */
+
+
+@media(max-width:500px){
+
+
+    .auth-card{
+
+        margin:20px;
+   
+        padding:30px;
+
+    }
+
+
+}
+
+
+
+@media(max-width:800px){
 
     .auth-container{
 
         flex-direction:column;
+
     }
 
-    .auth-left{
+
+    .auth-image{
 
         display:none;
-    }
 
-    .auth-right{
-
-        padding:40px 25px;
     }
 
 }
