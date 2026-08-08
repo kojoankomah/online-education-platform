@@ -29,6 +29,7 @@ if(!quizId){
 
 }
 
+
 const courseId =
 params.get("courseId");
 
@@ -41,12 +42,72 @@ if(!courseId){
 
 }
 
+
+let questionCount = 0;
+
+function updateQuestionCount(){
+
+    document.getElementById(
+        "questionCount"
+    ).textContent =
+    `Questions Added: ${questionCount}`;
+
+}
+
+
 document
 .getElementById("questionForm")
 .addEventListener(
 "submit",
 addQuestion
 );
+
+async function loadQuestionCount(){
+
+    try{
+
+        const response =
+        await fetch(
+
+            apiUrl(
+                `/quizzes/${quizId}/questions`
+            ),
+
+            {
+                headers:authHeaders()
+            }
+
+        );
+
+        const data =
+        await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message ||
+                data.error ||
+                "Unable to load questions"
+            );
+
+        }
+
+
+        questionCount =
+        data.length;
+
+        updateQuestionCount();
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+    }
+
+}
 
 
 // Function to add a question to the quiz
@@ -58,11 +119,6 @@ async function addQuestion(e){
         "addQuestionBtn"
     );
 
-    button.disabled = true;
-
-
-    button.textContent =
-    "Adding...";
 
     const question =
     document.getElementById(
@@ -115,6 +171,9 @@ async function addQuestion(e){
         return;
 
     }
+
+    button.disabled = true;
+    button.textContent = "Adding...";
 
     try{
 
@@ -169,7 +228,9 @@ async function addQuestion(e){
             "Question added successfully!"
         );
 
+        questionCount++;
 
+        updateQuestionCount();
 
         document
         .getElementById(
@@ -206,12 +267,59 @@ document
 .getElementById("finishQuizBtn")
 .addEventListener(
 "click",
-()=>{
+(e)=>{
+
+    e.preventDefault();
+
+    const question =
+    document.getElementById(
+        "question"
+    ).value.trim();
+
+    const option_a =
+    document.getElementById(
+        "option_a"
+    ).value.trim();
+
+    const option_b =
+    document.getElementById(
+        "option_b"
+    ).value.trim();
+
+    const option_c =
+    document.getElementById(
+        "option_c"
+    ).value.trim();
+
+    const option_d =
+    document.getElementById(
+        "option_d"
+    ).value.trim();
+
+
+    const hasUnsavedQuestion =
+        question ||
+        option_a ||
+        option_b ||
+        option_c ||
+        option_d;
+
+
+    if(hasUnsavedQuestion){
+
+        alert(
+            "You have an unsaved question. Click 'Add Question' before finishing the quiz."
+        );
+
+        return;
+    }
 
 
     window.location.href =
     `manage-course.html?courseId=${courseId}`;
 
-
 }
 );
+
+
+loadQuestionCount();
