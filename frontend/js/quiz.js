@@ -54,18 +54,7 @@ async function loadQuiz(){
         );
 
         const data =
-        await response.json();
-
-
-        if(!response.ok){
-
-            throw new Error(
-                data.message ||
-                data.error ||
-                "Unable to load quiz"
-            );
-
-        }
+        await handleApiResponse(response);
 
 
         questions = data;
@@ -312,17 +301,7 @@ async function submitQuiz(){
 
 
         const data =
-        await response.json();
-
-
-
-        if(!response.ok){
-
-            throw new Error(
-                data.error || data.message
-            );
-
-        }
+        await handleApiResponse(response);
 
 
 

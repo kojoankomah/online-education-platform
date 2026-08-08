@@ -53,6 +53,61 @@ function authHeaders() {
 }
 
 
+async function handleApiResponse(response){
+
+    let data = {};
+
+    try{
+
+        data = await response.json();
+
+    }
+    catch(error){
+
+        data = {};
+
+    }
+
+
+    // Invalid or expired session
+    if(response.status === 401){
+
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        alert(
+            data.message ||
+            data.error ||
+            "Your session has expired. Please log in again."
+        );
+
+        window.location.href =
+        "../auth/login.html";
+
+        throw new Error(
+            "Authentication required"
+        );
+    }
+
+
+    // Other failed requests
+    if(!response.ok){
+
+        throw new Error(
+            data.message ||
+            data.error ||
+            "Request failed"
+        );
+
+    }
+
+
+    return data;
+}
+
+
+
+/// Standard headers for JSON requests
 function jsonHeaders(){
 
     return {
@@ -65,6 +120,62 @@ function jsonHeaders(){
 }
 
 
+
+//Reusable response handler (Ensure the user is authenticated)
+async function handleApiResponse(response){
+
+    let data = {};
+
+    try{
+
+        data = await response.json();
+
+    }
+    catch(error){
+
+        data = {};
+
+    }
+
+
+    // Invalid or expired session
+    if(response.status === 401){
+
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        alert(
+            data.message ||
+            data.error ||
+            "Your session has expired. Please log in again."
+        );
+
+        window.location.href =
+        "../auth/login.html";
+
+        throw new Error(
+            "Authentication required"
+        );
+    }
+
+
+    // Other failed requests
+    if(!response.ok){
+
+        throw new Error(
+            data.message ||
+            data.error ||
+            "Request failed"
+        );
+
+    }
+
+
+    return data;
+}
+
+
+/// Ensure the user is authenticated
 function requireAuth(){
 
     const token = getToken();
@@ -83,8 +194,8 @@ function requireAuth(){
 function logout(){
 
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
 
     window.location.href =
     "../auth/login.html";
-
 }
