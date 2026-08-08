@@ -35,21 +35,19 @@ async function createLesson(e){
 
     e.preventDefault();
 
-    const button = e.target.querySelector("button");
+    const button =
+    e.target.querySelector("button");
 
-    button.disabled = true;
+    const title =
+    document.getElementById(
+        "title"
+    ).value.trim();
 
-    button.textContent =
-    "Creating...";
+    const content =
+    document.getElementById(
+        "content"
+    ).value.trim();
 
-const title =
-document.getElementById("title").value.trim();
-
-const content =
-document.getElementById("content").value.trim();
-
-
-// (Validate lesson order) Get the lesson order as an integer
     const lesson_order =
     parseInt(
         document.getElementById(
@@ -58,15 +56,37 @@ document.getElementById("content").value.trim();
     );
 
 
-    if(!lesson_order || lesson_order <= 0){
+    // Validate title and content
+    if(!title || !content){
 
         alert(
-        "Lesson order must be greater than zero."
+            "Title and lesson content are required."
         );
 
         return;
-
     }
+
+
+    // Validate lesson order
+    if(
+        !lesson_order ||
+        lesson_order <= 0
+    ){
+
+        alert(
+            "Lesson order must be greater than zero."
+        );
+
+        return;
+    }
+
+
+    // Disable only after validation passes
+    button.disabled = true;
+
+    button.textContent =
+    "Creating...";
+
 
     try{
 
@@ -95,21 +115,17 @@ document.getElementById("content").value.trim();
 
         );
 
+
         const data =
-        await response.json();
+        await handleApiResponse(
+            response
+        );
 
-        if(!response.ok){
-
-            throw new Error(
-                data.message ||
-                data.error
-            );
-
-        }
 
         alert(
             "Lesson created successfully!"
         );
+
 
         window.location.href =
         `manage-course.html?courseId=${courseId}`;
@@ -120,7 +136,18 @@ document.getElementById("content").value.trim();
 
         console.error(error);
 
-        alert(error.message);
+        // handleApiResponse already handles
+        // authentication errors
+        if(
+            error.message !==
+            "Authentication required"
+        ){
+
+            alert(
+                error.message
+            );
+
+        }
 
     }
 
