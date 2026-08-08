@@ -1,7 +1,9 @@
 const express = require("express");
+
 const router = express.Router();
 
-const auth = require("../middleware/authMiddleware");
+const auth =
+require("../middleware/authMiddleware");
 
 const roleMiddleware =
 require("../middleware/roleMiddleware");
@@ -16,10 +18,10 @@ const {
 
 // Mark lesson complete
 router.post(
-"/lesson/:lessonId/complete",
-auth,
-roleMiddleware("student"),
-completeLesson
+  "/lesson/:lessonId/complete",
+  auth,
+  roleMiddleware("student"),
+  completeLesson
 );
 
 
@@ -27,6 +29,7 @@ completeLesson
 router.get(
   "/lesson/:lessonId",
   auth,
+  roleMiddleware("student"),
   checkLessonCompletion
 );
 
@@ -35,6 +38,7 @@ router.get(
 router.get(
   "/course/:courseId/lessons",
   auth,
+  roleMiddleware("student"),
   getCompletedLessons
 );
 
@@ -43,6 +47,7 @@ router.get(
 router.get(
   "/course/:courseId",
   auth,
+  roleMiddleware("student"),
   getCourseProgress
 );
 

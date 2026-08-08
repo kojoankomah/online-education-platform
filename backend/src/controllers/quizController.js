@@ -375,6 +375,58 @@ const submitQuiz = async (req, res) => {
     const studentId = req.user.id;
     const { answers } = req.body;
 
+
+        // Find the quiz and the course it belongs to
+    const quizResult = await pool.query(
+      `
+      SELECT
+        q.id,
+        l.course_id
+      FROM quizzes q
+      JOIN lessons l
+        ON q.lesson_id = l.id
+      WHERE q.id = $1
+      `,
+      [quizId]
+    );
+
+    if (quizResult.rows.length === 0) {
+
+      return res.status(404).json({
+        message: "Quiz not found"
+      });
+
+    }
+
+    const courseId =
+    quizResult.rows[0].course_id;
+
+
+    // Verify that the student is enrolled
+    const enrollmentResult = await pool.query(
+      `
+      SELECT id
+      FROM enrollments
+      WHERE student_id = $1
+      AND course_id = $2
+      `,
+      [
+        studentId,
+        courseId
+      ]
+    );
+
+    if (enrollmentResult.rows.length === 0) {
+
+      return res.status(403).json({
+        message:
+          "You must be enrolled in this course to submit this quiz"
+      });
+
+    }
+
+
+
     // Get all correct answers
     const questionsResult = await pool.query(
       "SELECT id, correct_answer FROM quiz_questions WHERE quiz_id = $1",

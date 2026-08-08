@@ -21,6 +21,12 @@ const quizId =
 params.get("quizId");
 
 
+const submitQuizBtn =
+document.getElementById("submitQuizBtn");
+
+// Hide submit button until quiz loads successfully
+submitQuizBtn.style.display = "none";
+
 
 let questions = [];
 
@@ -32,7 +38,6 @@ let questions = [];
 async function loadQuiz(){
 
     try {
-
 
         const response =
         await fetch(
@@ -48,16 +53,16 @@ async function loadQuiz(){
 
         );
 
-
         const data =
         await response.json();
-
 
 
         if(!response.ok){
 
             throw new Error(
-                data.error || "Unable to load quiz"
+                data.message ||
+                data.error ||
+                "Unable to load quiz"
             );
 
         }
@@ -66,8 +71,33 @@ async function loadQuiz(){
         questions = data;
 
 
+        // No questions available
+        if(questions.length === 0){
+
+            document.getElementById(
+                "quizContainer"
+            ).innerHTML = `
+                <div class="card">
+                    <p>
+                        No questions are available for this quiz.
+                    </p>
+                </div>
+            `;
+
+            submitQuizBtn.style.display =
+            "none";
+
+            return;
+        }
+
+
         displayQuestions();
 
+
+        // Only show submit button
+        // after questions load successfully
+        submitQuizBtn.style.display =
+        "inline-block";
 
     }
 
@@ -75,9 +105,19 @@ async function loadQuiz(){
 
         console.error(error);
 
-        alert(
-            "Unable to load quiz"
-        );
+
+        document.getElementById(
+            "quizContainer"
+        ).innerHTML = `
+            <div class="card">
+                <p>${error.message}</p>
+            </div>
+        `;
+
+
+        // Prevent submission
+        submitQuizBtn.style.display =
+        "none";
 
     }
 
@@ -360,15 +400,10 @@ else{
 
 
 
-document
-.getElementById(
-    "submitQuizBtn"
-)
-.addEventListener(
+submitQuizBtn.addEventListener(
     "click",
     submitQuiz
 );
-
 
 
 loadQuiz();

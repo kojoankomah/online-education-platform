@@ -2,46 +2,152 @@ const pool = require("../db/connection");
 
 /**
  * Mark lesson as completed
+ * Student must be enrolled in the lesson's course
  */
 const completeLesson = async (req, res) => {
   try {
+
     const studentId = req.user.id;
     const { lessonId } = req.params;
 
+    // Find lesson and its course
+    const lessonResult = await pool.query(
+      `
+      SELECT id, course_id
+      FROM lessons
+      WHERE id = $1
+      `,
+      [lessonId]
+    );
+
+    if (lessonResult.rows.length === 0) {
+
+      return res.status(404).json({
+        message: "Lesson not found"
+      });
+
+    }
+
+    const courseId =
+      lessonResult.rows[0].course_id;
+
+    // Verify enrollment
+    const enrollmentResult = await pool.query(
+      `
+      SELECT id
+      FROM enrollments
+      WHERE student_id = $1
+      AND course_id = $2
+      `,
+      [
+        studentId,
+        courseId
+      ]
+    );
+
+    if (enrollmentResult.rows.length === 0) {
+
+      return res.status(403).json({
+        message:
+          "You must be enrolled in this course to complete this lesson"
+      });
+
+    }
+
+    // Record completion
     const result = await pool.query(
-      `INSERT INTO lesson_progress (student_id, lesson_id)
-       VALUES ($1, $2)
-       ON CONFLICT (student_id, lesson_id) DO NOTHING
-       RETURNING *`,
-      [studentId, lessonId]
+      `
+      INSERT INTO lesson_progress
+      (student_id, lesson_id)
+
+      VALUES ($1, $2)
+
+      ON CONFLICT
+      (student_id, lesson_id)
+      DO NOTHING
+
+      RETURNING *
+      `,
+      [
+        studentId,
+        lessonId
+      ]
     );
 
     res.json({
       message: "Lesson marked as completed",
-      data: result.rows[0] || "Already completed"
+      data:
+        result.rows[0] ||
+        "Already completed"
     });
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+
+    res.status(500).json({
+      error: error.message
+    });
+
   }
 };
 
 
-
 /**
- * Check if a specific lesson is completed
+ * Check whether a lesson is completed
+ * Student must be enrolled
  */
 const checkLessonCompletion = async (req, res) => {
-
   try {
 
     const studentId = req.user.id;
     const { lessonId } = req.params;
 
+    // Get lesson course
+    const lessonResult = await pool.query(
+      `
+      SELECT course_id
+      FROM lessons
+      WHERE id = $1
+      `,
+      [lessonId]
+    );
+
+    if (lessonResult.rows.length === 0) {
+
+      return res.status(404).json({
+        message: "Lesson not found"
+      });
+
+    }
+
+    const courseId =
+      lessonResult.rows[0].course_id;
+
+    // Verify enrollment
+    const enrollmentResult = await pool.query(
+      `
+      SELECT id
+      FROM enrollments
+      WHERE student_id = $1
+      AND course_id = $2
+      `,
+      [
+        studentId,
+        courseId
+      ]
+    );
+
+    if (enrollmentResult.rows.length === 0) {
+
+      return res.status(403).json({
+        message:
+          "You must be enrolled in this course"
+      });
+
+    }
 
     const result = await pool.query(
       `
-      SELECT *
+      SELECT id
       FROM lesson_progress
       WHERE student_id = $1
       AND lesson_id = $2
@@ -52,23 +158,18 @@ const checkLessonCompletion = async (req, res) => {
       ]
     );
 
-
     res.json({
-
       completed:
-      result.rows.length > 0
-
+        result.rows.length > 0
     });
 
-
-  } catch(error){
+  } catch (error) {
 
     res.status(500).json({
-      error:error.message
+      error: error.message
     });
 
   }
-
 };
 
 
@@ -79,6 +180,29 @@ const getCourseProgress = async (req, res) => {
     const studentId = req.user.id;
     const { courseId } = req.params;
 
+    // Verify student is enrolled
+    
+    const enrollmentResult = await pool.query(
+      `
+      SELECT id
+      FROM enrollments
+      WHERE student_id = $1
+      AND course_id = $2
+      `,
+      [
+        studentId,
+        courseId
+      ]
+    );
+
+    if (enrollmentResult.rows.length === 0) {
+
+      return res.status(403).json({
+        message:
+          "You must be enrolled in this course to view progress"
+      });
+
+    }
     // ---------------- LESSONS ----------------
     const totalLessonsResult = await pool.query(
       "SELECT COUNT(*) FROM lessons WHERE course_id = $1",
