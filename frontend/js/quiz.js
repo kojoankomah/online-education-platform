@@ -257,7 +257,19 @@ async function submitQuiz(){
 
     });
 
+    const unanswered =
+    answers.some(answer =>
+        answer.answer === null
+    );
 
+    if(unanswered){
+
+        alert(
+            "Please answer all questions before submitting the quiz."
+        );
+
+        return;
+    }
 
     try{
 
@@ -308,79 +320,79 @@ async function submitQuiz(){
 
 
 
-const result =
-document.getElementById("result");
+    const result =
+    document.getElementById("result");
 
 
-if(data.passed){
+    if(data.passed){
 
-    result.innerHTML = `
+        result.innerHTML = `
 
-    <div class="card">
+        <div class="card">
 
-        <h2>
-        Quiz Completed ✅
-        </h2>
-
-
-        <p>
-        Score:
-        ${data.score}/${data.totalQuestions}
-        </p>
+            <h2>
+            Quiz Completed ✅
+            </h2>
 
 
-        <p>
-        Percentage:
-        ${data.percentage}%
-        </p>
+            <p>
+            Score:
+            ${data.score}/${data.totalQuestions}
+            </p>
 
 
-        <h3>
-        Status: Passed
-        </h3>
-
-    </div>
-
-    `;
-
-}
-else{
-
-    result.innerHTML = `
-
-    <div class="card">
-
-        <h2>
-        Quiz Completed
-        </h2>
+            <p>
+            Percentage:
+            ${data.percentage}%
+            </p>
 
 
-        <p>
-        Score:
-        ${data.score}/${data.totalQuestions}
-        </p>
+            <h3>
+            Status: Passed
+            </h3>
+
+        </div>
+
+        `;
+
+    }
+    else{
+
+        result.innerHTML = `
+
+        <div class="card">
+
+            <h2>
+            Quiz Completed
+            </h2>
 
 
-        <p>
-        Percentage:
-        ${data.percentage}%
-        </p>
+            <p>
+            Score:
+            ${data.score}/${data.totalQuestions}
+            </p>
 
 
-        <h3>
-        Status: Failed
-        </h3>
+            <p>
+            Percentage:
+            ${data.percentage}%
+            </p>
 
 
-        <p>
-        You need 70% or higher to pass.
-        </p>
+            <h3>
+            Status: Failed
+            </h3>
 
-    </div>
 
-    `;
+            <p>
+            You need 70% or higher to pass.
+            </p>
 
-}
+        </div>
+
+        `;
+
+    }
 
 
     }
