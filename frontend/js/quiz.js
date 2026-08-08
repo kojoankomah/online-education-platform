@@ -233,6 +233,7 @@ function displayQuestions(){
 async function submitQuiz(){
 
 
+    // Get answers from the form
     const answers =
     questions.map(q=>{
 
@@ -257,6 +258,8 @@ async function submitQuiz(){
 
     });
 
+
+    // Check for unanswered questions
     const unanswered =
     answers.some(answer =>
         answer.answer === null
@@ -271,8 +274,11 @@ async function submitQuiz(){
         return;
     }
 
-    try{
 
+    submitQuizBtn.disabled = true;
+    submitQuizBtn.textContent = "Submitting...";
+
+    try{
 
         const response =
         await fetch(
@@ -404,6 +410,11 @@ async function submitQuiz(){
         alert(
             error.message
         );
+
+        submitQuizBtn.disabled = false;
+
+        submitQuizBtn.textContent =
+        "Submit Quiz";
 
     }
 
