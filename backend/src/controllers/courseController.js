@@ -45,37 +45,110 @@ const getAllCourses = async (req, res) => {
 };
 
 /**
- * Get single course by ID
+ * Get single course for learning/viewing
+ *
+ * Student:
+ * Must be enrolled
+ *
+ * Instructor:
+ * Must own the course
  */
 const getCourseById = async (req, res) => {
   try {
-    const { id } = req.params;
 
+    const { id } = req.params;
 
     // Get course information
     const courseResult = await pool.query(
       `
-      SELECT 
+      SELECT
         courses.*,
         users.name AS instructor_name
       FROM courses
-      JOIN users 
+      JOIN users
         ON users.id = courses.instructor_id
       WHERE courses.id = $1
       `,
       [id]
     );
 
-
     if (courseResult.rows.length === 0) {
+
       return res.status(404).json({
         message: "Course not found"
       });
+
     }
 
+    const course = courseResult.rows[0];
 
-    // Get lessons belonging to the course
-    const lessonsResult = await pool.query(
+    // =====================================
+    // INSTRUCTOR ACCESS
+    // =====================================
+
+    if (req.user.role === "instructor") {
+
+      if (
+        Number(course.instructor_id) !==
+        Number(req.user.id)
+      ) {
+
+        return res.status(403).json({
+          message:
+            "You can only access your own course content"
+        });
+
+      }
+
+    }
+
+    // =====================================
+    // STUDENT ACCESS
+    // =====================================
+
+    else if (req.user.role === "student") {
+
+      const enrollmentResult =
+      await pool.query(
+        `
+        SELECT id
+        FROM enrollments
+        WHERE student_id = $1
+        AND course_id = $2
+        `,
+        [
+          req.user.id,
+          id
+        ]
+      );
+
+      if (
+        enrollmentResult.rows.length === 0
+      ) {
+
+        return res.status(403).json({
+          message:
+            "You must be enrolled in this course to access its content"
+        });
+
+      }
+
+    }
+
+    else {
+
+      return res.status(403).json({
+        message: "Access denied"
+      });
+
+    }
+
+    // =====================================
+    // GET LESSONS AFTER AUTHORIZATION
+    // =====================================
+
+    const lessonsResult =
+    await pool.query(
       `
       SELECT
         id,
@@ -89,18 +162,10 @@ const getCourseById = async (req, res) => {
       [id]
     );
 
-
-    const course = courseResult.rows[0];
-
-
     res.json({
-
       ...course,
-
       lessons: lessonsResult.rows
-
     });
-
 
   } catch (error) {
 

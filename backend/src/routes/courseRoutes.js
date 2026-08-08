@@ -35,7 +35,11 @@ router.get(
 /**
  * PUBLIC: View single course
  */
-router.get("/:id", getCourseById);
+router.get(
+  "/:id",
+  authMiddleware,
+  getCourseById
+);
 
 /**
  * PROTECTED: Create course (instructor only)
