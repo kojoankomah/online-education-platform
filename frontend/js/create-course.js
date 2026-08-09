@@ -24,65 +24,80 @@ document
 createCourse
 );
 
+
+
 async function createCourse(e){
 
     e.preventDefault();
 
-    const button = e.target.querySelector("button");
+    const button =
+        e.target.querySelector("button");
+
+
+    const title =
+        document.getElementById(
+            "title"
+        ).value.trim();
+
+
+    const description =
+        document.getElementById(
+            "description"
+        ).value.trim();
+
+
+    // Validate before disabling button
+    if(!title){
+
+        alert(
+            "Course title is required."
+        );
+
+        return;
+    }
+
 
     button.disabled = true;
 
     button.textContent =
-    "Creating...";
+        "Creating...";
 
-const title =
-document.getElementById("title").value.trim();
-
-const description =
-document.getElementById("description").value.trim();
 
     try{
 
         const response =
-        await fetch(
+            await fetch(
 
-            apiUrl(API.endpoints.courses),
+                apiUrl(
+                    API.endpoints.courses
+                ),
 
-            {
+                {
+                    method:"POST",
 
-                method:"POST",
+                    headers:authHeaders(),
 
-                headers:authHeaders(),
+                    body:JSON.stringify({
+                        title,
+                        description
+                    })
+                }
 
-                body:JSON.stringify({
-
-                    title,
-                    description
-
-                })
-
-            }
-
-        );
-
-        const data =
-        await response.json();
-
-        if(!response.ok){
-
-            throw new Error(
-                data.message ||
-                data.error
             );
 
-        }
+
+        await handleApiResponse(
+            response
+        );
+
 
         alert(
             "Course created successfully!"
         );
 
+
         window.location.href =
-        "../dashboard/instructor-dashboard.html";
+            "../dashboard/instructor-dashboard.html";
 
     }
 
@@ -90,17 +105,28 @@ document.getElementById("description").value.trim();
 
         console.error(error);
 
-        alert(error.message);
+
+        if(
+            error.message !==
+            "Authentication required"
+        ){
+
+            alert(
+                error.message ||
+                "Unable to create course."
+            );
+
+        }
 
     }
 
     finally{
 
-    button.disabled = false;
+        button.disabled = false;
 
-    button.textContent =
-    "Create Course";
+        button.textContent =
+            "Create Course";
 
-}
+    }
 
 }
