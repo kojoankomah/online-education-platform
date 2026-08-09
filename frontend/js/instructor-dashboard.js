@@ -1,14 +1,16 @@
-const token = localStorage.getItem("token");
+const token = getToken();
 
 if (!token) {
-
     window.location.href =
-    "../auth/login.html";
-
+        "../auth/login.html";
 }
 
+
 const user =
-JSON.parse(localStorage.getItem("user"));
+    JSON.parse(
+        localStorage.getItem("user")
+    );
+
 
 if (user) {
 
@@ -22,116 +24,128 @@ if (user) {
 /**
  * Load instructor dashboard
  */
-async function loadInstructorDashboard(){
+async function loadInstructorDashboard() {
 
-    try{
+    try {
 
         const response = await fetch(
-
-            apiUrl(API.endpoints.instructorDashboard),
-
+            apiUrl(
+                API.endpoints.instructorDashboard
+            ),
             {
                 headers: authHeaders()
             }
-
         );
 
-        const data = await response.json();
 
-        if(!response.ok){
+        const data =
+            await handleApiResponse(response);
 
-            throw new Error(
-                data.error || "Unable to load dashboard"
-            );
-
-        }
 
         displayDashboard(data);
 
     }
 
-    catch(error){
+    catch (error) {
 
         console.error(error);
 
-        alert("Unable to load instructor dashboard.");
+        if (
+            error.message !==
+            "Authentication required"
+        ) {
+
+            alert(
+                error.message ||
+                "Unable to load instructor dashboard."
+            );
+
+        }
 
     }
 
 }
 
 
-
-// Display dashboard data
-function displayDashboard(data){
+/**
+ * Display dashboard data
+ */
+function displayDashboard(data) {
 
     const courses =
-    data.courses || [];
+        data.courses || [];
 
     const courseStats =
-    data.courseStats || [];
+        data.courseStats || [];
 
-    document.getElementById("courseCount").textContent =
-    courses.length;
+
+    document.getElementById(
+        "courseCount"
+    ).textContent =
+        courses.length;
+
 
     const totalStudents =
-    courseStats.reduce(
+        courseStats.reduce(
+            (total, course) =>
+                total + Number(course.students),
+            0
+        );
 
-        (total,course)=>
 
-        total + Number(course.students),
+    document.getElementById(
+        "studentCount"
+    ).textContent =
+        totalStudents;
 
-        0
-
-    );
-
-    document.getElementById("studentCount").textContent =
-    totalStudents;
 
     const courseList =
-    document.getElementById("courseList");
+        document.getElementById(
+            "courseList"
+        );
+
 
     courseList.innerHTML = "";
 
-    if(data.courseStats.length===0){
+
+    if (courseStats.length === 0) {
 
         courseList.innerHTML =
-        "<p>No courses created yet.</p>";
+            "<p>No courses created yet.</p>";
 
         return;
 
     }
 
-      courseStats.forEach(course=>{
+
+    courseStats.forEach(course => {
 
         const card =
-        document.createElement("div");
+            document.createElement("div");
 
-        card.className="card";
+        card.className = "card";
 
-        card.innerHTML=`
+
+        card.innerHTML = `
 
             <h3>
-
-            ${course.title}
-
+                ${course.title}
             </h3>
 
             <p>
-
-            Students Enrolled:
-            ${course.students}
-
+                Students Enrolled:
+                ${course.students}
             </p>
 
             <button
-            onclick="manageCourse(${course.id})">
+                onclick="manageCourse(${course.id})">
 
-            Manage Course
+                Manage Course
 
             </button>
 
         `;
+
 
         courseList.appendChild(card);
 
@@ -140,29 +154,26 @@ function displayDashboard(data){
 }
 
 
-// Navigate to manage course page
-function manageCourse(courseId){
+/**
+ * Navigate to manage course page
+ */
+function manageCourse(courseId) {
 
     window.location.href =
-    `../courses/manage-course.html?courseId=${courseId}`;
+        `../courses/manage-course.html?courseId=${courseId}`;
 
 }
 
 
-
-// Logout functionality
-document.getElementById("logoutBtn")
-.addEventListener("click",()=>{
-
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-
-    window.location.href =
-    "../auth/login.html";
-
-});
-
-
+/**
+ * Logout
+ */
+document
+    .getElementById("logoutBtn")
+    .addEventListener(
+        "click",
+        logout
+    );
 
 
 loadInstructorDashboard();
