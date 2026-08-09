@@ -1,21 +1,23 @@
 const token = getToken();
 
-const user =
-JSON.parse(localStorage.getItem("user"));
-
-
-if(user && user.role !== "instructor"){
-
-    window.location.href =
-    "../dashboard/student-dashboard.html";
-
-}
-
 if(!token){
 
     window.location.href =
-    "../auth/login.html";
+        "../auth/login.html";
+}
 
+const user =
+    JSON.parse(
+        localStorage.getItem("user")
+    );
+
+if(
+    user &&
+    user.role !== "instructor"
+){
+
+    window.location.href =
+        "../dashboard/student-dashboard.html";
 }
 
 const params =
@@ -41,48 +43,37 @@ async function loadCourse(){
 
     try{
 
-        const response =
-        await fetch(
+        const response = await fetch(
 
             apiUrl(
-            API.endpoints.courses +
-            "/" +
-            courseId +
-            "/manage"
+                API.endpoints.courses +
+                "/" +
+                courseId +
+                "/manage"
             ),
 
             {
-                headers:authHeaders()
+                headers: authHeaders()
             }
 
         );
 
+
         const course =
-        await response.json();
+            await handleApiResponse(response);
 
-        if(!response.ok){
-
-            alert(
-                course.message ||
-                course.error ||
-                "Unable to access this course."
-            );
-
-            window.location.href =
-            "../dashboard/instructor-dashboard.html";
-
-            return;
-        }
 
         document.getElementById(
             "courseTitle"
         ).textContent =
-        course.title;
+            course.title;
+
 
         document.getElementById(
             "courseDescription"
         ).textContent =
-        course.description;
+            course.description;
+
 
         displayLessons(
             course.lessons || []
@@ -94,9 +85,30 @@ async function loadCourse(){
 
         console.error(error);
 
+
+        if(
+            error.message ===
+            "Authentication required"
+        ){
+
+            return;
+        }
+
+
         alert(
-            error.message
+            error.message ||
+            "Unable to load course."
         );
+
+
+        // An instructor tried to manage
+        // another instructor's course
+        if(error.status === 403){
+
+            window.location.href =
+                "../dashboard/instructor-dashboard.html";
+
+        }
 
     }
 

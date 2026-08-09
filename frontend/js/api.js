@@ -153,21 +153,28 @@ async function handleApiResponse(response){
         window.location.href =
         "../auth/login.html";
 
-        throw new Error(
+        const error = new Error(
             "Authentication required"
         );
+
+        error.status = 401;
+
+        throw error;
     }
 
 
     // Other failed requests
     if(!response.ok){
 
-        throw new Error(
+        const error = new Error(
             data.message ||
             data.error ||
             "Request failed"
         );
 
+        error.status = response.status;
+
+        throw error;
     }
 
 
