@@ -12,9 +12,8 @@
 
 
 // Get stored JWT token
-
-const token = localStorage.getItem("token");
-
+// If no token exists, redirect to login page
+const token = getToken();
 
 // If no token exists,
 // user is not authenticated
@@ -57,24 +56,14 @@ async function loadStudentDashboard() {
     try {
 
         const response = await fetch(
-
             apiUrl("/dashboard/student"),
-
             {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                headers: authHeaders()
             }
-
         );
 
-        const data = await response.json();
-
-        if (!response.ok) {
-
-            throw new Error(data.error || "Unable to load dashboard");
-
-        }
+        const data =
+            await handleApiResponse(response);
 
         // Update statistics
 
@@ -189,8 +178,17 @@ async function loadStudentDashboard() {
 
         console.error(error);
 
-        alert("Failed to load dashboard.");
+        if (
+            error.message !==
+            "Authentication required"
+        ) {
 
+            alert(
+                error.message ||
+                "Failed to load dashboard."
+            );
+
+        }
     }
 
 }
@@ -301,22 +299,10 @@ logoutBtn.addEventListener(
 ()=>{
 
 
-    /*
-    Remove authentication data
-    */
-
-    localStorage.removeItem("token");
-
-    localStorage.removeItem("user");
-
-
-
-    /*
-    Return user to login
-    */
-
-    window.location.href =
-    "../auth/login.html";
+    logoutBtn.addEventListener(
+        "click",
+        logout
+    );
 
 
 });
