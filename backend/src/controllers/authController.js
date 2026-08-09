@@ -3,7 +3,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const pool = require("../db/connection");
-require("dotenv").config();
 
 
 /**

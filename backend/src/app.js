@@ -18,11 +18,6 @@ app.get("/", (req, res) => {
  */
 app.use("/api/auth", require("./routes/authRoutes"));
 
-// Protected route example
-app.use(
-  "/api/protected",
-  require("./routes/protectedRoutes")
-);
 
 // Course routes
 app.use("/api/courses", require("./routes/courseRoutes"));
