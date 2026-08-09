@@ -1,121 +1,131 @@
-const token = localStorage.getItem("token");
+const token = getToken();
 
-
-if(!token){
-
+if (!token) {
     window.location.href =
-    "../auth/login.html";
-
+        "../auth/login.html";
 }
 
 
+// Ensure this page is being used by a student
+const user =
+    JSON.parse(
+        localStorage.getItem("user")
+    );
 
-async function loadCourses(){
+if (
+    user &&
+    user.role !== "student"
+) {
+    window.location.href =
+        "../dashboard/instructor-dashboard.html";
+}
 
-    try{
 
-        // Fetch courses from the API
+/**
+ * Load all available courses
+ */
+async function loadCourses() {
+
+    try {
+
         const response = await fetch(
-
-            apiUrl("/courses"),
-
-            {
-                headers:{
-                    Authorization:
-                    `Bearer ${token}`
-                }
-            }
-
+            apiUrl("/courses")
         );
 
+
         const courses =
-        await response.json();
+            await handleApiResponse(response);
 
-
-        if(!response.ok){
-
-            throw new Error(
-                courses.error ||
-                "Unable to load courses"
-            );
-
-        }
 
         displayCourses(courses);
 
     }
 
-    catch(error){
+    catch (error) {
 
         console.error(error);
 
-        alert(
-            "Unable to load courses"
-        );
+
+        if (
+            error.message !==
+            "Authentication required"
+        ) {
+
+            alert(
+                error.message ||
+                "Unable to load courses."
+            );
+
+        }
 
     }
 
 }
 
 
-/// Display courses in the UI
-function displayCourses(courses){
+/**
+ * Display courses
+ */
+function displayCourses(courses) {
 
     const courseList =
-    document.getElementById(
-        "courseList"
-    );
+        document.getElementById(
+            "courseList"
+        );
 
-    // Clear existing courses
-    courseList.innerHTML="";
 
-    if(courses.length === 0){
+    courseList.innerHTML = "";
+
+
+    if (courses.length === 0) {
 
         courseList.innerHTML =
-        "<p>No courses available yet.</p>";
+            "<p>No courses available yet.</p>";
 
         return;
 
     }
 
-    // Create course cards
-    courses.forEach(course=>{
+
+    courses.forEach(course => {
 
         const card =
-        document.createElement(
-            "div"
-        );
+            document.createElement(
+                "div"
+            );
+
 
         card.className =
-        "card";
+            "card";
+
 
         card.innerHTML = `
 
+            <h2>
+                ${course.title}
+            </h2>
 
-        <h2>
-        ${course.title}
-        </h2>
+            <p>
+                ${
+                    course.description ||
+                    "No description available."
+                }
+            </p>
 
+            <p>
+                Instructor:
+                ${course.instructor_name}
+            </p>
 
-        <p>
-        ${course.description}
-        </p>
+            <button
+                onclick="enrollCourse(${course.id}, this)">
 
+                Enroll
 
-        <p>
-        Instructor:
-        ${course.instructor_name}
-        </p>
-
-
-        <button
-        onclick="enrollCourse(${course.id})">
-
-        Enroll
-
-        </button>
+            </button>
 
         `;
+
 
         courseList.appendChild(card);
 
@@ -124,71 +134,77 @@ function displayCourses(courses){
 }
 
 
-async function enrollCourse(courseId){
+/**
+ * Enroll student in a course
+ */
+async function enrollCourse(
+    courseId,
+    button
+) {
 
-    try{
+    button.disabled = true;
 
-        const response =
-        await fetch(
+    button.textContent =
+        "Enrolling...";
 
+
+    try {
+
+        const response = await fetch(
             apiUrl("/enrollments"),
-
             {
+                method: "POST",
 
-                method:"POST",
+                headers: authHeaders(),
 
-                headers:{
-
-                    "Content-Type":
-                    "application/json",
-
-                    Authorization:
-                    `Bearer ${token}`
-
-                },
-
-                body:
-                JSON.stringify({
-
+                body: JSON.stringify({
                     courseId
-
                 })
-
             }
-
         );
 
-        const data =
-        await response.json();
 
-        if(!response.ok){
+        await handleApiResponse(
+            response
+        );
 
-            throw new Error(
-                data.message ||
-                "Enrollment failed"
-            );
-
-        }
 
         alert(
             "Enrollment successful!"
         );
 
+
         window.location.href =
-        "../dashboard/student-dashboard.html";
+            "../dashboard/student-dashboard.html";
 
     }
 
-    catch(error){
+    catch (error) {
 
         console.error(error);
 
-        alert(
-            error.message
-        );
+
+        if (
+            error.message !==
+            "Authentication required"
+        ) {
+
+            alert(
+                error.message ||
+                "Enrollment failed."
+            );
+
+
+            button.disabled = false;
+
+            button.textContent =
+                "Enroll";
+
+        }
 
     }
 
 }
+
 
 loadCourses();
