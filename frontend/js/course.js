@@ -1,277 +1,314 @@
-const token =
-localStorage.getItem("token");
+const token = getToken();
+
+if (!token) {
+    window.location.href =
+        "../auth/login.html";
+}
 
 
-// If no token exists,
-if(!token){
+// Ensure this page is being used by a student
+const user =
+    JSON.parse(
+        localStorage.getItem("user")
+    );
+
+if (
+    user &&
+    user.role !== "student"
+) {
+    window.location.href =
+        "../dashboard/instructor-dashboard.html";
+}
+
+
+// Get course ID from URL
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+const courseId =
+    params.get("courseId");
+
+
+if (!courseId) {
+
+    alert(
+        "No course selected."
+    );
 
     window.location.href =
-    "../auth/login.html";
-
+        "../dashboard/student-dashboard.html";
 }
 
 
 
+/**
+ * Load course details and progress
+ */
+async function loadCourse() {
 
-// Get course ID from URL
+    try {
 
-const params =
-new URLSearchParams(
-window.location.search
-);
+        // ----------------------------
+        // COURSE DETAILS
+        // ----------------------------
 
-
-// Get course ID from URL
-const courseId =
-params.get("courseId");
-
-
-
-
-
-async function loadCourse(){
-
-
-try{
-
-// Fetch course details
-const response =
-await fetch(
-
-apiUrl(`/courses/${courseId}`),
-
-{
-
-headers:{
-
-Authorization:
-`Bearer ${token}`
-
-}
-
-}
-
-);
+        const response = await fetch(
+            apiUrl(
+                `/courses/${courseId}`
+            ),
+            {
+                headers: authHeaders()
+            }
+        );
 
 
-// Fetch completed lessons for the course
-const progressResponse = await fetch(
-    apiUrl(`/progress/course/${courseId}/lessons`),
-    {
-        headers:{
-            Authorization:`Bearer ${token}`
-        }
+        const data =
+            await handleApiResponse(
+                response
+            );
+
+
+        // ----------------------------
+        // COMPLETED LESSONS
+        // ----------------------------
+
+        const progressResponse =
+            await fetch(
+                apiUrl(
+                    `/progress/course/${courseId}/lessons`
+                ),
+                {
+                    headers: authHeaders()
+                }
+            );
+
+
+        const completedLessons =
+            await handleApiResponse(
+                progressResponse
+            );
+
+
+        // ----------------------------
+        // OVERALL COURSE PROGRESS
+        // ----------------------------
+
+        const courseProgressResponse =
+            await fetch(
+                apiUrl(
+                    `/progress/course/${courseId}`
+                ),
+                {
+                    headers: authHeaders()
+                }
+            );
+
+
+        const courseProgress =
+            await handleApiResponse(
+                courseProgressResponse
+            );
+
+
+        // ----------------------------
+        // DISPLAY COURSE
+        // ----------------------------
+
+        document.getElementById(
+            "courseTitle"
+        ).textContent =
+            data.title;
+
+
+        document.getElementById(
+            "courseDescription"
+        ).textContent =
+            data.description ||
+            "No course description available.";
+
+
+        displayLessons(
+            data.lessons || [],
+            completedLessons || []
+        );
+
+
+        displayProgress(
+            courseProgress
+        );
+
     }
-);
+
+    catch (error) {
+
+        console.error(error);
 
 
-// Get the completed lessons data
-const completedLessons =
-await progressResponse.json();
+        if (
+            error.message ===
+            "Authentication required"
+        ) {
+            return;
+        }
 
 
-
-// Fetch overall course progress
-const courseProgressResponse =
-await fetch(
-
-apiUrl(`/progress/course/${courseId}`),
-
-{
-headers:{
-Authorization:`Bearer ${token}`
-}
-}
-
-);
+        alert(
+            error.message ||
+            "Unable to load course."
+        );
 
 
-const courseProgress =
-await courseProgressResponse.json();
+        // Student is not enrolled
+        // or course does not exist
+        if (
+            error.status === 403 ||
+            error.status === 404
+        ) {
 
+            window.location.href =
+                "../dashboard/student-dashboard.html";
 
-// Check if the response is OK
-const data =
-await response.json();
+        }
 
-
-// If the response is not OK, throw an error
-if(!response.ok){
-
-throw new Error(data.error);
+    }
 
 }
 
 
-// Display course details
-document.getElementById(
-"courseTitle"
-).textContent =
-data.title;
 
-
-// Display course description
-document.getElementById(
-"courseDescription"
-).textContent =
-data.description;
-
-
-
-displayLessons(
-    data.lessons,
+/**
+ * Display lessons in the course
+ */
+function displayLessons(
+    lessons,
     completedLessons
-);
+) {
+
+    const lessonList =
+        document.getElementById(
+            "lessonList"
+        );
 
 
-
-displayProgress(courseProgress);
-
-}
+    lessonList.innerHTML = "";
 
 
-// Catch any errors that occur during the fetch
-catch(error){
+    if (lessons.length === 0) {
 
-console.error(error);
+        lessonList.innerHTML =
+            "<p>No lessons are available yet.</p>";
 
-alert(
-"Unable to load course"
-);
-
-}
+        return;
+    }
 
 
-}
+    // Extract completed lesson IDs
+    const completedLessonIds =
+        completedLessons.map(
+            lesson =>
+                Number(
+                    lesson.lesson_id
+                )
+        );
 
 
+    lessons.forEach(lesson => {
 
-// Function to display lessons in the course
-function displayLessons(lessons, completedLessons){
-
-
-const lessonList =
-document.getElementById(
-"lessonList"
-);
+        const item =
+            document.createElement(
+                "div"
+            );
 
 
-
-lessonList.innerHTML="";
-
-
-// Extract completed lesson IDs
-
-const completedLessonIds =
-completedLessons.map(
-    lesson => lesson.lesson_id
-);
+        item.className =
+            "card";
 
 
-
-lessons.forEach(lesson=>{
-
-
-const item =
-document.createElement(
-"div"
-);
+        const isCompleted =
+            completedLessonIds.includes(
+                Number(lesson.id)
+            );
 
 
-item.className="card";
+        item.innerHTML = `
+
+            <h3>
+                ${isCompleted ? "✅" : "📖"}
+                Lesson ${lesson.lesson_order}:
+                ${lesson.title}
+            </h3>
+
+            <button
+                onclick="openLesson(${lesson.id})">
+
+                ${
+                    isCompleted
+                    ? "Review Lesson"
+                    : "Open Lesson"
+                }
+
+            </button>
+
+        `;
 
 
-// Check if current lesson is completed
+        lessonList.appendChild(
+            item
+        );
 
-const isCompleted =
-completedLessonIds.includes(
-    lesson.id
-);
-
-
-
-item.innerHTML=`
-
-
-<h3>
-
-${isCompleted ? "✅" : "📖"}
-
-Lesson ${lesson.lesson_order}: 
-${lesson.title}
-
-</h3>
-
-
-
-<p>
-${lesson.content.substring(0,150)}...
-</p>
-
-
-
-<button
-onclick="openLesson(${lesson.id})">
-
-${isCompleted 
-? "Review Lesson" 
-: "Open Lesson"}
-
-</button>
-
-
-`;
-
-
-
-lessonList.appendChild(item);
-
-
-});
-
+    });
 
 }
 
 
-// Function to display overall course progress
-function displayProgress(progress){
+
+/**
+ * Display overall course progress
+ */
+function displayProgress(progress) {
+
+    const progressBar =
+        document.getElementById(
+            "courseProgressBar"
+        );
 
 
-const progressBar =
-document.getElementById(
-"courseProgressBar"
-);
+    const progressText =
+        document.getElementById(
+            "courseProgressText"
+        );
 
 
-const progressText =
-document.getElementById(
-"courseProgressText"
-);
+    const overallProgress =
+        Number(
+            progress.overallProgress
+        ) || 0;
 
 
-
-progressBar.style.width =
-`${progress.overallProgress}%`;
-
+    progressBar.style.width =
+        `${overallProgress}%`;
 
 
-progressText.textContent =
-`${progress.overallProgress}% completed 
-(${progress.lessonProgress.completed}/${progress.lessonProgress.total} lessons completed)`;
-
-
+    progressText.textContent =
+        `${overallProgress}% completed ` +
+        `(${progress.lessonProgress.completed}/` +
+        `${progress.lessonProgress.total} lessons completed)`;
 
 }
 
+
+
+/**
+ * Open individual lesson
+ */
+function openLesson(lessonId) {
+
+    window.location.href =
+        `../lessons/lesson.html?lessonId=${lessonId}`;
+
+}
 
 
 loadCourse();
-
-
-
-function openLesson(lessonId){
-
-    window.location.href =
-    `../lessons/lesson.html?lessonId=${lessonId}`;
-
-}
