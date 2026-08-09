@@ -1,16 +1,30 @@
-const token = localStorage.getItem("token");
+const token = getToken();
 
 if (!token) {
-    window.location.href = "../auth/login.html";
+    window.location.href =
+        "../auth/login.html";
 }
 
 
 // Get lesson ID from URL
-const params = new URLSearchParams(
-    window.location.search
-);
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
 
-const lessonId = params.get("lessonId");
+const lessonId =
+    params.get("lessonId");
+
+
+if (!lessonId) {
+
+    alert(
+        "No lesson selected."
+    );
+
+    window.location.href =
+        "../dashboard/student-dashboard.html";
+}
 
 
 
@@ -22,40 +36,38 @@ async function loadLesson() {
     try {
 
         const response = await fetch(
-            apiUrl(`/lessons/${lessonId}`),
+            apiUrl(
+                `/lessons/${lessonId}`
+            ),
             {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                headers: authHeaders()
             }
         );
 
 
-        const lesson = await response.json();
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                lesson.message ||
-                lesson.error ||
-                "Unable to load lesson"
+        const lesson =
+            await handleApiResponse(
+                response
             );
-
-        }
 
 
         document.getElementById(
             "lessonTitle"
-        ).textContent = lesson.title;
+        ).textContent =
+            lesson.title;
 
 
         document.getElementById(
             "lessonContent"
-        ).textContent = lesson.content;
+        ).textContent =
+            lesson.content;
 
 
-        loadQuizButton();
+        // Only load these after
+        // lesson access has succeeded
+        await loadQuizButton();
+
+        await checkCompletion();
 
     }
 
@@ -63,10 +75,30 @@ async function loadLesson() {
 
         console.error(error);
 
+
+        if (
+            error.message ===
+            "Authentication required"
+        ) {
+            return;
+        }
+
+
         alert(
             error.message ||
-            "Unable to load lesson"
+            "Unable to load lesson."
         );
+
+
+        if (
+            error.status === 403 ||
+            error.status === 404
+        ) {
+
+            window.location.href =
+                "../dashboard/student-dashboard.html";
+
+        }
 
     }
 
@@ -80,70 +112,66 @@ async function loadLesson() {
  */
 async function loadQuizButton() {
 
-    try {
-
-        const response = await fetch(
-            apiUrl(`/quizzes/lesson/${lessonId}`),
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            }
-        );
-
-
-        const quizzes = await response.json();
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                quizzes.message ||
-                quizzes.error ||
-                "Unable to load quiz"
-            );
-
-        }
-
-
-        const quizBtn = document.getElementById(
+    const quizBtn =
+        document.getElementById(
             "quizBtn"
         );
 
 
-        if (quizzes.length > 0) {
-
-            const quiz = quizzes[0];
-
-            const quizId = quiz.id;
-
-            const quizTitle = quiz.title;
+    // Hide until a valid quiz is found
+    quizBtn.style.display =
+        "none";
 
 
-            // Display the quiz button
-            quizBtn.style.display = "block";
+    try {
+
+        const response = await fetch(
+            apiUrl(
+                `/quizzes/lesson/${lessonId}`
+            ),
+            {
+                headers: authHeaders()
+            }
+        );
 
 
-            // Show the actual quiz title
-            quizBtn.textContent =
-                `Take Quiz: ${quizTitle}`;
+        const quizzes =
+            await handleApiResponse(
+                response
+            );
 
 
-            // Open quiz page
-            quizBtn.onclick = () => {
-
-                window.location.href =
-                    `../quizzes/quiz.html?quizId=${quizId}&title=${encodeURIComponent(quizTitle)}`;
-
-            };
-
+        if (quizzes.length === 0) {
+            return;
         }
 
-        else {
 
-            quizBtn.style.display = "none";
+        const quiz =
+            quizzes[0];
 
-        }
+
+        const quizId =
+            quiz.id;
+
+
+        const quizTitle =
+            quiz.title;
+
+
+        quizBtn.style.display =
+            "block";
+
+
+        quizBtn.textContent =
+            `Take Quiz: ${quizTitle}`;
+
+
+        quizBtn.onclick = () => {
+
+            window.location.href =
+                `../quizzes/quiz.html?quizId=${quizId}&title=${encodeURIComponent(quizTitle)}`;
+
+        };
 
     }
 
@@ -154,6 +182,10 @@ async function loadQuizButton() {
             error
         );
 
+
+        quizBtn.style.display =
+            "none";
+
     }
 
 }
@@ -161,42 +193,35 @@ async function loadQuizButton() {
 
 
 /**
- * Check whether the lesson
- * has already been completed
+ * Check lesson completion and quiz status
  */
 async function checkCompletion() {
 
     try {
 
         const response = await fetch(
-            apiUrl(`/progress/lesson/${lessonId}`),
+            apiUrl(
+                `/progress/lesson/${lessonId}`
+            ),
             {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                headers: authHeaders()
             }
         );
 
 
-        const data = await response.json();
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                data.message ||
-                data.error ||
-                "Unable to check lesson progress"
+        const data =
+            await handleApiResponse(
+                response
             );
 
-        }
+
+        const button =
+            document.getElementById(
+                "completeBtn"
+            );
 
 
-        const button = document.getElementById(
-            "completeBtn"
-        );
-
-
+        // Lesson already completed
         if (data.completed) {
 
             button.textContent =
@@ -204,7 +229,39 @@ async function checkCompletion() {
 
             button.disabled = true;
 
+            return;
         }
+
+
+        // Lesson has no quiz yet
+        if (!data.quizExists) {
+
+            button.textContent =
+                "Quiz Required";
+
+            button.disabled = true;
+
+            return;
+        }
+
+
+        // Quiz exists but student has not passed
+        if (!data.quizPassed) {
+
+            button.textContent =
+                "Pass Quiz to Complete Lesson";
+
+            button.disabled = true;
+
+            return;
+        }
+
+
+        // Quiz passed — lesson can now be completed
+        button.textContent =
+            "Mark Lesson Complete";
+
+        button.disabled = false;
 
     }
 
@@ -220,11 +277,23 @@ async function checkCompletion() {
 }
 
 
-
 /**
  * Mark lesson as completed
  */
 async function completeLesson() {
+
+    const button =
+        document.getElementById(
+            "completeBtn"
+        );
+
+
+    button.disabled =
+        true;
+
+    button.textContent =
+        "Marking Complete...";
+
 
     try {
 
@@ -235,36 +304,21 @@ async function completeLesson() {
             {
                 method: "POST",
 
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                headers: authHeaders()
             }
         );
 
 
-        const data = await response.json();
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                data.error ||
-                data.message ||
-                "Unable to complete lesson"
-            );
-
-        }
-
-
-        const button = document.getElementById(
-            "completeBtn"
+        await handleApiResponse(
+            response
         );
 
 
         button.textContent =
             "✅ Lesson Completed";
 
-        button.disabled = true;
+        button.disabled =
+            true;
 
     }
 
@@ -272,9 +326,25 @@ async function completeLesson() {
 
         console.error(error);
 
-        alert(
-            error.message
-        );
+
+        if (
+            error.message !==
+            "Authentication required"
+        ) {
+
+            alert(
+                error.message ||
+                "Unable to complete lesson."
+            );
+
+
+            button.disabled =
+                false;
+
+            button.textContent =
+                "Mark Complete";
+
+        }
 
     }
 
@@ -282,7 +352,9 @@ async function completeLesson() {
 
 
 
-// Mark lesson complete button
+/**
+ * Mark lesson complete button
+ */
 document
     .getElementById("completeBtn")
     .addEventListener(
@@ -292,9 +364,7 @@ document
 
 
 
-// Load lesson page
+/**
+ * Load lesson page
+ */
 loadLesson();
-
-
-// Check existing completion status
-checkCompletion();

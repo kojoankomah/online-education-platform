@@ -54,6 +54,58 @@ const completeLesson = async (req, res) => {
 
     }
 
+
+    // Find the quiz belonging to this lesson
+    const quizResult = await pool.query(
+        `
+        SELECT id
+        FROM quizzes
+        WHERE lesson_id = $1
+        `,
+        [lessonId]
+    );
+
+
+    if (quizResult.rows.length === 0) {
+
+        return res.status(400).json({
+            message:
+                "You must complete and pass the lesson quiz before marking this lesson as completed."
+        });
+
+    }
+
+
+    const quizId =
+        quizResult.rows[0].id;
+
+
+    // Check whether the student has passed the quiz
+    const attemptResult = await pool.query(
+        `
+        SELECT passed
+        FROM quiz_attempts
+        WHERE student_id = $1
+        AND quiz_id = $2
+        `,
+        [
+            studentId,
+            quizId
+        ]
+    );
+
+
+    if (
+        attemptResult.rows.length === 0 ||
+        attemptResult.rows[0].passed !== true
+    ) {
+
+        return res.status(400).json({
+            message:
+                "You must pass the quiz with at least 70% before completing this lesson."
+        });
+
+    }
     // Record completion
     const result = await pool.query(
       `
@@ -95,81 +147,150 @@ const completeLesson = async (req, res) => {
  * Check whether a lesson is completed
  * Student must be enrolled
  */
+/**
+ * Check lesson completion status
+ * and whether the student has passed the lesson quiz
+ */
 const checkLessonCompletion = async (req, res) => {
-  try {
+    try {
 
-    const studentId = req.user.id;
-    const { lessonId } = req.params;
+        const studentId = req.user.id;
+        const { lessonId } = req.params;
 
-    // Get lesson course
-    const lessonResult = await pool.query(
-      `
-      SELECT course_id
-      FROM lessons
-      WHERE id = $1
-      `,
-      [lessonId]
-    );
 
-    if (lessonResult.rows.length === 0) {
+        // Find the lesson and its course
+        const lessonResult = await pool.query(
+            `
+            SELECT course_id
+            FROM lessons
+            WHERE id = $1
+            `,
+            [lessonId]
+        );
 
-      return res.status(404).json({
-        message: "Lesson not found"
-      });
+
+        if (lessonResult.rows.length === 0) {
+
+            return res.status(404).json({
+                message: "Lesson not found"
+            });
+
+        }
+
+
+        const courseId =
+            lessonResult.rows[0].course_id;
+
+
+        // Verify enrollment
+        const enrollmentResult = await pool.query(
+            `
+            SELECT id
+            FROM enrollments
+            WHERE student_id = $1
+            AND course_id = $2
+            `,
+            [
+                studentId,
+                courseId
+            ]
+        );
+
+
+        if (enrollmentResult.rows.length === 0) {
+
+            return res.status(403).json({
+                message:
+                    "You must be enrolled in this course"
+            });
+
+        }
+
+
+        // Check whether lesson is already completed
+        const completionResult = await pool.query(
+            `
+            SELECT id
+            FROM lesson_progress
+            WHERE student_id = $1
+            AND lesson_id = $2
+            `,
+            [
+                studentId,
+                lessonId
+            ]
+        );
+
+
+        const completed =
+            completionResult.rows.length > 0;
+
+
+        // Find quiz belonging to lesson
+        const quizResult = await pool.query(
+            `
+            SELECT id
+            FROM quizzes
+            WHERE lesson_id = $1
+            `,
+            [lessonId]
+        );
+
+
+        // Lesson has no quiz
+        if (quizResult.rows.length === 0) {
+
+            return res.json({
+                completed,
+                quizExists: false,
+                quizPassed: false,
+                canComplete: false
+            });
+
+        }
+
+
+        const quizId =
+            quizResult.rows[0].id;
+
+
+        // Check student's quiz result
+        const attemptResult = await pool.query(
+            `
+            SELECT passed
+            FROM quiz_attempts
+            WHERE student_id = $1
+            AND quiz_id = $2
+            `,
+            [
+                studentId,
+                quizId
+            ]
+        );
+
+
+        const quizPassed =
+            attemptResult.rows.length > 0 &&
+            attemptResult.rows[0].passed === true;
+
+
+        res.json({
+            completed,
+            quizExists: true,
+            quizPassed,
+            canComplete:
+                completed || quizPassed
+        });
 
     }
 
-    const courseId =
-      lessonResult.rows[0].course_id;
+    catch (error) {
 
-    // Verify enrollment
-    const enrollmentResult = await pool.query(
-      `
-      SELECT id
-      FROM enrollments
-      WHERE student_id = $1
-      AND course_id = $2
-      `,
-      [
-        studentId,
-        courseId
-      ]
-    );
-
-    if (enrollmentResult.rows.length === 0) {
-
-      return res.status(403).json({
-        message:
-          "You must be enrolled in this course"
-      });
+        res.status(500).json({
+            error: error.message
+        });
 
     }
-
-    const result = await pool.query(
-      `
-      SELECT id
-      FROM lesson_progress
-      WHERE student_id = $1
-      AND lesson_id = $2
-      `,
-      [
-        studentId,
-        lessonId
-      ]
-    );
-
-    res.json({
-      completed:
-        result.rows.length > 0
-    });
-
-  } catch (error) {
-
-    res.status(500).json({
-      error: error.message
-    });
-
-  }
 };
 
 
@@ -181,7 +302,7 @@ const getCourseProgress = async (req, res) => {
     const { courseId } = req.params;
 
     // Verify student is enrolled
-    
+
     const enrollmentResult = await pool.query(
       `
       SELECT id
