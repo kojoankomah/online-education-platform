@@ -9,16 +9,22 @@ if (!token) {
 }
 
 
-// Get quiz ID from URL
-
+// Get quiz information from URL
 const params =
 new URLSearchParams(
-window.location.search
+    window.location.search
 );
-
 
 const quizId =
 params.get("quizId");
+
+const quizTitle =
+params.get("title");
+
+document.getElementById(
+    "quizTitle"
+).textContent =
+quizTitle || "Quiz";
 
 
 const submitQuizBtn =
