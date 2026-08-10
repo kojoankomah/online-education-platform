@@ -43,6 +43,10 @@ if (!courseId) {
 }
 
 
+document.getElementById(
+    "backToCourse").href =
+    `manage-course.html?courseId=${courseId}`;
+
 
 /**
  * Load enrolled students
