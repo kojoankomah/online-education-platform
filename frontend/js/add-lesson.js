@@ -24,6 +24,13 @@ if(!courseId){
 
 }
 
+
+document.getElementById(
+    "backToCourse"
+).href =
+    `manage-course.html?courseId=${courseId}`;
+
+    
 document
 .getElementById("lessonForm")
 .addEventListener(

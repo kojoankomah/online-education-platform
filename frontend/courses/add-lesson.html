@@ -19,12 +19,13 @@ href="../css/global.css">
 
 <header class="dashboard-header">
 
-<h2>EduPlatform</h2>
-
 <a href="javascript:history.back()">
+    Back
+</a>
 
-Back
 
+<a id="backToCourse" href="#">
+    Back
 </a>
 
 </header>
@@ -68,9 +69,12 @@ Lesson Order
 </label>
 
 <input
-type="number"
-id="lessonOrder"
-required>
+    type="number"
+    id="lessonOrder"
+    min="1"
+    step="1"
+    required
+>
 
 <button type="submit">
 
