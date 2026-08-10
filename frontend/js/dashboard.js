@@ -2,181 +2,123 @@
  * STUDENT DASHBOARD
  *
  * Responsibilities:
- *
  * 1. Check authentication
  * 2. Load logged-in user
- * 3. Display user information
- * 4. Handle logout
- *
+ * 3. Display dashboard statistics
+ * 4. Display course progress
+ * 5. Display quiz history
+ * 6. Handle logout
  */
 
 
-// Get stored JWT token
-// If no token exists, redirect to login page
+// Check authentication
 const token = getToken();
 
-// If no token exists,
-// user is not authenticated
+if (!token) {
+    window.location.href =
+        "../auth/login.html";
+}
 
-if(!token){
+
+// Retrieve stored user
+const user =
+    JSON.parse(
+        localStorage.getItem("user")
+    );
+
+
+// Ensure student access
+if (
+    user &&
+    user.role !== "student"
+) {
 
     window.location.href =
-    "../auth/login.html";
+        "../dashboard/instructor-dashboard.html";
 
 }
 
 
-
-// Retrieve saved user data
-
-const user =
-JSON.parse(
-    localStorage.getItem("user")
-);
-
-
-
-if(user){
-
+// Display student name
+if (user) {
 
     document.getElementById(
         "studentName"
     ).textContent =
-    user.name;
-
+        user.name;
 
 }
 
 
+
 /**
- * Load student dashboard data
+ * Load dashboard information
  */
 async function loadStudentDashboard() {
 
     try {
 
         const response = await fetch(
-            apiUrl("/dashboard/student"),
+            apiUrl(
+                API.endpoints.studentDashboard
+            ),
             {
                 headers: authHeaders()
             }
         );
 
+
         const data =
-            await handleApiResponse(response);
-
-        // Update statistics
-
-        document.getElementById("courseCount").textContent =
-            data.courseCount;
-
-        document.getElementById("lessonCount").textContent =
-            data.completedLessons;
-
-        document.getElementById("quizCount").textContent =
-            data.quizAttemptCount;
-
-        displayQuizHistory(
-        data.recentAttempts || []
-        );
-        // Display courses
-        const courseList =
-            document.getElementById("courseList");
-
-        courseList.innerHTML = "";
-
-        if (data.courses.length === 0) {
-
-            courseList.innerHTML =
-                "<p>You are not enrolled in any courses yet.</p>";
-
-            return;
-
-        }
-
-        data.courses.forEach(course => {
-
-            const progress =
-            course.total_lessons == 0
-            ?
-            0
-            :
-            Math.round(
-            (course.completed_lessons /
-            course.total_lessons) * 100
+            await handleApiResponse(
+                response
             );
 
 
-            const card = document.createElement("div");
+        // ----------------------------
+        // DASHBOARD STATISTICS
+        // ----------------------------
 
-            card.className = "course-card";
-            card.innerHTML = `
-
-            <div class="course-image">
-
-                📚
-
-            </div>
+        document.getElementById(
+            "courseCount"
+        ).textContent =
+            data.courseCount || 0;
 
 
-            <div class="course-body">
+        document.getElementById(
+            "lessonCount"
+        ).textContent =
+            data.completedLessons || 0;
 
 
-            <h3>
-            ${course.title}
-            </h3>
+        document.getElementById(
+            "quizCount"
+        ).textContent =
+            data.quizAttemptCount || 0;
 
 
-            <p>
-            ${course.description}
-            </p>
+        // ----------------------------
+        // QUIZ HISTORY
+        // ----------------------------
+
+        displayQuizHistory(
+            data.recentAttempts || []
+        );
 
 
+        // ----------------------------
+        // COURSE PROGRESS
+        // ----------------------------
 
-            <div class="course-progress">
-
-                <div class="progress-bar">
-
-                    <div
-                    class="progress"
-                    style="width:${progress}%">
-                    </div>
-
-                </div>
-
-                <small>
-                ${course.completed_lessons}/${course.total_lessons}
-                lessons completed
-                (${progress}%)
-                </small>
-
-            </div>
-
-
-
-            <button
-            class="continue-btn"
-            onclick="openCourse(${course.id})">
-
-            Continue Learning
-
-            </button>
-
-
-            </div>
-
-            `;
-
-            courseList.appendChild(card);
-
-        });
+        displayCourses(
+            data.courses || []
+        );
 
     }
-
 
     catch (error) {
 
         console.error(error);
+
 
         if (
             error.message !==
@@ -189,69 +131,219 @@ async function loadStudentDashboard() {
             );
 
         }
+
     }
 
 }
 
 
-// Open course details page
-    function openCourse(courseId){
 
-    window.location.href =
-    `../courses/course-details.html?courseId=${courseId}`;
+/**
+ * Display enrolled courses
+ * and their progress
+ */
+function displayCourses(courses) {
 
-    }
+    const courseList =
+        document.getElementById(
+            "courseList"
+        );
 
 
+    courseList.innerHTML = "";
 
- // Display quiz history   
-function displayQuizHistory(attempts){
 
-    const container =
-    document.getElementById(
-        "quizHistory"
-    );
+    if (courses.length === 0) {
 
-    container.innerHTML = "";
-
-    if(attempts.length === 0){
-
-        container.innerHTML =
-        "<p>No quiz attempts yet.</p>";
+        courseList.innerHTML =
+            "<p>You are not enrolled in any courses yet.</p>";
 
         return;
 
     }
 
-    attempts.forEach(attempt=>{
+
+    courses.forEach(course => {
+
+        const totalLessons =
+            Number(
+                course.total_lessons
+            ) || 0;
+
+
+        const completedLessons =
+            Number(
+                course.completed_lessons
+            ) || 0;
+
+
+        const progress =
+            totalLessons === 0
+                ? 0
+                : Math.round(
+                    (
+                        completedLessons /
+                        totalLessons
+                    ) * 100
+                );
+
 
         const card =
-        document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         card.className =
-        "quiz-card";
+            "course-card";
 
-        const percentage =
-        attempt.total_questions === 0
-        ?
-        0
-        :
-        Math.round(
-            (attempt.score /
-            attempt.total_questions) * 100
+
+        card.innerHTML = `
+
+            <div class="course-image">
+                📚
+            </div>
+
+
+            <div class="course-body">
+
+                <h3>
+                    ${course.title}
+                </h3>
+
+
+                <p>
+                    ${
+                        course.description ||
+                        "No description available."
+                    }
+                </p>
+
+
+                <div class="course-progress">
+
+                    <div class="progress-bar">
+
+                        <div
+                            class="progress"
+                            style="width: ${progress}%">
+                        </div>
+
+                    </div>
+
+
+                    <small>
+                        ${completedLessons}/${totalLessons}
+                        lessons completed
+                        (${progress}%)
+                    </small>
+
+                </div>
+
+
+                <button
+                    class="continue-btn"
+                    onclick="openCourse(${course.id})">
+
+                    Continue Learning
+
+                </button>
+
+            </div>
+
+        `;
+
+
+        courseList.appendChild(
+            card
         );
 
+    });
+
+}
+
+
+
+/**
+ * Open course details page
+ */
+function openCourse(courseId) {
+
+    window.location.href =
+        `../courses/course-details.html?courseId=${courseId}`;
+
+}
+
+
+
+/**
+ * Display recent quiz attempts
+ */
+function displayQuizHistory(attempts) {
+
+    const container =
+        document.getElementById(
+            "quizHistory"
+        );
+
+
+    container.innerHTML = "";
+
+
+    if (attempts.length === 0) {
+
+        container.innerHTML =
+            "<p>No quiz attempts yet.</p>";
+
+        return;
+
+    }
+
+
+    attempts.forEach(attempt => {
+
+        const card =
+            document.createElement(
+                "div"
+            );
+
+
+        card.className =
+            "quiz-card";
+
+
+        const score =
+            Number(attempt.score) || 0;
+
+
+        const totalQuestions =
+            Number(
+                attempt.total_questions
+            ) || 0;
+
+
+        const percentage =
+            totalQuestions === 0
+                ? 0
+                : Math.round(
+                    (
+                        score /
+                        totalQuestions
+                    ) * 100
+                );
+
+
         const status =
-        attempt.passed
-        ?
-        "Passed ✅"
-        :
-        "Failed ❌";
+            attempt.passed
+                ? "Passed ✅"
+                : "Failed ❌";
+
 
         const date =
-        new Date(
-            attempt.submitted_at
-        ).toLocaleDateString();
+            new Date(
+                attempt.submitted_at
+            ).toLocaleDateString();
+
 
         card.innerHTML = `
 
@@ -261,7 +353,7 @@ function displayQuizHistory(attempts){
 
             <p>
                 Score:
-                ${attempt.score}/${attempt.total_questions}
+                ${score}/${totalQuestions}
             </p>
 
             <p>
@@ -271,7 +363,9 @@ function displayQuizHistory(attempts){
 
             <p>
                 Status:
-                <strong>${status}</strong>
+                <strong>
+                    ${status}
+                </strong>
             </p>
 
             <small>
@@ -280,33 +374,34 @@ function displayQuizHistory(attempts){
 
         `;
 
-        container.appendChild(card);
+
+        container.appendChild(
+            card
+        );
 
     });
 
 }
 
 
-// Logout functionality
 
+/**
+ * Logout
+ */
 const logoutBtn =
-document.getElementById("logoutBtn");
-
-
-
-logoutBtn.addEventListener(
-"click",
-()=>{
-
-
-    logoutBtn.addEventListener(
-        "click",
-        logout
+    document.getElementById(
+        "logoutBtn"
     );
 
 
-});
+logoutBtn.addEventListener(
+    "click",
+    logout
+);
 
 
 
+/**
+ * Load dashboard
+ */
 loadStudentDashboard();
