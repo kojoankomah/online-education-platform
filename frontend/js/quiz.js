@@ -1,86 +1,107 @@
-const token = localStorage.getItem("token");
-
+const token = getToken();
 
 if (!token) {
-
     window.location.href =
-    "../auth/login.html";
-
+        "../auth/login.html";
 }
 
 
 // Get quiz information from URL
 const params =
-new URLSearchParams(
-    window.location.search
-);
+    new URLSearchParams(
+        window.location.search
+    );
 
 const quizId =
-params.get("quizId");
+    params.get("quizId");
 
 const quizTitle =
-params.get("title");
+    params.get("title");
 
+
+// Validate quiz ID
+if (!quizId) {
+
+    alert(
+        "No quiz selected."
+    );
+
+    window.location.href =
+        "../dashboard/student-dashboard.html";
+}
+
+
+// Display quiz title
 document.getElementById(
     "quizTitle"
 ).textContent =
-quizTitle || "Quiz";
+    quizTitle || "Quiz";
 
 
+// Submit button
 const submitQuizBtn =
-document.getElementById("submitQuizBtn");
+    document.getElementById(
+        "submitQuizBtn"
+    );
 
-// Hide submit button until quiz loads successfully
-submitQuizBtn.style.display = "none";
+
+// Hide submit button until
+// questions load successfully
+submitQuizBtn.style.display =
+    "none";
 
 
 let questions = [];
 
 
 
-
-// Load quiz questions
-
-async function loadQuiz(){
+/**
+ * Load quiz questions
+ */
+async function loadQuiz() {
 
     try {
 
-        const response =
-        await fetch(
-
-            apiUrl(`/quizzes/${quizId}/questions`),
-
+        const response = await fetch(
+            apiUrl(
+                `/quizzes/${quizId}/questions`
+            ),
             {
-                headers:{
-                    Authorization:
-                    `Bearer ${token}`
-                }
+                headers: authHeaders()
             }
-
         );
 
+
         const data =
-        await handleApiResponse(response);
+            await handleApiResponse(
+                response
+            );
 
 
         questions = data;
 
 
         // No questions available
-        if(questions.length === 0){
+        if (questions.length === 0) {
 
             document.getElementById(
                 "quizContainer"
             ).innerHTML = `
+
                 <div class="card">
+
                     <p>
-                        No questions are available for this quiz.
+                        No questions are available
+                        for this quiz.
                     </p>
+
                 </div>
+
             `;
 
+
             submitQuizBtn.style.display =
-            "none";
+                "none";
 
             return;
         }
@@ -89,30 +110,46 @@ async function loadQuiz(){
         displayQuestions();
 
 
-        // Only show submit button
-        // after questions load successfully
+        // Show submit button only
+        // when questions are available
         submitQuizBtn.style.display =
-        "inline-block";
+            "inline-block";
 
     }
 
-    catch(error){
+    catch (error) {
 
         console.error(error);
+
+
+        submitQuizBtn.style.display =
+            "none";
+
+
+        if (
+            error.message ===
+            "Authentication required"
+        ) {
+            return;
+        }
 
 
         document.getElementById(
             "quizContainer"
         ).innerHTML = `
+
             <div class="card">
-                <p>${error.message}</p>
+
+                <p>
+                    ${
+                        error.message ||
+                        "Unable to load quiz."
+                    }
+                </p>
+
             </div>
+
         `;
-
-
-        // Prevent submission
-        submitQuizBtn.style.display =
-        "none";
 
     }
 
@@ -120,147 +157,147 @@ async function loadQuiz(){
 
 
 
-
-
-// Display questions
-
-function displayQuestions(){
-
+/**
+ * Display quiz questions
+ */
+function displayQuestions() {
 
     const container =
-    document.getElementById(
-        "quizContainer"
-    );
+        document.getElementById(
+            "quizContainer"
+        );
 
 
     container.innerHTML = "";
 
 
+    questions.forEach(
+        (question, index) => {
 
-    questions.forEach((q,index)=>{
-
-
-        const card =
-        document.createElement(
-            "div"
-        );
-
-
-        card.className =
-        "card";
+            const card =
+                document.createElement(
+                    "div"
+                );
 
 
-
-        card.innerHTML = `
-
-        <h3>
-        ${index + 1}. ${q.question}
-        </h3>
+            card.className =
+                "card";
 
 
-        <label>
-        <input 
-        type="radio"
-        name="question${q.id}"
-        value="A">
+            card.innerHTML = `
 
-        ${q.option_a}
-
-        </label>
-
-        <br>
+                <h3>
+                    ${index + 1}.
+                    ${question.question}
+                </h3>
 
 
-        <label>
-        <input 
-        type="radio"
-        name="question${q.id}"
-        value="B">
+                <label>
 
-        ${q.option_b}
+                    <input
+                        type="radio"
+                        name="question${question.id}"
+                        value="A">
 
-        </label>
+                    ${question.option_a}
 
-        <br>
+                </label>
 
-
-        <label>
-        <input 
-        type="radio"
-        name="question${q.id}"
-        value="C">
-
-        ${q.option_c}
-
-        </label>
-
-        <br>
+                <br>
 
 
-        <label>
-        <input 
-        type="radio"
-        name="question${q.id}"
-        value="D">
+                <label>
 
-        ${q.option_d}
+                    <input
+                        type="radio"
+                        name="question${question.id}"
+                        value="B">
 
-        </label>
+                    ${question.option_b}
 
+                </label>
 
-        `;
-
-
-        container.appendChild(card);
+                <br>
 
 
-    });
+                <label>
 
+                    <input
+                        type="radio"
+                        name="question${question.id}"
+                        value="C">
+
+                    ${question.option_c}
+
+                </label>
+
+                <br>
+
+
+                <label>
+
+                    <input
+                        type="radio"
+                        name="question${question.id}"
+                        value="D">
+
+                    ${question.option_d}
+
+                </label>
+
+            `;
+
+
+            container.appendChild(
+                card
+            );
+
+        }
+    );
 
 }
 
 
 
+/**
+ * Submit quiz
+ */
+async function submitQuiz() {
 
-
-// Submit quiz
-
-async function submitQuiz(){
-
-
-    // Get answers from the form
+    // Collect answers
     const answers =
-    questions.map(q=>{
+        questions.map(question => {
+
+            const selected =
+                document.querySelector(
+                    `input[name="question${question.id}"]:checked`
+                );
 
 
-        const selected =
-        document.querySelector(
-            `input[name="question${q.id}"]:checked`
-        );
+            return {
 
+                questionId:
+                    question.id,
 
-        return {
+                answer:
+                    selected
+                        ? selected.value
+                        : null
 
-            questionId:q.id,
+            };
 
-            answer:
-            selected ?
-            selected.value :
-            null
-
-        };
-
-
-    });
+        });
 
 
     // Check for unanswered questions
     const unanswered =
-    answers.some(answer =>
-        answer.answer === null
-    );
+        answers.some(
+            answer =>
+                answer.answer === null
+        );
 
-    if(unanswered){
+
+    if (unanswered) {
 
         alert(
             "Please answer all questions before submitting the quiz."
@@ -270,136 +307,76 @@ async function submitQuiz(){
     }
 
 
-    submitQuizBtn.disabled = true;
-    submitQuizBtn.textContent = "Submitting...";
+    // Prevent repeated clicks
+    submitQuizBtn.disabled =
+        true;
 
-    try{
+    submitQuizBtn.textContent =
+        "Submitting...";
 
-        const response =
-        await fetch(
 
-            apiUrl(`/quizzes/${quizId}/submit`),
+    try {
 
+        const response = await fetch(
+            apiUrl(
+                `/quizzes/${quizId}/submit`
+            ),
             {
+                method: "POST",
 
-                method:"POST",
-
-                headers:{
-
-                    "Content-Type":
-                    "application/json",
-
-                    Authorization:
-                    `Bearer ${token}`
-
-                },
-
+                headers: authHeaders(),
 
                 body:
-                JSON.stringify({
-                    answers
-                })
-
+                    JSON.stringify({
+                        answers
+                    })
             }
-
         );
-
 
 
         const data =
-        await handleApiResponse(response);
+            await handleApiResponse(
+                response
+            );
 
 
-
-    const result =
-    document.getElementById("result");
+        displayResult(data);
 
 
-    if(data.passed){
+        // Submission completed successfully
+        submitQuizBtn.textContent =
+            "Quiz Submitted";
 
-        result.innerHTML = `
-
-        <div class="card">
-
-            <h2>
-            Quiz Completed ✅
-            </h2>
-
-
-            <p>
-            Score:
-            ${data.score}/${data.totalQuestions}
-            </p>
-
-
-            <p>
-            Percentage:
-            ${data.percentage}%
-            </p>
-
-
-            <h3>
-            Status: Passed
-            </h3>
-
-        </div>
-
-        `;
-
-    }
-    else{
-
-        result.innerHTML = `
-
-        <div class="card">
-
-            <h2>
-            Quiz Completed
-            </h2>
-
-
-            <p>
-            Score:
-            ${data.score}/${data.totalQuestions}
-            </p>
-
-
-            <p>
-            Percentage:
-            ${data.percentage}%
-            </p>
-
-
-            <h3>
-            Status: Failed
-            </h3>
-
-
-            <p>
-            You need 70% or higher to pass.
-            </p>
-
-        </div>
-
-        `;
+        submitQuizBtn.disabled =
+            true;
 
     }
 
-
-    }
-
-    catch(error){
+    catch (error) {
 
         console.error(error);
 
+
+        if (
+            error.message ===
+            "Authentication required"
+        ) {
+            return;
+        }
+
+
         alert(
-            error.message
+            error.message ||
+            "Unable to submit quiz."
         );
 
-        submitQuizBtn.disabled = false;
+
+        // Allow retry when request fails
+        submitQuizBtn.disabled =
+            false;
 
         submitQuizBtn.textContent =
-        "Submit Quiz";
+            "Submit Quiz";
 
     }
 
@@ -407,11 +384,106 @@ async function submitQuiz(){
 
 
 
+/**
+ * Display quiz result
+ */
+function displayResult(data) {
 
+    const result =
+        document.getElementById(
+            "result"
+        );
+
+
+    if (data.passed) {
+
+        result.innerHTML = `
+
+            <div class="card">
+
+                <h2>
+                    Quiz Completed ✅
+                </h2>
+
+                <p>
+                    Score:
+                    ${data.score}/${data.totalQuestions}
+                </p>
+
+                <p>
+                    Percentage:
+                    ${data.percentage}%
+                </p>
+
+                <h3>
+                    Status: Passed
+                </h3>
+
+                <p>
+                    You can now return to the lesson
+                    and mark it as completed.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+    else {
+
+        result.innerHTML = `
+
+            <div class="card">
+
+                <h2>
+                    Quiz Completed
+                </h2>
+
+                <p>
+                    Score:
+                    ${data.score}/${data.totalQuestions}
+                </p>
+
+                <p>
+                    Percentage:
+                    ${data.percentage}%
+                </p>
+
+                <h3>
+                    Status: Failed
+                </h3>
+
+                <p>
+                    You need 70% or higher
+                    to pass this quiz.
+                </p>
+
+                <p>
+                    You must pass the quiz before
+                    completing the lesson.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+
+/**
+ * Submit button
+ */
 submitQuizBtn.addEventListener(
     "click",
     submitQuiz
 );
 
 
+/**
+ * Load quiz page
+ */
 loadQuiz();
