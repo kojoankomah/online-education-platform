@@ -211,12 +211,11 @@ window.location.href=
 
 
 
-// Edit lesson (Temporary)
-function editLesson(id){
+// Edit lesson 
+function editLesson(lessonId) {
 
-alert(
-"Lesson editor coming next."
-);
+    window.location.href =
+        `edit-lesson.html?lessonId=${lessonId}&courseId=${courseId}`;
 
 }
 
