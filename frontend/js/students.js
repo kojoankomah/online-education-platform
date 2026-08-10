@@ -1,77 +1,108 @@
 const token = getToken();
 
-
-if(!token){
-
+if (!token) {
     window.location.href =
-    "../auth/login.html";
-
+        "../auth/login.html";
 }
 
 
-const params =
-new URLSearchParams(
-window.location.search
-);
+// Ensure instructor access
+const user =
+    JSON.parse(
+        localStorage.getItem("user")
+    );
 
+if (
+    user &&
+    user.role !== "instructor"
+) {
+    window.location.href =
+        "../dashboard/student-dashboard.html";
+}
+
+
+// Get course ID from URL
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
 
 const courseId =
-params.get("courseId");
+    params.get("courseId");
+
+
+// Validate course ID
+if (!courseId) {
+
+    alert(
+        "No course selected."
+    );
+
+    window.location.href =
+        "../dashboard/instructor-dashboard.html";
+}
 
 
 
-async function loadStudents(){
+/**
+ * Load enrolled students
+ */
+async function loadStudents() {
 
-    try{
+    try {
 
-
-        const response =
-        await fetch(
-
+        const response = await fetch(
             apiUrl(
-            `/enrollments/course/${courseId}/students`
+                `/enrollments/course/${courseId}/students`
             ),
-
             {
-
-                headers:authHeaders()
-
+                headers: authHeaders()
             }
-
         );
-
 
 
         const students =
-        await response.json();
-
-
-
-        if(!response.ok){
-
-            throw new Error(
-                students.message ||
-                students.error
+            await handleApiResponse(
+                response
             );
 
-        }
 
-
-
-        displayStudents(students);
-
-
+        displayStudents(
+            students || []
+        );
 
     }
 
-
-    catch(error){
+    catch (error) {
 
         console.error(error);
 
+
+        if (
+            error.message ===
+            "Authentication required"
+        ) {
+            return;
+        }
+
+
         alert(
-            error.message
+            error.message ||
+            "Unable to load students."
         );
+
+
+        // Course does not exist or
+        // instructor does not own it
+        if (
+            error.status === 403 ||
+            error.status === 404
+        ) {
+
+            window.location.href =
+                "../dashboard/instructor-dashboard.html";
+
+        }
 
     }
 
@@ -79,64 +110,90 @@ async function loadStudents(){
 
 
 
-// Function to display students in the UI
-function displayStudents(students){
-
+/**
+ * Display enrolled students
+ */
+function displayStudents(students) {
 
     const list =
-    document.getElementById(
-        "studentList"
-    );
-
-
-    list.innerHTML="";
-
-
-    if(students.length===0){
-
-        list.innerHTML =
-        "<p>No students enrolled.</p>";
-
-        return;
-
-    }
-
-
-
-    students.forEach(student=>{
-
-
-        const card =
-        document.createElement(
-            "div"
+        document.getElementById(
+            "studentList"
         );
 
 
-        card.className="card";
+    list.innerHTML = "";
 
 
-        card.innerHTML=`
+    if (students.length === 0) {
 
-        <h3>
-        ${student.name}
-        </h3>
+        const message =
+            document.createElement(
+                "p"
+            );
 
-        <p>
-        Email:
-        ${student.email}
-        </p>
+        message.textContent =
+            "No students enrolled.";
 
-        `;
+        list.appendChild(
+            message
+        );
+
+        return;
+    }
 
 
-        list.appendChild(card);
+    students.forEach(student => {
 
+        const card =
+            document.createElement(
+                "div"
+            );
+
+
+        card.className =
+            "card";
+
+
+        const name =
+            document.createElement(
+                "h3"
+            );
+
+
+        name.textContent =
+            student.name;
+
+
+        const email =
+            document.createElement(
+                "p"
+            );
+
+
+        email.textContent =
+            `Email: ${student.email}`;
+
+
+        card.appendChild(
+            name
+        );
+
+        card.appendChild(
+            email
+        );
+
+
+        list.appendChild(
+            card
+        );
 
     });
 
-
 }
 
 
 
+/**
+ * Load page
+ */
 loadStudents();
