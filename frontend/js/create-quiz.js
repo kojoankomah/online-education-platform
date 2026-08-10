@@ -42,7 +42,9 @@ if (!courseId) {
 }
 
 
-
+document.getElementById(
+    "backToCourse").href =
+    `manage-course.html?courseId=${courseId}`;
 /**
  * Load lessons belonging to the course
  */

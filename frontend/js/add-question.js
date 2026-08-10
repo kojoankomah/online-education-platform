@@ -58,6 +58,12 @@ if (!courseId) {
 }
 
 
+
+document.getElementById(
+    "backToCourse").href =
+    `manage-course.html?courseId=${courseId}`;
+
+
 // Question counter
 let questionCount = 0;
 
