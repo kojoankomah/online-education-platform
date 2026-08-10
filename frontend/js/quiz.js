@@ -19,6 +19,9 @@ const quizTitle =
     params.get("title");
 
 
+const lessonId =
+    params.get("lessonId");
+
 // Validate quiz ID
 if (!quizId) {
 
@@ -43,6 +46,30 @@ const submitQuizBtn =
     document.getElementById(
         "submitQuizBtn"
     );
+
+
+const backToLesson =
+    document.getElementById(
+        "backToLesson"
+    );
+
+
+if (lessonId) {
+
+    backToLesson.href =
+        `../lessons/lesson.html?lessonId=${lessonId}`;
+
+}
+
+else {
+
+    backToLesson.href =
+        "../dashboard/student-dashboard.html";
+
+    backToLesson.textContent =
+        "Back to Dashboard";
+
+}
 
 
 // Hide submit button until

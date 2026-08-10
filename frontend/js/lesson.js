@@ -51,6 +51,10 @@ async function loadLesson() {
             );
 
 
+            document.getElementById(
+            "backToCourse").href =
+            `../courses/course-details.html?courseId=${lesson.course_id}`;
+
         document.getElementById(
             "lessonTitle"
         ).textContent =
@@ -169,7 +173,7 @@ async function loadQuizButton() {
         quizBtn.onclick = () => {
 
             window.location.href =
-                `../quizzes/quiz.html?quizId=${quizId}&title=${encodeURIComponent(quizTitle)}`;
+            `../quizzes/quiz.html?quizId=${quizId}&lessonId=${lessonId}&title=${encodeURIComponent(quizTitle)}`;
 
         };
 
