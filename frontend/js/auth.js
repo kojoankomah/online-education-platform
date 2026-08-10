@@ -1,90 +1,232 @@
 /**
  * Authentication Script
+ *
  * Handles:
- * - User Registration
- * - User Login
+ * - User registration
+ * - User login
  */
 
-const registerForm = document.getElementById("registerForm");
+
+/**
+ * Handle responses from public
+ * authentication endpoints.
+ *
+ * Unlike handleApiResponse(),
+ * this does NOT redirect on 401.
+ */
+async function handleAuthResponse(response) {
+
+    let data = {};
+
+    try {
+
+        data =
+            await response.json();
+
+    }
+
+    catch (error) {
+
+        data = {};
+
+    }
+
+
+    if (!response.ok) {
+
+        const error =
+            new Error(
+                data.message ||
+                data.error ||
+                "Request failed."
+            );
+
+
+        error.status =
+            response.status;
+
+
+        throw error;
+
+    }
+
+
+    return data;
+}
+
+
+
+/**
+ * REGISTER USER
+ */
+const registerForm =
+    document.getElementById(
+        "registerForm"
+    );
+
 
 if (registerForm) {
 
-    registerForm.addEventListener("submit", registerUser);
+    registerForm.addEventListener(
+        "submit",
+        registerUser
+    );
 
 }
 
-async function registerUser(event){
+
+
+/**
+ * Register a new user
+ */
+async function registerUser(event) {
 
     event.preventDefault();
 
-    const button =
-    event.target.querySelector("button");
 
-    button.disabled = true;
+    const name =
+        document.getElementById(
+            "name"
+        ).value.trim();
 
-    button.textContent = "Registering...";
 
-    const user = {
+    const email =
+        document.getElementById(
+            "email"
+        ).value.trim();
 
-        name:document.getElementById("name").value.trim(),
 
-        email:document.getElementById("email").value.trim(),
+    // Do not trim passwords
+    const password =
+        document.getElementById(
+            "password"
+        ).value;
 
-        password:document.getElementById("password").value,
 
-        role:document.getElementById("role").value
+    const role =
+        document.getElementById(
+            "role"
+        ).value;
 
-    };
 
-    try{
+    // Validate before disabling button
+    if (
+        !name ||
+        !email ||
+        !password ||
+        !role
+    ) {
 
-        const response = await fetch(
-
-            apiUrl(API.endpoints.register),
-
-            {
-
-                method:"POST",
-
-                headers: jsonHeaders(),
-
-                body:JSON.stringify(user)
-
-            }
-
+        alert(
+            "Please complete all required fields."
         );
 
-        const data = await response.json();
-
-        if(response.ok){
-
-            alert("Account created successfully. Please login.");
-
-            window.location.href="./login.html";
-
-        }
-
-        else{
-
-            alert(data.message || data.error);
-
-        }
+        return;
 
     }
 
-    catch(error){
+
+    if (
+        !["student", "instructor"]
+            .includes(role)
+    ) {
+
+        alert(
+            "Please select a valid role."
+        );
+
+        return;
+
+    }
+
+
+    const button =
+        event.target.querySelector(
+            "button"
+        );
+
+
+    button.disabled =
+        true;
+
+    button.textContent =
+        "Registering...";
+
+
+    const user = {
+        name,
+        email,
+        password,
+        role
+    };
+
+
+    try {
+
+        const response = await fetch(
+            apiUrl(
+                API.endpoints.register
+            ),
+            {
+                method: "POST",
+
+                headers:
+                    jsonHeaders(),
+
+                body:
+                    JSON.stringify(
+                        user
+                    )
+            }
+        );
+
+
+        await handleAuthResponse(
+            response
+        );
+
+
+        alert(
+            "Account created successfully. Please login."
+        );
+
+
+        window.location.href =
+            "./login.html";
+
+    }
+
+    catch (error) {
 
         console.error(error);
 
-        alert("Unable to connect to the server.");
+
+        if (error.status) {
+
+            alert(
+                error.message ||
+                "Registration failed."
+            );
+
+        }
+
+        else {
+
+            alert(
+                "Unable to connect to the server."
+            );
+
+        }
 
     }
 
-    finally{
+    finally {
 
-        button.disabled = false;
+        button.disabled =
+            false;
 
-        button.textContent = "Register";
+        button.textContent =
+            "Register";
 
     }
 
@@ -94,19 +236,14 @@ async function registerUser(event){
 
 /**
  * LOGIN USER
- * 
- * 1. Collect email and password
- * 2. Send credentials to backend
- * 3. Receive JWT token
- * 4. Store token
- * 5. Redirect based on role
  */
+const loginForm =
+    document.getElementById(
+        "loginForm"
+    );
 
 
-const loginForm = document.getElementById("loginForm");
-
-
-if(loginForm){
+if (loginForm) {
 
     loginForm.addEventListener(
         "submit",
@@ -117,139 +254,209 @@ if(loginForm){
 
 
 
-async function loginUser(event){
+/**
+ * Login an existing user
+ */
+async function loginUser(event) {
 
     event.preventDefault();
 
 
-        const button =
-    event.target.querySelector("button");
-
-    button.disabled = true;
-
-    button.textContent = "Logging in...";
-
-    const credentials = {
-
-        email:
-        document.getElementById("loginEmail").value.trim(),
+    const email =
+        document.getElementById(
+            "loginEmail"
+        ).value.trim();
 
 
-        password:
-        document.getElementById("loginPassword").value
-
-    };
-
-
-    try{
+    // Do not trim passwords
+    const password =
+        document.getElementById(
+            "loginPassword"
+        ).value;
 
 
-        const response = await fetch(
+    // Validate before disabling button
+    if (
+        !email ||
+        !password
+    ) {
 
-            apiUrl(API.endpoints.login),
+        alert(
+            "Please enter your email and password."
+        );
 
-            {
+        return;
 
-                method:"POST",
-
-                headers: jsonHeaders(),
+    }
 
 
-                body:
-                JSON.stringify(credentials)
-
-            }
-
+    const button =
+        event.target.querySelector(
+            "button"
         );
 
 
+    button.disabled =
+        true;
 
-        const data = await response.json();
+    button.textContent =
+        "Logging in...";
 
 
+    const credentials = {
+        email,
+        password
+    };
 
-        if(response.ok){
+
+    try {
+
+        const response = await fetch(
+            apiUrl(
+                API.endpoints.login
+            ),
+            {
+                method: "POST",
+
+                headers:
+                    jsonHeaders(),
+
+                body:
+                    JSON.stringify(
+                        credentials
+                    )
+            }
+        );
 
 
-            /*
-            Save JWT token.
-            This token will be attached
-            to future protected requests.
-            */
-
-            localStorage.setItem(
-                "token",
-                data.token
+        const data =
+            await handleAuthResponse(
+                response
             );
 
 
+        // Validate expected login response
+        if (
+            !data.token ||
+            !data.user
+        ) {
 
-            /*
-            Save user information.
-            Useful for dashboards.
-            */
-
-            localStorage.setItem(
-                "user",
-                JSON.stringify(data.user)
+            throw new Error(
+                "Invalid login response from server."
             );
 
+        }
 
+
+        /*
+         * Store JWT token.
+         * Protected requests use this token.
+         */
+        localStorage.setItem(
+            "token",
+            data.token
+        );
+
+
+        /*
+         * Store basic user information.
+         */
+        localStorage.setItem(
+            "user",
+            JSON.stringify(
+                data.user
+            )
+        );
+
+
+        // Redirect according to role
+        if (
+            data.user.role ===
+            "student"
+        ) {
 
             alert(
                 "Login successful!"
             );
 
 
-
-            /*
-            Redirect according to role
-            */
-
-            if(data.user.role === "student"){
-
-                window.location.href =
+            window.location.href =
                 "../dashboard/student-dashboard.html";
 
-            }
-
-
-            else if(data.user.role === "instructor"){
-
-                window.location.href =
-                "../dashboard/instructor-dashboard.html";
-
-            }
-
-            else{
-                alert("Unknown user role.");
-            }
         }
 
-
-        else{
+        else if (
+            data.user.role ===
+            "instructor"
+        ) {
 
             alert(
-                data.message || data.error
+                "Login successful!"
+            );
+
+
+            window.location.href =
+                "../dashboard/instructor-dashboard.html";
+
+        }
+
+        else {
+
+            // Do not leave an invalid
+            // authenticated session behind
+            localStorage.removeItem(
+                "token"
+            );
+
+            localStorage.removeItem(
+                "user"
+            );
+
+
+            throw new Error(
+                "Unknown user role."
             );
 
         }
+
     }
 
-    catch(error){
+    catch (error) {
 
         console.error(error);
 
-        alert(
-            "Unable to connect to the server."
-        );
+
+        if (error.status) {
+
+            alert(
+                error.message ||
+                "Login failed."
+            );
+
+        }
+
+        else {
+
+            alert(
+                error.message ===
+                "Unknown user role." ||
+                error.message ===
+                "Invalid login response from server."
+                    ? error.message
+                    : "Unable to connect to the server."
+            );
+
+        }
+
     }
 
-    finally{
+    finally {
 
-        button.disabled = false;
+        button.disabled =
+            false;
 
-        button.textContent = "Login";
+        button.textContent =
+            "Login";
 
     }
 
