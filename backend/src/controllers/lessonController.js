@@ -52,6 +52,185 @@ const createLesson = async (req, res) => {
 
 
 /**
+ * Update lesson
+ * Instructor must own the course
+ */
+const updateLesson = async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+        const {
+            title,
+            content,
+            lesson_order
+        } = req.body;
+
+
+        /**
+         * Validate input
+         */
+        if (
+            !title ||
+            !title.trim() ||
+            !content ||
+            !content.trim() ||
+            !lesson_order
+        ) {
+
+            return res.status(400).json({
+                message:
+                    "Title, content, and lesson order are required"
+            });
+
+        }
+
+
+        const lessonOrder =
+            Number(lesson_order);
+
+
+        if (
+            !Number.isInteger(lessonOrder) ||
+            lessonOrder <= 0
+        ) {
+
+            return res.status(400).json({
+                message:
+                    "Lesson order must be a positive whole number"
+            });
+
+        }
+
+
+        /**
+         * Find lesson and course owner
+         */
+        const lessonResult =
+            await pool.query(
+                `
+                SELECT
+                    lessons.id,
+                    lessons.course_id,
+                    courses.instructor_id
+                FROM lessons
+                JOIN courses
+                    ON lessons.course_id = courses.id
+                WHERE lessons.id = $1
+                `,
+                [id]
+            );
+
+
+        if (
+            lessonResult.rows.length === 0
+        ) {
+
+            return res.status(404).json({
+                message:
+                    "Lesson not found"
+            });
+
+        }
+
+
+        const lesson =
+            lessonResult.rows[0];
+
+
+        /**
+         * Verify instructor ownership
+         */
+        if (
+            Number(
+                lesson.instructor_id
+            ) !==
+            Number(
+                req.user.id
+            )
+        ) {
+
+            return res.status(403).json({
+                message:
+                    "You can only edit lessons from your own courses"
+            });
+
+        }
+
+
+        /**
+         * Update lesson
+         */
+        const updatedLesson =
+            await pool.query(
+                `
+                UPDATE lessons
+
+                SET
+                    title = $1,
+                    content = $2,
+                    lesson_order = $3
+
+                WHERE id = $4
+
+                RETURNING *
+                `,
+                [
+                    title.trim(),
+                    content.trim(),
+                    lessonOrder,
+                    id
+                ]
+            );
+
+
+        return res.json({
+            message:
+                "Lesson updated successfully",
+
+            lesson:
+                updatedLesson.rows[0]
+        });
+
+    }
+
+    catch (error) {
+
+        /**
+         * Duplicate lesson order
+         *
+         * UNIQUE(course_id, lesson_order)
+         */
+        if (
+            error.code === "23505"
+        ) {
+
+            return res.status(400).json({
+                message:
+                    "Another lesson in this course already uses that lesson order"
+            });
+
+        }
+
+
+        console.error(
+            "Update lesson error:",
+            error
+        );
+
+
+        return res.status(500).json({
+            error:
+                "Unable to update lesson"
+        });
+
+    }
+
+};
+
+
+/**
  * Get lessons in a course
  * Instructor must own the course
  * Student must be enrolled
@@ -251,7 +430,8 @@ const getLessonById = async (req, res) => {
 };
 
 module.exports = {
-  createLesson,
-  getCourseLessons,
-  getLessonById
+    createLesson,
+    updateLesson,
+    getCourseLessons,
+    getLessonById
 };

@@ -5,9 +5,10 @@ const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
 
 const {
-  createLesson,
-  getCourseLessons,
-  getLessonById
+    createLesson,
+    updateLesson,
+    getCourseLessons,
+    getLessonById
 } = require("../controllers/lessonController");
 
 /**
@@ -28,6 +29,17 @@ router.post(
   roleMiddleware("instructor"),
   createLesson
 );
+
+/**
+ * Update lesson
+ */
+router.put(
+    "/:id",
+    authMiddleware,
+    roleMiddleware("instructor"),
+    updateLesson
+);
+
 
 // Get lesson by ID
 router.get(
