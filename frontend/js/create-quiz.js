@@ -1,100 +1,149 @@
 const token = getToken();
 
-if(!token){
-
+if (!token) {
     window.location.href =
-    "../auth/login.html";
-
+        "../auth/login.html";
 }
 
+
+// Ensure instructor access
+const user =
+    JSON.parse(
+        localStorage.getItem("user")
+    );
+
+if (
+    user &&
+    user.role !== "instructor"
+) {
+    window.location.href =
+        "../dashboard/student-dashboard.html";
+}
+
+
+// Get course ID from URL
 const params =
-new URLSearchParams(
-window.location.search
-);
+    new URLSearchParams(
+        window.location.search
+    );
 
 const courseId =
-params.get("courseId");
+    params.get("courseId");
 
-// Check if courseId is present
-if(!courseId){
 
-    alert("No course selected.");
+if (!courseId) {
+
+    alert(
+        "No course selected."
+    );
 
     window.location.href =
-    "manage-course.html";
-
+        "../dashboard/instructor-dashboard.html";
 }
 
-// Load course details
-async function loadLessons(){
 
-    try{
 
-        const response =
-        await fetch(
+/**
+ * Load lessons belonging to the course
+ */
+async function loadLessons() {
 
-            apiUrl(
-                `/lessons/course/${courseId}`
-            ),
-
-            {
-
-                headers:authHeaders()
-
-            }
-
-        );
-
-        const data =
-        await response.json();
-
-        const select =
+    const select =
         document.getElementById(
             "lessonSelect"
         );
 
-        select.innerHTML="";
+
+    try {
+
+        const response = await fetch(
+            apiUrl(
+                `/lessons/course/${courseId}`
+            ),
+            {
+                headers: authHeaders()
+            }
+        );
+
+
+        const data =
+            await handleApiResponse(
+                response
+            );
+
+
+        select.innerHTML = "";
 
 
         const lessons =
-        data.lessons || data;
+            data.lessons || data;
 
 
-        if(lessons.length === 0){
+        if (lessons.length === 0) {
 
-            select.innerHTML =
-            `
-            <option>
-            No lessons available
-            </option>
+            select.innerHTML = `
+                <option value="">
+                    No lessons available
+                </option>
             `;
 
             return;
-
         }
 
 
-        lessons.forEach(lesson=>{
-
+        lessons.forEach(lesson => {
 
             const option =
-            document.createElement("option");
+                document.createElement(
+                    "option"
+                );
+
 
             option.value =
-            lesson.id;
+                lesson.id;
+
 
             option.textContent =
-            `Lesson ${lesson.lesson_order}: ${lesson.title}`;
+                `Lesson ${lesson.lesson_order}: ${lesson.title}`;
 
-            select.appendChild(option);
+
+            select.appendChild(
+                option
+            );
 
         });
 
     }
 
-    catch(error){
+    catch (error) {
 
         console.error(error);
+
+
+        if (
+            error.message ===
+            "Authentication required"
+        ) {
+            return;
+        }
+
+
+        alert(
+            error.message ||
+            "Unable to load lessons."
+        );
+
+
+        // Instructor does not own the course
+        if (
+            error.status === 403 ||
+            error.status === 404
+        ) {
+
+            window.location.href =
+                "../dashboard/instructor-dashboard.html";
+
+        }
 
     }
 
@@ -102,85 +151,84 @@ async function loadLessons(){
 
 
 
-// Submit quiz
-document
-.getElementById("quizForm")
-.addEventListener(
-"submit",
-createQuiz
-);
-
-async function createQuiz(e){
+/**
+ * Create quiz
+ */
+async function createQuiz(e) {
 
     e.preventDefault();
 
-// Validate lesson selection
-const lessonId = document.getElementById(
-    "lessonSelect"
-).value;
 
-
-if(!lessonId){
-
-    alert(
-    "Please select a lesson."
-    );
-
-    return;
-
-}
-
-
-const button =
-e.target.querySelector("button");
-
-button.disabled = true;
-
-button.textContent =
-"Creating...";
+    const lessonId =
+        document.getElementById(
+            "lessonSelect"
+        ).value;
 
 
     const title =
-    document.getElementById(
-    "quizTitle"
-    ).value.trim();
+        document.getElementById(
+            "quizTitle"
+        ).value.trim();
 
-    try{
 
-        const response =
-        await fetch(
+    // Validate lesson
+    if (!lessonId) {
 
+        alert(
+            "Please select a lesson."
+        );
+
+        return;
+    }
+
+
+    // Validate title
+    if (!title) {
+
+        alert(
+            "Quiz title is required."
+        );
+
+        return;
+    }
+
+
+    const button =
+        e.target.querySelector(
+            "button[type='submit']"
+        );
+
+
+    // Disable only after validation passes
+    button.disabled = true;
+
+    button.textContent =
+        "Creating...";
+
+
+    try {
+
+        const response = await fetch(
             apiUrl(
                 `/quizzes/lesson/${lessonId}`
             ),
-
             {
+                method: "POST",
 
-                method:"POST",
+                headers: authHeaders(),
 
-                headers:authHeaders(),
-
-                body:JSON.stringify({
-
+                body: JSON.stringify({
                     title
-
                 })
-
             }
-
         );
 
+
         const data =
-        await response.json();
-
-        if(!response.ok){
-
-            throw new Error(
-                data.message ||
-                data.error
+            await handleApiResponse(
+                response
             );
 
-        }
 
         alert(
             "Quiz created successfully!"
@@ -188,29 +236,51 @@ button.textContent =
 
 
         window.location.href =
-        `add-question.html?quizId=${data.quiz.id}&courseId=${courseId}`;
+            `add-question.html?quizId=${data.quiz.id}&courseId=${courseId}`;
 
     }
 
-    catch(error){
+    catch (error) {
 
         console.error(error);
 
-        alert(error.message);
+
+        if (
+            error.message !==
+            "Authentication required"
+        ) {
+
+            alert(
+                error.message ||
+                "Unable to create quiz."
+            );
+
+        }
 
     }
 
-    finally{
+    finally {
 
         button.disabled = false;
 
         button.textContent =
-        "Create Quiz";
+            "Create Quiz";
 
     }
 
 }
 
+
+
+/**
+ * Quiz form
+ */
+document
+    .getElementById("quizForm")
+    .addEventListener(
+        "submit",
+        createQuiz
+    );
 
 
 loadLessons();
