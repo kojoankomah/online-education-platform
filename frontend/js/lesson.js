@@ -1,8 +1,10 @@
 const token = getToken();
 
 if (!token) {
+
     window.location.href =
         "../auth/login.html";
+
 }
 
 
@@ -16,16 +18,38 @@ const lessonId =
     params.get("lessonId");
 
 
+// Validate lesson ID
 if (!lessonId) {
 
-    alert(
-        "No lesson selected."
+    setFlashToast(
+        "No lesson selected.",
+        "warning"
     );
 
     window.location.href =
         "../dashboard/student-dashboard.html";
+
 }
 
+
+// Main action buttons
+const quizBtn =
+    document.getElementById(
+        "quizBtn"
+    );
+
+const completeBtn =
+    document.getElementById(
+        "completeBtn"
+    );
+
+
+// Do not allow completion until
+// the backend confirms eligibility
+completeBtn.disabled = true;
+
+completeBtn.textContent =
+    "Checking Progress...";
 
 
 /**
@@ -40,7 +64,8 @@ async function loadLesson() {
                 `/lessons/${lessonId}`
             ),
             {
-                headers: authHeaders()
+                headers:
+                    authHeaders()
             }
         );
 
@@ -51,9 +76,12 @@ async function loadLesson() {
             );
 
 
-            document.getElementById(
-            "backToCourse").href =
+        // Back to the correct course
+        document.getElementById(
+            "backToCourse"
+        ).href =
             `../courses/course-details.html?courseId=${lesson.course_id}`;
+
 
         document.getElementById(
             "lessonTitle"
@@ -67,8 +95,8 @@ async function loadLesson() {
             lesson.content;
 
 
-        // Only load these after
-        // lesson access has succeeded
+        // Only check these after
+        // lesson access succeeds
         await loadQuizButton();
 
         await checkCompletion();
@@ -88,21 +116,38 @@ async function loadLesson() {
         }
 
 
-        alert(
-            error.message ||
-            "Unable to load lesson."
-        );
-
-
+        // Access denied or lesson missing
         if (
             error.status === 403 ||
             error.status === 404
         ) {
 
+            setFlashToast(
+                error.message ||
+                "Unable to access this lesson.",
+                "error"
+            );
+
+
             window.location.href =
                 "../dashboard/student-dashboard.html";
 
+            return;
+
         }
+
+
+        showToast(
+            error.message ||
+            "Unable to load lesson.",
+            "error"
+        );
+
+
+        completeBtn.disabled = true;
+
+        completeBtn.textContent =
+            "Lesson Unavailable";
 
     }
 
@@ -116,13 +161,7 @@ async function loadLesson() {
  */
 async function loadQuizButton() {
 
-    const quizBtn =
-        document.getElementById(
-            "quizBtn"
-        );
-
-
-    // Hide until a valid quiz is found
+    // Hide until valid quiz is found
     quizBtn.style.display =
         "none";
 
@@ -134,7 +173,8 @@ async function loadQuizButton() {
                 `/quizzes/lesson/${lessonId}`
             ),
             {
-                headers: authHeaders()
+                headers:
+                    authHeaders()
             }
         );
 
@@ -145,7 +185,9 @@ async function loadQuizButton() {
             );
 
 
-        if (quizzes.length === 0) {
+        if (
+            quizzes.length === 0
+        ) {
             return;
         }
 
@@ -163,7 +205,7 @@ async function loadQuizButton() {
 
 
         quizBtn.style.display =
-            "block";
+            "inline-flex";
 
 
         quizBtn.textContent =
@@ -173,7 +215,7 @@ async function loadQuizButton() {
         quizBtn.onclick = () => {
 
             window.location.href =
-            `../quizzes/quiz.html?quizId=${quizId}&lessonId=${lessonId}&title=${encodeURIComponent(quizTitle)}`;
+                `../quizzes/quiz.html?quizId=${quizId}&lessonId=${lessonId}&title=${encodeURIComponent(quizTitle)}`;
 
         };
 
@@ -190,6 +232,20 @@ async function loadQuizButton() {
         quizBtn.style.display =
             "none";
 
+
+        if (
+            error.message !==
+            "Authentication required"
+        ) {
+
+            showToast(
+                error.message ||
+                "Unable to load lesson quiz.",
+                "error"
+            );
+
+        }
+
     }
 
 }
@@ -197,7 +253,8 @@ async function loadQuizButton() {
 
 
 /**
- * Check lesson completion and quiz status
+ * Check lesson completion
+ * and quiz status
  */
 async function checkCompletion() {
 
@@ -208,7 +265,8 @@ async function checkCompletion() {
                 `/progress/lesson/${lessonId}`
             ),
             {
-                headers: authHeaders()
+                headers:
+                    authHeaders()
             }
         );
 
@@ -219,53 +277,54 @@ async function checkCompletion() {
             );
 
 
-        const button =
-            document.getElementById(
-                "completeBtn"
-            );
-
-
         // Lesson already completed
         if (data.completed) {
 
-            button.textContent =
-                "✅ Lesson Completed";
+            completeBtn.textContent =
+                "✓ Lesson Completed";
 
-            button.disabled = true;
+            completeBtn.disabled =
+                true;
 
             return;
+
         }
 
 
-        // Lesson has no quiz yet
+        // Lesson has no quiz
         if (!data.quizExists) {
 
-            button.textContent =
+            completeBtn.textContent =
                 "Quiz Required";
 
-            button.disabled = true;
+            completeBtn.disabled =
+                true;
 
             return;
+
         }
 
 
-        // Quiz exists but student has not passed
+        // Quiz exists but has not been passed
         if (!data.quizPassed) {
 
-            button.textContent =
+            completeBtn.textContent =
                 "Pass Quiz to Complete Lesson";
 
-            button.disabled = true;
+            completeBtn.disabled =
+                true;
 
             return;
+
         }
 
 
-        // Quiz passed — lesson can now be completed
-        button.textContent =
+        // Quiz passed
+        completeBtn.textContent =
             "Mark Lesson Complete";
 
-        button.disabled = false;
+        completeBtn.disabled =
+            false;
 
     }
 
@@ -276,9 +335,31 @@ async function checkCompletion() {
             error
         );
 
+
+        completeBtn.disabled =
+            true;
+
+        completeBtn.textContent =
+            "Unable to Verify Progress";
+
+
+        if (
+            error.message !==
+            "Authentication required"
+        ) {
+
+            showToast(
+                error.message ||
+                "Unable to check lesson progress.",
+                "error"
+            );
+
+        }
+
     }
 
 }
+
 
 
 /**
@@ -286,16 +367,10 @@ async function checkCompletion() {
  */
 async function completeLesson() {
 
-    const button =
-        document.getElementById(
-            "completeBtn"
-        );
-
-
-    button.disabled =
+    completeBtn.disabled =
         true;
 
-    button.textContent =
+    completeBtn.textContent =
         "Marking Complete...";
 
 
@@ -308,7 +383,8 @@ async function completeLesson() {
             {
                 method: "POST",
 
-                headers: authHeaders()
+                headers:
+                    authHeaders()
             }
         );
 
@@ -318,11 +394,17 @@ async function completeLesson() {
         );
 
 
-        button.textContent =
-            "✅ Lesson Completed";
+        completeBtn.textContent =
+            "✓ Lesson Completed";
 
-        button.disabled =
+        completeBtn.disabled =
             true;
+
+
+        showToast(
+            "Lesson completed successfully!",
+            "success"
+        );
 
     }
 
@@ -332,23 +414,23 @@ async function completeLesson() {
 
 
         if (
-            error.message !==
+            error.message ===
             "Authentication required"
         ) {
-
-            alert(
-                error.message ||
-                "Unable to complete lesson."
-            );
-
-
-            button.disabled =
-                false;
-
-            button.textContent =
-                "Mark Complete";
-
+            return;
         }
+
+
+        showToast(
+            error.message ||
+            "Unable to complete lesson.",
+            "error"
+        );
+
+
+        // Recheck eligibility instead of
+        // blindly enabling the button
+        await checkCompletion();
 
     }
 
@@ -357,18 +439,19 @@ async function completeLesson() {
 
 
 /**
- * Mark lesson complete button
+ * Complete lesson button
  */
-document
-    .getElementById("completeBtn")
-    .addEventListener(
-        "click",
-        completeLesson
-    );
-
+completeBtn.addEventListener(
+    "click",
+    completeLesson
+);
 
 
 /**
  * Load lesson page
  */
-loadLesson();
+if (lessonId) {
+
+    loadLesson();
+
+}
