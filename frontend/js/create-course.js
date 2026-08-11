@@ -49,8 +49,9 @@ async function createCourse(e){
     // Validate before disabling button
     if(!title){
 
-        alert(
-            "Course title is required."
+        showToast(
+            "Course title is required.",
+            "warning"
         );
 
         return;
@@ -95,7 +96,6 @@ async function createCourse(e){
             "Course created successfully!"
         );
 
-
         window.location.href =
             "../dashboard/instructor-dashboard.html";
 
@@ -111,9 +111,10 @@ async function createCourse(e){
             "Authentication required"
         ){
 
-            alert(
+            showToast(
                 error.message ||
-                "Unable to create course."
+                "Unable to create course.",
+                "error"
             );
 
         }

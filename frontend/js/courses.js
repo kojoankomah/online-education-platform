@@ -51,9 +51,10 @@ async function loadCourses() {
             "Authentication required"
         ) {
 
-            alert(
+            showToast(
                 error.message ||
-                "Unable to load courses."
+                "Unable to load courses.",
+                "error"
             );
 
         }
@@ -169,10 +170,10 @@ async function enrollCourse(
         );
 
 
-        alert(
-            "Enrollment successful!"
+        setFlashToast(
+            "Enrollment successful!",
+            "success"
         );
-
 
         window.location.href =
             "../dashboard/student-dashboard.html";
@@ -189,11 +190,11 @@ async function enrollCourse(
             "Authentication required"
         ) {
 
-            alert(
+            showToast(
                 error.message ||
-                "Enrollment failed."
+                "Enrollment failed.",
+                "error"
             );
-
 
             button.disabled = false;
 
