@@ -74,7 +74,8 @@ async function loadCourse(){
         document.getElementById(
             "courseDescription"
         ).textContent =
-            course.description;
+            course.description ||
+            "No course description available.";
 
 
         displayLessons(
@@ -83,34 +84,44 @@ async function loadCourse(){
 
     }
 
-    catch(error){
+    catch (error) {
 
         console.error(error);
 
 
-        if(
+        if (
             error.message ===
             "Authentication required"
-        ){
+        ) {
 
             return;
         }
 
 
-        alert(
-            error.message ||
-            "Unable to load course."
-        );
+        if (
+            error.status === 403 ||
+            error.status === 404
+        ) {
 
+            setFlashToast(
+                error.message ||
+                "Unable to access this course.",
+                "error"
+            );
 
-        // An instructor tried to manage
-        // another instructor's course
-        if(error.status === 403){
 
             window.location.href =
                 "../dashboard/instructor-dashboard.html";
 
+            return;
         }
+
+
+        showToast(
+            error.message ||
+            "Unable to load course.",
+            "error"
+        );
 
     }
 
@@ -137,39 +148,44 @@ function displayLessons(lessons){
 
     }
 
-    lessons.forEach(lesson=>{
+    lessons.forEach(lesson => {
 
         const card =
-        document.createElement("div");
+            document.createElement("div");
 
-        card.className="card";
+        card.className = "card";
 
-        card.innerHTML=`
 
-        <h3>
+        const preview =
+            lesson.content.length > 100
+                ? lesson.content.substring(0, 100) + "..."
+                : lesson.content;
 
-        Lesson ${lesson.lesson_order}
 
-        </h3>
+        card.innerHTML = `
 
-        <p>
+            <h3>
+                Lesson ${lesson.lesson_order}
+            </h3>
 
-        ${lesson.title}
+            <p>
+                ${lesson.title}
+            </p>
 
-        </p>
+            <p>
+                ${preview}
+            </p>
 
-        <p>
-        ${lesson.content.substring(0,100)}...
-        </p>
-        
-        <button
-        onclick="editLesson(${lesson.id})">
-
-        Edit Lesson
-
-        </button>
+            <button
+                type="button"
+                class="btn btn-primary"
+                onclick="editLesson(${lesson.id})"
+            >
+                Edit Lesson
+            </button>
 
         `;
+
 
         list.appendChild(card);
 

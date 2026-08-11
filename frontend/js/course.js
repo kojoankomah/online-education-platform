@@ -1,8 +1,10 @@
 const token = getToken();
 
 if (!token) {
+
     window.location.href =
         "../auth/login.html";
+
 }
 
 
@@ -12,12 +14,15 @@ const user =
         localStorage.getItem("user")
     );
 
+
 if (
     user &&
     user.role !== "student"
 ) {
+
     window.location.href =
         "../dashboard/instructor-dashboard.html";
+
 }
 
 
@@ -31,14 +36,17 @@ const courseId =
     params.get("courseId");
 
 
+// Validate course ID
 if (!courseId) {
 
-    alert(
-        "No course selected."
+    setFlashToast(
+        "No course selected.",
+        "warning"
     );
 
     window.location.href =
         "../dashboard/student-dashboard.html";
+
 }
 
 
@@ -59,7 +67,8 @@ async function loadCourse() {
                 `/courses/${courseId}`
             ),
             {
-                headers: authHeaders()
+                headers:
+                    authHeaders()
             }
         );
 
@@ -80,7 +89,8 @@ async function loadCourse() {
                     `/progress/course/${courseId}/lessons`
                 ),
                 {
-                    headers: authHeaders()
+                    headers:
+                        authHeaders()
                 }
             );
 
@@ -101,7 +111,8 @@ async function loadCourse() {
                     `/progress/course/${courseId}`
                 ),
                 {
-                    headers: authHeaders()
+                    headers:
+                        authHeaders()
                 }
             );
 
@@ -154,12 +165,6 @@ async function loadCourse() {
         }
 
 
-        alert(
-            error.message ||
-            "Unable to load course."
-        );
-
-
         // Student is not enrolled
         // or course does not exist
         if (
@@ -167,10 +172,28 @@ async function loadCourse() {
             error.status === 404
         ) {
 
+            setFlashToast(
+                error.message ||
+                "Unable to access this course.",
+                "error"
+            );
+
+
             window.location.href =
                 "../dashboard/student-dashboard.html";
 
+            return;
+
         }
+
+
+        // Error that keeps the student
+        // on this page
+        showToast(
+            error.message ||
+            "Unable to load course.",
+            "error"
+        );
 
     }
 
@@ -192,15 +215,19 @@ function displayLessons(
         );
 
 
-    lessonList.innerHTML = "";
+    lessonList.innerHTML =
+        "";
 
 
-    if (lessons.length === 0) {
+    if (
+        lessons.length === 0
+    ) {
 
         lessonList.innerHTML =
             "<p>No lessons are available yet.</p>";
 
         return;
+
     }
 
 
@@ -228,7 +255,9 @@ function displayLessons(
 
         const isCompleted =
             completedLessonIds.includes(
-                Number(lesson.id)
+                Number(
+                    lesson.id
+                )
             );
 
 
@@ -241,14 +270,15 @@ function displayLessons(
             </h3>
 
             <button
+                type="button"
                 class="btn btn-primary"
                 onclick="openLesson(${lesson.id})"
             >
 
                 ${
                     isCompleted
-                    ? "Review Lesson"
-                    : "Open Lesson"
+                        ? "Review Lesson"
+                        : "Open Lesson"
                 }
 
             </button>
@@ -269,7 +299,9 @@ function displayLessons(
 /**
  * Display overall course progress
  */
-function displayProgress(progress) {
+function displayProgress(
+    progress
+) {
 
     const progressBar =
         document.getElementById(
@@ -305,7 +337,9 @@ function displayProgress(progress) {
 /**
  * Open individual lesson
  */
-function openLesson(lessonId) {
+function openLesson(
+    lessonId
+) {
 
     window.location.href =
         `../lessons/lesson.html?lessonId=${lessonId}`;
@@ -313,4 +347,9 @@ function openLesson(lessonId) {
 }
 
 
-loadCourse();
+// Only load when a valid course ID exists
+if (courseId) {
+
+    loadCourse();
+
+}

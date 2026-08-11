@@ -119,19 +119,18 @@ async function loadStudentDashboard() {
 
         console.error(error);
 
-
         if (
             error.message !==
             "Authentication required"
         ) {
 
-            alert(
+            showToast(
                 error.message ||
-                "Failed to load dashboard."
+                "Failed to load dashboard.",
+                "error"
             );
 
         }
-
     }
 
 }
@@ -242,6 +241,7 @@ function displayCourses(courses) {
 
 
                 <button
+                    type="button"
                     class="btn btn-primary continue-btn"
                     onclick="openCourse(${course.id})"
                 >

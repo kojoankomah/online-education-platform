@@ -12,6 +12,17 @@ const user =
     );
 
 
+if (
+    user &&
+    user.role !== "instructor"
+) {
+
+    window.location.href =
+        "../dashboard/student-dashboard.html";
+
+}
+
+
 if (user) {
 
     document.getElementById(
@@ -55,13 +66,13 @@ async function loadInstructorDashboard() {
             "Authentication required"
         ) {
 
-            alert(
+            showToast(
                 error.message ||
-                "Unable to load instructor dashboard."
+                "Unable to load instructor dashboard.",
+                "error"
             );
 
         }
-
     }
 
 }
@@ -138,10 +149,11 @@ function displayDashboard(data) {
             </p>
 
             <button
-                onclick="manageCourse(${course.id})">
-
+                type="button"
+                class="btn btn-primary"
+                onclick="manageCourse(${course.id})"
+            >
                 Manage Course
-
             </button>
 
         `;
