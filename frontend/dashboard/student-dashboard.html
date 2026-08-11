@@ -25,15 +25,65 @@
 
 <div class="dashboard-layout">
 
+    <!-- MOBILE DASHBOARD HEADER -->
+
+    <header class="dashboard-mobile-header">
+
+        <button
+            type="button"
+            class="sidebar-toggle"
+            id="sidebarToggle"
+            aria-label="Open dashboard menu"
+            aria-expanded="false"
+            aria-controls="studentSidebar"
+        >
+
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </button>
+
+
+        <a
+            href="student-dashboard.html"
+            class="mobile-dashboard-logo"
+        >
+            EduPlatform
+        </a>
+
+    </header>
+
+
+    <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+    ></div>
 
     <!-- SIDEBAR -->
 
-    <aside class="sidebar">
+    <aside
+        class="sidebar"
+        id="studentSidebar"
+    >
+
+        <div class="sidebar-heading">
+
+            <h2>
+                EduPlatform
+            </h2>
 
 
-        <h2>
-            EduPlatform
-        </h2>
+            <button
+                type="button"
+                class="sidebar-close"
+                id="sidebarClose"
+                aria-label="Close dashboard menu"
+            >
+                &times;
+            </button>
+
+        </div>
 
 
         <nav>
@@ -203,6 +253,6 @@
 
 <script src="../js/dashboard.js"></script>
 
-
+<script src="../js/navigation.js"></script>
 </body>
 </html>

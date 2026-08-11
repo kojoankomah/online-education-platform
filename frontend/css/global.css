@@ -13,7 +13,7 @@
 
 
 html{
-    scroll-behavior:smooth;
+    scroll-behavior: smooth;
 }
 
 
@@ -59,10 +59,6 @@ button{
 
     font-family:inherit;
 
-}
-
-html {
-    scroll-behavior: smooth;
 }
 
 /* ---------- CONTAINER ---------- */
@@ -202,71 +198,154 @@ p{
 }
 
 
-
 /* =========================================
-   NAVBAR
+NAVBAR
 ========================================= */
 
+.navbar {
+    position: relative;
+    z-index: 1000;
 
-.navbar{
+    background: white;
 
-    background:white;
-
-    padding:20px 0;
+    padding: 20px 0;
 
     box-shadow:
-
-    0 2px 10px rgba(0,0,0,0.05);
-
+        0 2px 10px
+        rgba(0, 0, 0, 0.05);
 }
 
 
-.navbar .container{
+.navbar .container {
+    position: relative;
 
-    display:flex;
+    display: flex;
 
-    align-items:center;
+    align-items: center;
 
-    justify-content:space-between;
+    justify-content: space-between;
 
+    gap: 30px;
 }
 
 
-.logo{
+.logo {
+    font-size: 1.5rem;
 
-    font-size:1.5rem;
+    font-weight: 800;
 
-    font-weight:800;
+    color: #2563EB;
 
-    color:#2563EB;
-
-}
-
-.navbar nav{
-    display:flex;
-    gap:30px;
-}
-
-.navbar nav a{
-    color:#475569;
-    font-weight:500;
+    white-space: nowrap;
 }
 
 
-.navbar nav a:hover{
-    color:#2563EB;
+/* Desktop menu */
+
+.navbar-menu {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 40px;
+
+    flex: 1;
 }
 
 
+.navbar nav {
+    display: flex;
 
-.nav-buttons{
+    align-items: center;
 
-    display:flex;
-
-    gap:15px;
-
+    gap: 30px;
 }
 
+
+.navbar nav a {
+    color: #475569;
+
+    font-weight: 500;
+
+    transition: color 0.2s ease;
+}
+
+
+.navbar nav a:hover {
+    color: #2563EB;
+}
+
+
+.nav-buttons {
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+}
+
+
+/* Hamburger */
+
+.menu-toggle {
+    display: none;
+
+    width: 44px;
+
+    height: 44px;
+
+    padding: 8px;
+
+    background: transparent;
+
+    border: none;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+
+.menu-toggle span {
+    display: block;
+
+    width: 25px;
+
+    height: 3px;
+
+    margin: 5px auto;
+
+    background: #1F2937;
+
+    border-radius: 5px;
+
+    transition:
+        transform 0.25s ease,
+        opacity 0.25s ease;
+}
+
+
+/* Hamburger becomes X */
+
+.menu-toggle.active span:nth-child(1) {
+    transform:
+        translateY(8px)
+        rotate(45deg);
+}
+
+
+.menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+
+.menu-toggle.active span:nth-child(3) {
+    transform:
+        translateY(-8px)
+        rotate(-45deg);
+}
 
 
 /* =========================================
@@ -307,12 +386,9 @@ select:focus{
 
 
 
-textarea{
-
-    resize:none;
-
-    min-height:150px;
-
+textarea {
+    resize: vertical;
+    min-height: 150px;
 }
 
 
@@ -407,24 +483,114 @@ footer p{
 
 
 /* =========================================
-   RESPONSIVE DESIGN
+RESPONSIVE DESIGN
 ========================================= */
 
+@media (max-width: 900px) {
 
-@media(max-width:900px){
-
-    h1{
-
-        font-size:2.2rem;
-
+    h1 {
+        font-size: 2.2rem;
     }
 
-    .dashboard-grid{
-        grid-template-columns:1fr;
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
     }
 
-    .navbar nav{
-    display:none;
+
+    /* Mobile navbar */
+
+    .menu-toggle {
+        display: block;
+
+        flex-shrink: 0;
+    }
+
+
+    .navbar-menu {
+        position: absolute;
+
+        top: calc(100% + 20px);
+
+        left: 0;
+
+        right: 0;
+
+        display: none;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 25px;
+
+        padding: 25px;
+
+        background: white;
+
+        border-radius: 0 0 15px 15px;
+
+        box-shadow:
+            0 12px 25px
+            rgba(0, 0, 0, 0.12);
+    }
+
+
+    .navbar-menu.open {
+        display: flex;
+    }
+
+
+    .navbar nav {
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 5px;
+    }
+
+
+    .navbar nav a {
+        display: block;
+
+        padding: 12px;
+
+        border-radius: 8px;
+    }
+
+
+    .navbar nav a:hover {
+        background: #EFF6FF;
+    }
+
+
+    .nav-buttons {
+        width: 100%;
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap: 12px;
+    }
+
+
+    .nav-buttons .btn {
+        width: 100%;
+
+        text-align: center;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .nav-buttons {
+        grid-template-columns: 1fr;
     }
 
 }
