@@ -34,18 +34,25 @@ const courseId =
 // Validate course ID
 if (!courseId) {
 
-    alert(
-        "No course selected."
+    setFlashToast(
+        "No course selected.",
+        "warning"
     );
 
     window.location.href =
         "../dashboard/instructor-dashboard.html";
+
 }
 
 
-document.getElementById(
-    "backToCourse").href =
-    `manage-course.html?courseId=${courseId}`;
+if (courseId) {
+
+    document.getElementById(
+        "backToCourse"
+    ).href =
+        `manage-course.html?courseId=${courseId}`;
+
+}
 
 
 /**
@@ -90,23 +97,33 @@ async function loadStudents() {
         }
 
 
-        alert(
-            error.message ||
-            "Unable to load students."
-        );
-
-
-        // Course does not exist or
-        // instructor does not own it
+        // Course missing or instructor
+        // does not own this course
         if (
             error.status === 403 ||
             error.status === 404
         ) {
 
+            setFlashToast(
+                error.message ||
+                "Unable to access this course.",
+                "error"
+            );
+
+
             window.location.href =
                 "../dashboard/instructor-dashboard.html";
 
+            return;
+
         }
+
+
+        showToast(
+            error.message ||
+            "Unable to load students.",
+            "error"
+        );
 
     }
 
@@ -200,4 +217,6 @@ function displayStudents(students) {
 /**
  * Load page
  */
-loadStudents();
+if (courseId) {
+    loadStudents();
+}
