@@ -1,8 +1,10 @@
 const token = getToken();
 
 if (!token) {
+
     window.location.href =
         "../auth/login.html";
+
 }
 
 
@@ -12,12 +14,15 @@ const user =
         localStorage.getItem("user")
     );
 
+
 if (
     user &&
     user.role !== "instructor"
 ) {
+
     window.location.href =
         "../dashboard/student-dashboard.html";
+
 }
 
 
@@ -31,20 +36,33 @@ const courseId =
     params.get("courseId");
 
 
+// Validate course ID
 if (!courseId) {
 
-    alert(
-        "No course selected."
+    setFlashToast(
+        "No course selected.",
+        "warning"
     );
 
     window.location.href =
         "../dashboard/instructor-dashboard.html";
+
 }
 
 
-document.getElementById(
-    "backToCourse").href =
-    `manage-course.html?courseId=${courseId}`;
+// Set Back link only when
+// a valid course ID exists
+if (courseId) {
+
+    document.getElementById(
+        "backToCourse"
+    ).href =
+        `manage-course.html?courseId=${courseId}`;
+
+}
+
+
+
 /**
  * Load lessons belonging to the course
  */
@@ -58,14 +76,16 @@ async function loadLessons() {
 
     try {
 
-        const response = await fetch(
-            apiUrl(
-                `/lessons/course/${courseId}`
-            ),
-            {
-                headers: authHeaders()
-            }
-        );
+        const response =
+            await fetch(
+                apiUrl(
+                    `/lessons/course/${courseId}`
+                ),
+                {
+                    headers:
+                        authHeaders()
+                }
+            );
 
 
         const data =
@@ -84,12 +104,15 @@ async function loadLessons() {
         if (lessons.length === 0) {
 
             select.innerHTML = `
+
                 <option value="">
                     No lessons available
                 </option>
+
             `;
 
             return;
+
         }
 
 
@@ -130,22 +153,33 @@ async function loadLessons() {
         }
 
 
-        alert(
-            error.message ||
-            "Unable to load lessons."
-        );
-
-
-        // Instructor does not own the course
+        // Ownership failure or missing course
         if (
             error.status === 403 ||
             error.status === 404
         ) {
 
+            setFlashToast(
+                error.message ||
+                "Unable to access this course.",
+                "error"
+            );
+
+
             window.location.href =
                 "../dashboard/instructor-dashboard.html";
 
+            return;
+
         }
+
+
+        // Error that stays on this page
+        showToast(
+            error.message ||
+            "Unable to load lessons.",
+            "error"
+        );
 
     }
 
@@ -176,22 +210,26 @@ async function createQuiz(e) {
     // Validate lesson
     if (!lessonId) {
 
-        alert(
-            "Please select a lesson."
+        showToast(
+            "Please select a lesson.",
+            "warning"
         );
 
         return;
+
     }
 
 
     // Validate title
     if (!title) {
 
-        alert(
-            "Quiz title is required."
+        showToast(
+            "Quiz title is required.",
+            "warning"
         );
 
         return;
+
     }
 
 
@@ -201,8 +239,10 @@ async function createQuiz(e) {
         );
 
 
-    // Disable only after validation passes
-    button.disabled = true;
+    // Disable only after
+    // validation passes
+    button.disabled =
+        true;
 
     button.textContent =
         "Creating...";
@@ -210,20 +250,23 @@ async function createQuiz(e) {
 
     try {
 
-        const response = await fetch(
-            apiUrl(
-                `/quizzes/lesson/${lessonId}`
-            ),
-            {
-                method: "POST",
+        const response =
+            await fetch(
+                apiUrl(
+                    `/quizzes/lesson/${lessonId}`
+                ),
+                {
+                    method: "POST",
 
-                headers: authHeaders(),
+                    headers:
+                        authHeaders(),
 
-                body: JSON.stringify({
-                    title
-                })
-            }
-        );
+                    body:
+                        JSON.stringify({
+                            title
+                        })
+                }
+            );
 
 
         const data =
@@ -232,8 +275,11 @@ async function createQuiz(e) {
             );
 
 
-        alert(
-            "Quiz created successfully!"
+        // Flash toast because
+        // we are redirecting
+        setFlashToast(
+            "Quiz created successfully!",
+            "success"
         );
 
 
@@ -252,9 +298,10 @@ async function createQuiz(e) {
             "Authentication required"
         ) {
 
-            alert(
+            showToast(
                 error.message ||
-                "Unable to create quiz."
+                "Unable to create quiz.",
+                "error"
             );
 
         }
@@ -263,7 +310,8 @@ async function createQuiz(e) {
 
     finally {
 
-        button.disabled = false;
+        button.disabled =
+            false;
 
         button.textContent =
             "Create Quiz";
@@ -278,11 +326,15 @@ async function createQuiz(e) {
  * Quiz form
  */
 document
-    .getElementById("quizForm")
+    .getElementById(
+        "quizForm"
+    )
     .addEventListener(
         "submit",
         createQuiz
     );
 
 
-loadLessons();
+if (courseId) {
+    loadLessons();
+}
