@@ -22,7 +22,11 @@ href="../css/form.css">
 
 <header class="dashboard-header">
 
-<h2>EduPlatform</h2>
+<h2>
+    <a href="../dashboard/instructor-dashboard.html">
+        EduPlatform
+    </a>
+</h2>
 
 <a href="../dashboard/instructor-dashboard.html">
 
@@ -40,29 +44,25 @@ Back to Dashboard
 
 <form id="courseForm">
 
-<label>
-
-Course Title
-
+<label for="title">
+    Course Title
 </label>
 
 <input
-type="text"
-id="title"
-required>
+    type="text"
+    id="title"
+    required
+>
 
-<label>
 
-Description
-
+<label for="description">
+    Description
 </label>
 
 <textarea
-id="description"
-rows="6"
-required>
-
-</textarea>
+    id="description"
+    rows="6"
+></textarea>
 
 <button type="submit">
 Create Course
