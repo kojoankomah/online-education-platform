@@ -1,8 +1,10 @@
 const token = getToken();
 
 if (!token) {
+
     window.location.href =
         "../auth/login.html";
+
 }
 
 
@@ -18,19 +20,21 @@ const quizId =
 const quizTitle =
     params.get("title");
 
-
 const lessonId =
     params.get("lessonId");
+
 
 // Validate quiz ID
 if (!quizId) {
 
-    alert(
-        "No quiz selected."
+    setFlashToast(
+        "No quiz selected.",
+        "warning"
     );
 
     window.location.href =
         "../dashboard/student-dashboard.html";
+
 }
 
 
@@ -48,6 +52,7 @@ const submitQuizBtn =
     );
 
 
+// Back link
 const backToLesson =
     document.getElementById(
         "backToLesson"
@@ -94,7 +99,8 @@ async function loadQuiz() {
                 `/quizzes/${quizId}/questions`
             ),
             {
-                headers: authHeaders()
+                headers:
+                    authHeaders()
             }
         );
 
@@ -105,11 +111,14 @@ async function loadQuiz() {
             );
 
 
-        questions = data;
+        questions =
+            data;
 
 
         // No questions available
-        if (questions.length === 0) {
+        if (
+            questions.length === 0
+        ) {
 
             document.getElementById(
                 "quizContainer"
@@ -131,6 +140,7 @@ async function loadQuiz() {
                 "none";
 
             return;
+
         }
 
 
@@ -138,9 +148,9 @@ async function loadQuiz() {
 
 
         // Show submit button only
-        // when questions are available
+        // after questions load
         submitQuizBtn.style.display =
-            "inline-block";
+            "inline-flex";
 
     }
 
@@ -177,6 +187,13 @@ async function loadQuiz() {
             </div>
 
         `;
+
+
+        showToast(
+            error.message ||
+            "Unable to load quiz.",
+            "error"
+        );
 
     }
 
@@ -293,27 +310,29 @@ async function submitQuiz() {
 
     // Collect answers
     const answers =
-        questions.map(question => {
+        questions.map(
+            question => {
 
-            const selected =
-                document.querySelector(
-                    `input[name="question${question.id}"]:checked`
-                );
+                const selected =
+                    document.querySelector(
+                        `input[name="question${question.id}"]:checked`
+                    );
 
 
-            return {
+                return {
 
-                questionId:
-                    question.id,
+                    questionId:
+                        question.id,
 
-                answer:
-                    selected
-                        ? selected.value
-                        : null
+                    answer:
+                        selected
+                            ? selected.value
+                            : null
 
-            };
+                };
 
-        });
+            }
+        );
 
 
     // Check for unanswered questions
@@ -326,11 +345,13 @@ async function submitQuiz() {
 
     if (unanswered) {
 
-        alert(
-            "Please answer all questions before submitting the quiz."
+        showToast(
+            "Please answer all questions before submitting the quiz.",
+            "warning"
         );
 
         return;
+
     }
 
 
@@ -351,7 +372,8 @@ async function submitQuiz() {
             {
                 method: "POST",
 
-                headers: authHeaders(),
+                headers:
+                    authHeaders(),
 
                 body:
                     JSON.stringify({
@@ -367,15 +389,37 @@ async function submitQuiz() {
             );
 
 
-        displayResult(data);
+        displayResult(
+            data
+        );
 
 
-        // Submission completed successfully
+        // Submission completed
         submitQuizBtn.textContent =
             "Quiz Submitted";
 
         submitQuizBtn.disabled =
             true;
+
+
+        // Result notification
+        if (data.passed) {
+
+            showToast(
+                "Quiz completed successfully. You passed!",
+                "success"
+            );
+
+        }
+
+        else {
+
+            showToast(
+                "Quiz submitted. You need 70% or higher to pass.",
+                "warning"
+            );
+
+        }
 
     }
 
@@ -392,9 +436,10 @@ async function submitQuiz() {
         }
 
 
-        alert(
+        showToast(
             error.message ||
-            "Unable to submit quiz."
+            "Unable to submit quiz.",
+            "error"
         );
 
 
@@ -513,4 +558,8 @@ submitQuizBtn.addEventListener(
 /**
  * Load quiz page
  */
-loadQuiz();
+if (quizId) {
+
+    loadQuiz();
+
+}
