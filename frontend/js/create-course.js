@@ -92,8 +92,9 @@ async function createCourse(e){
         );
 
 
-        alert(
-            "Course created successfully!"
+        setFlashToast(
+            "Course created successfully!",
+            "success"
         );
 
         window.location.href =
