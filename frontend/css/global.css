@@ -506,6 +506,17 @@ RESPONSIVE DESIGN
         flex-shrink: 0;
     }
 
+    .navbar .container {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+
+    .menu-toggle {
+        margin-left: auto;
+    }
+
 
     .navbar-menu {
         position: absolute;
@@ -615,5 +626,32 @@ RESPONSIVE DESIGN
         text-align:center;
     }
 
+
+}
+
+
+
+
+/* =========================================
+VERY SMALL MOBILE SCREENS
+========================================= */
+
+@media (max-width: 340px) {
+
+    .navbar .container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+
+    .menu-toggle {
+        align-self: flex-start;
+    }
+
+
+    .navbar-menu {
+        top: calc(100% + 12px);
+    }
 
 }
