@@ -1,8 +1,10 @@
 const token = getToken();
 
 if (!token) {
+
     window.location.href =
         "../auth/login.html";
+
 }
 
 
@@ -12,12 +14,15 @@ const user =
         localStorage.getItem("user")
     );
 
+
 if (
     user &&
     user.role !== "instructor"
 ) {
+
     window.location.href =
         "../dashboard/student-dashboard.html";
+
 }
 
 
@@ -37,31 +42,41 @@ const courseId =
 // Validate quiz ID
 if (!quizId) {
 
-    alert(
-        "No quiz selected."
+    setFlashToast(
+        "No quiz selected.",
+        "warning"
     );
 
     window.location.href =
         "../dashboard/instructor-dashboard.html";
+
 }
 
 
 // Validate course ID
 if (!courseId) {
 
-    alert(
-        "Course information missing."
+    setFlashToast(
+        "Course information missing.",
+        "warning"
     );
 
     window.location.href =
         "../dashboard/instructor-dashboard.html";
+
 }
 
 
+// Set back link only when
+// course information exists
+if (courseId) {
 
-document.getElementById(
-    "backToCourse").href =
-    `manage-course.html?courseId=${courseId}`;
+    document.getElementById(
+        "backToCourse"
+    ).href =
+        `manage-course.html?courseId=${courseId}`;
+
+}
 
 
 // Question counter
@@ -81,6 +96,7 @@ function updateQuestionCount() {
 }
 
 
+
 /**
  * Load number of questions
  * already saved for this quiz
@@ -94,7 +110,8 @@ async function loadQuestionCount() {
                 `/quizzes/${quizId}/questions`
             ),
             {
-                headers: authHeaders()
+                headers:
+                    authHeaders()
             }
         );
 
@@ -126,12 +143,6 @@ async function loadQuestionCount() {
         }
 
 
-        alert(
-            error.message ||
-            "Unable to load quiz questions."
-        );
-
-
         // Instructor does not own quiz
         // or quiz does not exist
         if (
@@ -139,14 +150,31 @@ async function loadQuestionCount() {
             error.status === 404
         ) {
 
+            setFlashToast(
+                error.message ||
+                "Unable to access this quiz.",
+                "error"
+            );
+
+
             window.location.href =
                 "../dashboard/instructor-dashboard.html";
 
+            return;
+
         }
+
+
+        showToast(
+            error.message ||
+            "Unable to load quiz questions.",
+            "error"
+        );
 
     }
 
 }
+
 
 
 /**
@@ -199,7 +227,7 @@ async function addQuestion(e) {
         ).value.trim();
 
 
-    // Validate fields before disabling button
+    // Validate fields
     if (
         !question ||
         !option_a ||
@@ -209,28 +237,34 @@ async function addQuestion(e) {
         !correct_answer
     ) {
 
-        alert(
-            "All fields are required."
+        showToast(
+            "All question fields are required.",
+            "warning"
         );
 
         return;
+
     }
 
 
-    // Extra validation
+    // Validate correct answer
     if (
         !["A", "B", "C", "D"]
             .includes(correct_answer)
     ) {
 
-        alert(
-            "Please select a valid correct answer."
+        showToast(
+            "Please select a valid correct answer.",
+            "warning"
         );
 
         return;
+
     }
 
 
+    // Disable only after
+    // validation passes
     button.disabled =
         true;
 
@@ -247,16 +281,18 @@ async function addQuestion(e) {
             {
                 method: "POST",
 
-                headers: authHeaders(),
+                headers:
+                    authHeaders(),
 
-                body: JSON.stringify({
-                    question,
-                    option_a,
-                    option_b,
-                    option_c,
-                    option_d,
-                    correct_answer
-                })
+                body:
+                    JSON.stringify({
+                        question,
+                        option_a,
+                        option_b,
+                        option_c,
+                        option_d,
+                        correct_answer
+                    })
             }
         );
 
@@ -266,8 +302,9 @@ async function addQuestion(e) {
         );
 
 
-        alert(
-            "Question added successfully!"
+        showToast(
+            "Question added successfully!",
+            "success"
         );
 
 
@@ -296,9 +333,10 @@ async function addQuestion(e) {
             "Authentication required"
         ) {
 
-            alert(
+            showToast(
                 error.message ||
-                "Unable to add question."
+                "Unable to add question.",
+                "error"
             );
 
         }
@@ -318,8 +356,9 @@ async function addQuestion(e) {
 }
 
 
+
 /**
- * Finish quiz
+ * Finish quiz setup
  */
 function finishQuiz(e) {
 
@@ -331,20 +370,24 @@ function finishQuiz(e) {
             "question"
         ).value.trim();
 
+
     const option_a =
         document.getElementById(
             "option_a"
         ).value.trim();
+
 
     const option_b =
         document.getElementById(
             "option_b"
         ).value.trim();
 
+
     const option_c =
         document.getElementById(
             "option_c"
         ).value.trim();
+
 
     const option_d =
         document.getElementById(
@@ -363,23 +406,33 @@ function finishQuiz(e) {
 
     if (hasUnsavedQuestion) {
 
-        alert(
-            "You have an unsaved question. Click 'Add Question' before finishing the quiz."
+        showToast(
+            "You have an unsaved question. Click 'Add Question' before finishing the quiz.",
+            "warning"
         );
 
         return;
+
     }
 
 
-    // Do not allow completely empty quiz
+    // Do not allow an empty quiz
     if (questionCount === 0) {
 
-        alert(
-            "Add at least one question before finishing the quiz."
+        showToast(
+            "Add at least one question before finishing the quiz.",
+            "warning"
         );
 
         return;
+
     }
+
+
+    setFlashToast(
+        "Quiz setup completed successfully!",
+        "success"
+    );
 
 
     window.location.href =
@@ -388,11 +441,14 @@ function finishQuiz(e) {
 }
 
 
+
 /**
  * Event listeners
  */
 document
-    .getElementById("questionForm")
+    .getElementById(
+        "questionForm"
+    )
     .addEventListener(
         "submit",
         addQuestion
@@ -400,7 +456,9 @@ document
 
 
 document
-    .getElementById("finishQuizBtn")
+    .getElementById(
+        "finishQuizBtn"
+    )
     .addEventListener(
         "click",
         finishQuiz
@@ -410,4 +468,6 @@ document
 /**
  * Load current question count
  */
-loadQuestionCount();
+if (quizId && courseId) {
+    loadQuestionCount();
+}
