@@ -111,58 +111,151 @@ p{
 
 
 /* =========================================
-   BUTTONS
+BUTTON SYSTEM
 ========================================= */
 
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 
-.btn{
+    min-height: 44px;
 
-    display:inline-block;
+    padding: 11px 20px;
 
-    padding:12px 24px;
+    border: 2px solid transparent;
+    border-radius: 8px;
 
-    background:#2563EB;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
 
-    color:white;
+    text-align: center;
+    text-decoration: none;
 
-    border-radius:8px;
+    cursor: pointer;
 
-    border:none;
-
-    cursor:pointer;
-
-    font-weight:600;
-
-    transition:.3s;
-
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
 }
 
 
-.btn:hover{
+/* Primary actions */
 
-    background:#1D4ED8;
-
+.btn-primary,
+.btn:not(.btn-outline):not(.btn-secondary):not(.btn-danger) {
+    background: #2563EB;
+    color: white;
 }
 
 
+.btn-primary:hover,
+.btn:not(.btn-outline):not(.btn-secondary):not(.btn-danger):hover {
+    background: #1D4ED8;
 
-.btn-outline{
+    transform: translateY(-1px);
 
-    background:transparent;
-
-    color:#2563EB;
-
-    border:2px solid #2563EB;
-
+    box-shadow:
+        0 4px 10px
+        rgba(37, 99, 235, 0.25);
 }
 
 
-.btn-outline:hover{
+/* Outline button */
 
-    background:#2563EB;
+.btn-outline {
+    background: transparent;
 
-    color:white;
+    color: #2563EB;
 
+    border-color: #2563EB;
+}
+
+
+.btn-outline:hover {
+    background: #2563EB;
+
+    color: white;
+}
+
+
+/* Secondary actions */
+
+.btn-secondary {
+    background: #E2E8F0;
+
+    color: #1E293B;
+}
+
+
+.btn-secondary:hover {
+    background: #CBD5E1;
+}
+
+
+/* Destructive actions */
+
+.btn-danger {
+    background: #EF4444;
+
+    color: white;
+}
+
+
+.btn-danger:hover {
+    background: #DC2626;
+}
+
+
+/* Smaller button */
+
+.btn-small {
+    min-height: 38px;
+
+    padding: 8px 15px;
+
+    font-size: 0.9rem;
+}
+
+
+/* Full-width button */
+
+.btn-block {
+    width: 100%;
+}
+
+
+/* Disabled state */
+
+.btn:disabled,
+.btn.disabled {
+    background: #CBD5E1;
+
+    color: #64748B;
+
+    border-color: transparent;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+    box-shadow: none;
+
+    opacity: 0.8;
+}
+
+
+/* Keyboard accessibility */
+
+.btn:focus-visible {
+    outline: 3px solid #93C5FD;
+
+    outline-offset: 3px;
 }
 
 

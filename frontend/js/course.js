@@ -241,7 +241,9 @@ function displayLessons(
             </h3>
 
             <button
-                onclick="openLesson(${lesson.id})">
+                class="btn btn-primary"
+                onclick="openLesson(${lesson.id})"
+            >
 
                 ${
                     isCompleted

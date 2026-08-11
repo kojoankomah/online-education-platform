@@ -242,11 +242,10 @@ function displayCourses(courses) {
 
 
                 <button
-                    class="continue-btn"
-                    onclick="openCourse(${course.id})">
-
+                    class="btn btn-primary continue-btn"
+                    onclick="openCourse(${course.id})"
+                >
                     Continue Learning
-
                 </button>
 
             </div>
