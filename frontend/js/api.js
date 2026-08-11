@@ -151,10 +151,11 @@ async function handleApiResponse(response) {
         );
 
 
-        alert(
+        setFlashToast(
             data.message ||
             data.error ||
-            "Your session has expired. Please log in again."
+            "Your session has expired. Please log in again.",
+            "warning"
         );
 
 

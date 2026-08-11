@@ -117,10 +117,10 @@ async function registerUser(event) {
         !role
     ) {
 
-        alert(
-            "Please complete all required fields."
+        showToast(
+            "Please complete all required fields.",
+            "warning"
         );
-
         return;
 
     }
@@ -131,8 +131,9 @@ async function registerUser(event) {
             .includes(role)
     ) {
 
-        alert(
-            "Please select a valid role."
+        showToast(
+            "Please select a valid role.",
+            "warning"
         );
 
         return;
@@ -186,8 +187,9 @@ async function registerUser(event) {
         );
 
 
-        alert(
-            "Account created successfully. Please login."
+        setFlashToast(
+            "Account created successfully. Please login.",
+            "success"
         );
 
 
@@ -203,17 +205,19 @@ async function registerUser(event) {
 
         if (error.status) {
 
-            alert(
+            showToast(
                 error.message ||
-                "Registration failed."
+                "Registration failed.",
+                "error"
             );
 
         }
 
         else {
 
-            alert(
-                "Unable to connect to the server."
+            showToast(
+                "Unable to connect to the server.",
+                "error"
             );
 
         }
@@ -281,8 +285,9 @@ async function loginUser(event) {
         !password
     ) {
 
-        alert(
-            "Please enter your email and password."
+        showToast(
+            "Please enter your email and password.",
+            "warning"
         );
 
         return;
@@ -375,8 +380,9 @@ async function loginUser(event) {
             "student"
         ) {
 
-            alert(
-                "Login successful!"
+            setFlashToast(
+                "Login successful!",
+                "success"
             );
 
 
@@ -390,13 +396,14 @@ async function loginUser(event) {
             "instructor"
         ) {
 
-            alert(
-                "Login successful!"
+            setFlashToast(
+                "Login successful!",
+                "success"
             );
 
 
             window.location.href =
-                "../dashboard/instructor-dashboard.html";
+                "../dashboard/student-dashboard.html";
 
         }
 
@@ -428,22 +435,23 @@ async function loginUser(event) {
 
         if (error.status) {
 
-            alert(
+            showToast(
                 error.message ||
-                "Login failed."
+                "Login failed.",
+                "error"
             );
-
         }
 
         else {
 
-            alert(
+            showToast(
                 error.message ===
-                "Unknown user role." ||
+                    "Unknown user role." ||
                 error.message ===
-                "Invalid login response from server."
+                    "Invalid login response from server."
                     ? error.message
-                    : "Unable to connect to the server."
+                    : "Unable to connect to the server.",
+                "error"
             );
 
         }

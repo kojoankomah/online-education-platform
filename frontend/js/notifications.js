@@ -289,3 +289,83 @@ function showToast(
     );
 
 }
+
+
+
+/**
+ * Save a notification to display
+ * after the next page loads.
+ */
+function setFlashToast(
+    message,
+    type = "info"
+) {
+
+    sessionStorage.setItem(
+        "flashToast",
+        JSON.stringify({
+            message,
+            type
+        })
+    );
+
+}
+
+
+/**
+ * Display a saved notification
+ * after navigation/redirect.
+ */
+function showFlashToast() {
+
+    const savedToast =
+        sessionStorage.getItem(
+            "flashToast"
+        );
+
+
+    if (!savedToast) {
+        return;
+    }
+
+
+    sessionStorage.removeItem(
+        "flashToast"
+    );
+
+
+    try {
+
+        const toast =
+            JSON.parse(
+                savedToast
+            );
+
+
+        showToast(
+            toast.message,
+            toast.type
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Unable to display flash notification:",
+            error
+        );
+
+    }
+
+}
+
+
+/**
+ * Automatically display
+ * flash notifications.
+ */
+document.addEventListener(
+    "DOMContentLoaded",
+    showFlashToast
+);
