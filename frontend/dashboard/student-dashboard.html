@@ -88,25 +88,37 @@
 
         <nav>
 
-
-            <a href="student-dashboard.html">
+            <a
+                href="#dashboardTop"
+                class="sidebar-link active"
+                data-section="dashboardTop"
+                aria-current="location"
+            >
                 🏠 Dashboard
             </a>
 
-
-            <a href="../courses/courses.html">
+            <a
+                href="../courses/courses.html"
+                class="sidebar-link"
+            >
                 📚 Courses
             </a>
 
-
-            <a href="#progressSection">
+            <a
+                href="#progressSection"
+                class="sidebar-link"
+                data-section="progressSection"
+            >
                 📊 Progress
             </a>
 
-            <a href="#quizHistorySection">
+            <a
+                href="#quizHistorySection"
+                class="sidebar-link"
+                data-section="quizHistorySection"
+            >
                 📝 Quiz History
             </a>
-
 
         </nav>
 
@@ -123,8 +135,10 @@
 
     <!-- MAIN CONTENT -->
 
-    <main class="dashboard-content">
-
+    <main
+        class="dashboard-content"
+        id="dashboardTop"
+    >
 
         <header class="dashboard-header">
 

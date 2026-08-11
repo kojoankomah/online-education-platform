@@ -11,7 +11,10 @@ document.addEventListener(
     () => {
 
         setupLandingNavigation();
+
         setupDashboardSidebar();
+
+        setupDashboardActiveNavigation();
 
     }
 );
@@ -331,5 +334,170 @@ function setupDashboardSidebar() {
 
         }
     );
+
+}
+
+
+/**
+ * Student dashboard active navigation
+ */
+function setupDashboardActiveNavigation() {
+
+    const sidebar =
+        document.getElementById(
+            "studentSidebar"
+        );
+
+
+    if (!sidebar) {
+        return;
+    }
+
+
+    const links =
+        Array.from(
+            sidebar.querySelectorAll(
+                "nav a[data-section]"
+            )
+        );
+
+
+    if (links.length === 0) {
+        return;
+    }
+
+
+    const sections =
+        links
+            .map(link => {
+
+                const sectionId =
+                    link.dataset.section;
+
+
+                return document.getElementById(
+                    sectionId
+                );
+
+            })
+            .filter(Boolean);
+
+
+
+    /**
+     * Highlight selected link
+     */
+    function setActiveLink(sectionId) {
+
+        links.forEach(link => {
+
+            const isActive =
+                link.dataset.section ===
+                sectionId;
+
+
+            link.classList.toggle(
+                "active",
+                isActive
+            );
+
+
+            if (isActive) {
+
+                link.setAttribute(
+                    "aria-current",
+                    "location"
+                );
+
+            }
+
+            else {
+
+                link.removeAttribute(
+                    "aria-current"
+                );
+
+            }
+
+        });
+
+    }
+
+
+
+    /**
+     * Detect current section
+     * while scrolling
+     */
+    function updateActiveLink() {
+
+        const position =
+            window.scrollY + 220;
+
+
+        let currentSection =
+            "dashboardTop";
+
+
+        sections.forEach(section => {
+
+            if (
+                section.offsetTop <=
+                position
+            ) {
+
+                currentSection =
+                    section.id;
+
+            }
+
+        });
+
+
+        setActiveLink(
+            currentSection
+        );
+
+    }
+
+
+
+    /**
+     * Immediately highlight
+     * link when clicked
+     */
+    links.forEach(link => {
+
+        link.addEventListener(
+            "click",
+            () => {
+
+                setActiveLink(
+                    link.dataset.section
+                );
+
+            }
+        );
+
+    });
+
+
+
+    /**
+     * Update while scrolling
+     */
+    window.addEventListener(
+        "scroll",
+        updateActiveLink,
+        {
+            passive: true
+        }
+    );
+
+
+    /**
+     * Set initial state
+     */
+    updateActiveLink();
 
 }
