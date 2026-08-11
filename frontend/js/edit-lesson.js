@@ -37,8 +37,9 @@ const courseId =
 // Validate lesson ID
 if (!lessonId) {
 
-    alert(
-        "No lesson selected."
+    setFlashToast(
+        "No lesson selected.",
+        "warning"
     );
 
     window.location.href =
@@ -49,8 +50,9 @@ if (!lessonId) {
 // Validate course ID
 if (!courseId) {
 
-    alert(
-        "Course information missing."
+    setFlashToast(
+        "Course information missing.",
+        "warning"
     );
 
     window.location.href =
@@ -63,7 +65,7 @@ document.getElementById(
 ).href =
     `manage-course.html?courseId=${courseId}`;
 
-    
+
 /**
  * Load existing lesson details
  */
@@ -119,22 +121,31 @@ async function loadLesson() {
         }
 
 
-        alert(
-            error.message ||
-            "Unable to load lesson."
-        );
-
-
+        // Course not accessible
         if (
             error.status === 403 ||
             error.status === 404
         ) {
 
-            window.location.href =
-                `manage-course.html?courseId=${courseId}`;
+            setFlashToast(
+                error.message ||
+                "Unable to access this course.",
+                "error"
+            );
 
+            window.location.href =
+                "../dashboard/instructor-dashboard.html";
+
+            return;
         }
 
+
+        // Error that stays on current page
+        showToast(
+            error.message ||
+            "Unable to load course.",
+            "error"
+        );
     }
 
 }
@@ -176,8 +187,9 @@ async function updateLesson(event) {
         !lessonOrder
     ) {
 
-        alert(
-            "Title, content, and lesson order are required."
+        showToast(
+            "Title, content, and lesson order are required.",
+            "warning"
         );
 
         return;
@@ -189,8 +201,9 @@ async function updateLesson(event) {
         lessonOrder <= 0
     ) {
 
-        alert(
-            "Lesson order must be a positive whole number."
+        showToast(
+            "Lesson order must be a positive whole number.",
+            "warning"
         );
 
         return;
@@ -236,10 +249,10 @@ async function updateLesson(event) {
         );
 
 
-        alert(
-            "Lesson updated successfully!"
+        setFlashToast(
+            "Lesson updated successfully!",
+            "success"
         );
-
 
         window.location.href =
             `manage-course.html?courseId=${courseId}`;
@@ -256,9 +269,10 @@ async function updateLesson(event) {
             "Authentication required"
         ) {
 
-            alert(
+            showToast(
                 error.message ||
-                "Unable to update lesson."
+                "Unable to update lesson.",
+                "error"
             );
 
         }

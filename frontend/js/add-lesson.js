@@ -1,87 +1,110 @@
 const token = getToken();
 
-if(!token){
+if (!token) {
 
     window.location.href =
-    "../auth/login.html";
+        "../auth/login.html";
 
 }
 
+
+// Get course ID
 const params =
-new URLSearchParams(
-window.location.search
-);
+    new URLSearchParams(
+        window.location.search
+    );
 
 const courseId =
-params.get("courseId");
+    params.get("courseId");
 
-if(!courseId){
 
-    alert("No course selected.");
+// Validate course ID
+if (!courseId) {
+
+    setFlashToast(
+        "No course selected.",
+        "warning"
+    );
 
     window.location.href =
-    "manage-course.html";
+        "../dashboard/instructor-dashboard.html";
 
 }
 
 
+// Back to current course
 document.getElementById(
     "backToCourse"
 ).href =
     `manage-course.html?courseId=${courseId}`;
 
-    
+
+// Form event
 document
-.getElementById("lessonForm")
-.addEventListener(
-"submit",
-createLesson
-);
-
-async function createLesson(e){
-
-    e.preventDefault();
-
-    const button =
-    e.target.querySelector("button");
-
-    const title =
-    document.getElementById(
-        "title"
-    ).value.trim();
-
-    const content =
-    document.getElementById(
-        "content"
-    ).value.trim();
-
-    const lesson_order =
-    parseInt(
-        document.getElementById(
-            "lessonOrder"
-        ).value
+    .getElementById("lessonForm")
+    .addEventListener(
+        "submit",
+        createLesson
     );
 
 
-    // Validate title and content
-    if(!title || !content){
+/**
+ * Create lesson
+ */
+async function createLesson(e) {
 
-        alert(
-            "Title and lesson content are required."
+    e.preventDefault();
+
+
+    const button =
+        e.target.querySelector(
+            "button[type='submit']"
+        );
+
+
+    const title =
+        document.getElementById(
+            "title"
+        ).value.trim();
+
+
+    const content =
+        document.getElementById(
+            "content"
+        ).value.trim();
+
+
+    const lessonOrder =
+        Number(
+            document.getElementById(
+                "lessonOrder"
+            ).value
+        );
+
+
+    // ----------------------------
+    // VALIDATION
+    // ----------------------------
+
+    if (!title || !content) {
+
+        showToast(
+            "Title and lesson content are required.",
+            "warning"
         );
 
         return;
     }
 
 
-    // Validate lesson order
-    if(
-        !lesson_order ||
-        lesson_order <= 0
-    ){
+    if (
+        !Number.isInteger(lessonOrder) ||
+        lessonOrder <= 0
+    ) {
 
-        alert(
-            "Lesson order must be greater than zero."
+        showToast(
+            "Lesson order must be a positive whole number.",
+            "warning"
         );
 
         return;
@@ -89,81 +112,79 @@ async function createLesson(e){
 
 
     // Disable only after validation passes
-    button.disabled = true;
+    button.disabled =
+        true;
 
     button.textContent =
-    "Creating...";
+        "Creating...";
 
 
-    try{
+    try {
 
-        const response =
-        await fetch(
-
+        const response = await fetch(
             apiUrl(
                 `/lessons/course/${courseId}`
             ),
-
             {
+                method: "POST",
 
-                method:"POST",
+                headers:
+                    authHeaders(),
 
-                headers:authHeaders(),
-
-                body:JSON.stringify({
-
-                    title,
-                    content,
-                    lesson_order
-
-                })
-
+                body:
+                    JSON.stringify({
+                        title,
+                        content,
+                        lesson_order:
+                            lessonOrder
+                    })
             }
-
         );
 
 
-        const data =
         await handleApiResponse(
             response
         );
 
 
-        alert(
-            "Lesson created successfully!"
+        setFlashToast(
+            "Lesson created successfully!",
+            "success"
         );
 
 
         window.location.href =
-        `manage-course.html?courseId=${courseId}`;
+            `manage-course.html?courseId=${courseId}`;
 
     }
 
-    catch(error){
+    catch (error) {
 
         console.error(error);
 
-        // handleApiResponse already handles
-        // authentication errors
-        if(
+
+        if (
             error.message !==
             "Authentication required"
-        ){
+        ) {
 
-            alert(
-                error.message
+            showToast(
+                error.message ||
+                "Unable to create lesson.",
+                "error"
             );
 
         }
 
     }
 
-    finally{
+    finally {
 
-        button.disabled = false;
+        button.disabled =
+            false;
 
         button.textContent =
-        "Create Lesson";
+            "Create Lesson";
 
     }
 

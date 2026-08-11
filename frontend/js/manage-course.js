@@ -28,13 +28,15 @@ window.location.search
 const courseId =
 params.get("courseId");
 
-if(!courseId){
+if (!courseId) {
 
-    alert("No course selected.");
+    setFlashToast(
+        "No course selected.",
+        "warning"
+    );
 
     window.location.href =
-    "../dashboard/instructor-dashboard.html";
-
+        "../dashboard/instructor-dashboard.html";
 }
 
 

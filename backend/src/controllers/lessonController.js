@@ -9,6 +9,37 @@ const createLesson = async (req, res) => {
     const { courseId } = req.params;
     const { title, content, lesson_order } = req.body;
 
+
+  if (
+  !title ||
+  !title.trim() ||
+  !content ||
+  !content.trim()
+  ) {
+
+      return res.status(400).json({
+          message:
+              "Lesson title and content are required"
+      });
+
+  }
+
+
+  const lessonOrder =
+      Number(lesson_order);
+
+
+  if (
+      !Number.isInteger(lessonOrder) ||
+      lessonOrder <= 0
+  ) {
+
+      return res.status(400).json({
+          message:
+              "Lesson order must be a positive whole number"
+      });
+
+  }
     // Verify course exists
     const courseResult = await pool.query(
       "SELECT * FROM courses WHERE id = $1",
@@ -35,7 +66,7 @@ const createLesson = async (req, res) => {
       (course_id, title, content, lesson_order)
       VALUES ($1, $2, $3, $4)
       RETURNING *`,
-      [courseId, title, content, lesson_order]
+      [courseId, title.trim(), content.trim(), lesson_order]
     );
 
     res.status(201).json({
