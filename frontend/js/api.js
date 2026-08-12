@@ -11,7 +11,7 @@
 const API = {
 
     BASE_URL:
-        "http://localhost:5000/api",
+        "https://eduplatform-api-7nax.onrender.com/api",
 
     endpoints: {
 
