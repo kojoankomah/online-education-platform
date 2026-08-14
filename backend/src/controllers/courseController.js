@@ -258,50 +258,140 @@ const getCourseForManagement = async (req, res) => {
  * Only the course owner can update it
  */
 const updateCourse = async (req, res) => {
+
   try {
+
     const { id } = req.params;
-    const { title, description } = req.body;
 
-    // Check if course exists
-    const courseResult = await pool.query(
-      "SELECT * FROM courses WHERE id = $1",
-      [id]
-    );
+    const {
+      title,
+      description
+    } = req.body;
 
-    if (courseResult.rows.length === 0) {
+
+    // ----------------------------
+    // VALIDATE TITLE
+    // ----------------------------
+
+    const cleanTitle =
+      typeof title === "string"
+        ? title.trim()
+        : "";
+
+
+    if (!cleanTitle) {
+
+      return res.status(400).json({
+        message:
+          "Course title is required"
+      });
+
+    }
+
+
+    // Description is optional
+    const cleanDescription =
+      typeof description === "string"
+        ? description.trim()
+        : "";
+
+
+    // ----------------------------
+    // CHECK COURSE EXISTS
+    // ----------------------------
+
+    const courseResult =
+      await pool.query(
+        `
+        SELECT *
+        FROM courses
+        WHERE id = $1
+        `,
+        [id]
+      );
+
+
+    if (
+      courseResult.rows.length === 0
+    ) {
+
       return res.status(404).json({
-        message: "Course not found"
+        message:
+          "Course not found"
       });
+
     }
 
-    const course = courseResult.rows[0];
 
-    // Verify ownership
-    if (Number(course.instructor_id) !== Number(req.user.id)) {
+    const course =
+      courseResult.rows[0];
+
+
+    // ----------------------------
+    // VERIFY OWNERSHIP
+    // ----------------------------
+
+    if (
+      Number(course.instructor_id) !==
+      Number(req.user.id)
+    ) {
+
       return res.status(403).json({
-        message: "You can only update your own courses"
+        message:
+          "You can only update your own courses"
       });
+
     }
 
-    const updatedCourse = await pool.query(
-      `UPDATE courses
-       SET title = $1,
-           description = $2
-       WHERE id = $3
-       RETURNING *`,
-      [title, description, id]
-    );
+
+    // ----------------------------
+    // UPDATE COURSE
+    // ----------------------------
+
+    const updatedCourse =
+      await pool.query(
+        `
+        UPDATE courses
+
+        SET
+          title = $1,
+          description = $2
+
+        WHERE id = $3
+
+        RETURNING *
+        `,
+        [
+          cleanTitle,
+          cleanDescription || null,
+          id
+        ]
+      );
+
 
     res.json({
-      message: "Course updated successfully",
-      course: updatedCourse.rows[0]
+
+      message:
+        "Course updated successfully",
+
+      course:
+        updatedCourse.rows[0]
+
     });
 
-  } catch (error) {
-    res.status(500).json({
-      error: error.message
-    });
   }
+
+  catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      error:
+        error.message
+    });
+
+  }
+
 };
 
 

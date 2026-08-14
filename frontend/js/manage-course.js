@@ -194,8 +194,19 @@ function displayLessons(lessons){
 }
 
 
+// Edit course
+document.getElementById(
+    "editCourseBtn"
+).onclick = () => {
 
-// Edit lesson
+    window.location.href =
+        `edit-course.html?courseId=${courseId}`;
+
+};
+
+
+
+// Add lesson
 document.getElementById(
 "addLessonBtn"
 ).onclick=()=>{
@@ -206,7 +217,7 @@ window.location.href=
 };
 
 
-// Edit lesson
+
 document.getElementById(
 "createQuizBtn"
 ).onclick=()=>{
