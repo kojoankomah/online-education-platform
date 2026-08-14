@@ -247,7 +247,6 @@ function displayQuestions() {
 
                 </label>
 
-                <br>
 
 
                 <label>
@@ -261,7 +260,6 @@ function displayQuestions() {
 
                 </label>
 
-                <br>
 
 
                 <label>
@@ -275,7 +273,6 @@ function displayQuestions() {
 
                 </label>
 
-                <br>
 
 
                 <label>

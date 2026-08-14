@@ -119,10 +119,11 @@ function displayCourses(courses) {
             </p>
 
             <button
-                onclick="enrollCourse(${course.id}, this)">
-
+                type="button"
+                class="btn btn-primary"
+                onclick="enroll(${course.id}, this)"
+            >
                 Enroll
-
             </button>
 
         `;
