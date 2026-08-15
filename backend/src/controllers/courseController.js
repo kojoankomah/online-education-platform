@@ -1,27 +1,144 @@
 const pool = require("../db/connection");
 
+const {
+  uploadImage,
+  deleteImage
+} = require("../utils/cloudinaryUpload");
+
 /**
- * Create a new course (Instructor only)
+ * Create a new course
+ * Instructor only
  */
 const createCourse = async (req, res) => {
+
   try {
-    const { title, description } = req.body;
 
-    // instructor_id comes from JWT middleware
-    const instructor_id = req.user.id;
+    const {
+      title,
+      description
+    } = req.body;
 
-    const result = await pool.query(
-      "INSERT INTO courses (title, description, instructor_id) VALUES ($1, $2, $3) RETURNING *",
-      [title, description, instructor_id]
-    );
+
+    // ----------------------------
+    // VALIDATE TITLE
+    // ----------------------------
+
+    const cleanTitle =
+      typeof title === "string"
+        ? title.trim()
+        : "";
+
+
+    if (!cleanTitle) {
+
+      return res.status(400).json({
+        message:
+          "Course title is required"
+      });
+
+    }
+
+
+    // Description is optional
+    const cleanDescription =
+      typeof description === "string"
+        ? description.trim()
+        : "";
+
+
+    // Instructor ID comes from JWT
+    const instructor_id =
+      req.user.id;
+
+
+    // ----------------------------
+    // COURSE THUMBNAIL
+    // ----------------------------
+
+    let image_url = null;
+    let image_public_id = null;
+
+
+    if (req.file) {
+
+      const uploadResult =
+        await uploadImage(
+          req.file.buffer
+        );
+
+
+      image_url =
+        uploadResult.secure_url;
+
+
+      image_public_id =
+        uploadResult.public_id;
+
+    }
+
+
+    // ----------------------------
+    // CREATE COURSE
+    // ----------------------------
+
+    const result =
+      await pool.query(
+        `
+        INSERT INTO courses (
+          title,
+          description,
+          image_url,
+          image_public_id,
+          instructor_id
+        )
+
+        VALUES (
+          $1,
+          $2,
+          $3,
+          $4,
+          $5
+        )
+
+        RETURNING *
+        `,
+        [
+          cleanTitle,
+          cleanDescription || null,
+          image_url,
+          image_public_id,
+          instructor_id
+        ]
+      );
+
 
     res.status(201).json({
-      message: "Course created successfully",
-      course: result.rows[0]
+
+      message:
+        "Course created successfully",
+
+      course:
+        result.rows[0]
+
     });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+
   }
+
+  catch (error) {
+
+    console.error(
+      "Create course error:",
+      error
+    );
+
+
+    res.status(500).json({
+      error:
+        error.message
+    });
+
+  }
+
 };
 
 /**
@@ -259,6 +376,8 @@ const getCourseForManagement = async (req, res) => {
  */
 const updateCourse = async (req, res) => {
 
+  let newImagePublicId = null;
+
   try {
 
     const { id } = req.params;
@@ -289,7 +408,6 @@ const updateCourse = async (req, res) => {
     }
 
 
-    // Description is optional
     const cleanDescription =
       typeof description === "string"
         ? description.trim()
@@ -345,7 +463,46 @@ const updateCourse = async (req, res) => {
 
 
     // ----------------------------
-    // UPDATE COURSE
+    // START WITH EXISTING IMAGE
+    // ----------------------------
+
+    let image_url =
+      course.image_url;
+
+    let image_public_id =
+      course.image_public_id;
+
+
+    // ----------------------------
+    // NEW THUMBNAIL SELECTED
+    // ----------------------------
+
+    if (req.file) {
+
+      const uploadResult =
+        await uploadImage(
+          req.file.buffer
+        );
+
+
+      image_url =
+        uploadResult.secure_url;
+
+
+      image_public_id =
+        uploadResult.public_id;
+
+
+      // Remember this in case
+      // database update fails
+      newImagePublicId =
+        uploadResult.public_id;
+
+    }
+
+
+    // ----------------------------
+    // UPDATE DATABASE
     // ----------------------------
 
     const updatedCourse =
@@ -355,18 +512,59 @@ const updateCourse = async (req, res) => {
 
         SET
           title = $1,
-          description = $2
+          description = $2,
+          image_url = $3,
+          image_public_id = $4
 
-        WHERE id = $3
+        WHERE id = $5
 
         RETURNING *
         `,
         [
           cleanTitle,
           cleanDescription || null,
+          image_url,
+          image_public_id,
           id
         ]
       );
+
+
+    // ----------------------------
+    // DELETE OLD CLOUDINARY IMAGE
+    // ONLY AFTER DATABASE UPDATE
+    // SUCCEEDS
+    // ----------------------------
+
+    if (
+      req.file &&
+      course.image_public_id &&
+      course.image_public_id !==
+        image_public_id
+    ) {
+
+      try {
+
+        await deleteImage(
+          course.image_public_id
+        );
+
+      }
+
+      catch (deleteError) {
+
+        // Course update succeeded,
+        // so do not fail the request
+        // just because old-image
+        // cleanup failed.
+        console.error(
+          "Old thumbnail cleanup error:",
+          deleteError
+        );
+
+      }
+
+    }
 
 
     res.json({
@@ -383,7 +581,37 @@ const updateCourse = async (req, res) => {
 
   catch (error) {
 
-    console.error(error);
+    console.error(
+      "Update course error:",
+      error
+    );
+
+
+    // If a new image reached Cloudinary
+    // but the database update failed,
+    // remove the new image so it
+    // does not become orphaned.
+    if (newImagePublicId) {
+
+      try {
+
+        await deleteImage(
+          newImagePublicId
+        );
+
+      }
+
+      catch (cleanupError) {
+
+        console.error(
+          "New thumbnail cleanup error:",
+          cleanupError
+        );
+
+      }
+
+    }
+
 
     res.status(500).json({
       error:

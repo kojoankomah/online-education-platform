@@ -1,5 +1,7 @@
 const express = require("express");
 
+const upload =
+  require("../middleware/uploadMiddleware");
 
 const router = express.Router();
 
@@ -48,6 +50,7 @@ router.post(
   "/",
   authMiddleware,
   roleMiddleware("instructor"),
+  upload.single("image"),
   createCourse
 );
 
@@ -59,6 +62,7 @@ router.put(
   "/:id",
   authMiddleware,
   roleMiddleware("instructor"),
+  upload.single("image"),
   updateCourse
 );
 

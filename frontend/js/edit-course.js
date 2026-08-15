@@ -1,8 +1,10 @@
 const token = getToken();
 
 if (!token) {
+
     window.location.href =
         "../auth/login.html";
+
 }
 
 
@@ -16,8 +18,10 @@ if (
     user &&
     user.role !== "instructor"
 ) {
+
     window.location.href =
         "../dashboard/student-dashboard.html";
+
 }
 
 
@@ -57,21 +61,69 @@ if (courseId) {
 
 
 /**
+ * Display current thumbnail
+ */
+function displayCurrentThumbnail(
+    imageUrl,
+    title
+) {
+
+    const container =
+        document.getElementById(
+            "currentThumbnail"
+        );
+
+
+    container.innerHTML = "";
+
+
+    if (!imageUrl) {
+
+        container.textContent =
+            "No thumbnail uploaded.";
+
+        return;
+
+    }
+
+
+    const image =
+        document.createElement(
+            "img"
+        );
+
+
+    image.src =
+        imageUrl;
+
+    image.alt =
+        `${title} course thumbnail`;
+
+
+    container.appendChild(
+        image
+    );
+
+}
+
+
+/**
  * Load current course information
  */
 async function loadCourse() {
 
     try {
 
-        const response = await fetch(
-            apiUrl(
-                `/courses/${courseId}/manage`
-            ),
-            {
-                headers:
-                    authHeaders()
-            }
-        );
+        const response =
+            await fetch(
+                apiUrl(
+                    `/courses/${courseId}/manage`
+                ),
+                {
+                    headers:
+                        authHeaders()
+                }
+            );
 
 
         const course =
@@ -90,6 +142,12 @@ async function loadCourse() {
             "courseDescription"
         ).value =
             course.description || "";
+
+
+        displayCurrentThumbnail(
+            course.image_url,
+            course.title
+        );
 
     }
 
@@ -116,6 +174,7 @@ async function loadCourse() {
                 "Unable to access this course.",
                 "error"
             );
+
 
             window.location.href =
                 "../dashboard/instructor-dashboard.html";
@@ -156,7 +215,20 @@ async function updateCourse(e) {
         ).value.trim();
 
 
-    // Title is required
+    const imageInput =
+        document.getElementById(
+            "courseImage"
+        );
+
+
+    const image =
+        imageInput.files[0];
+
+
+    // ----------------------------
+    // VALIDATE TITLE
+    // ----------------------------
+
     if (!title) {
 
         showToast(
@@ -169,13 +241,95 @@ async function updateCourse(e) {
     }
 
 
+    // ----------------------------
+    // VALIDATE NEW IMAGE
+    // ----------------------------
+
+    if (image) {
+
+        const allowedTypes = [
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+        ];
+
+
+        if (
+            !allowedTypes.includes(
+                image.type
+            )
+        ) {
+
+            showToast(
+                "Only JPG, PNG, and WEBP images are allowed.",
+                "warning"
+            );
+
+            return;
+
+        }
+
+
+        const maxSize =
+            5 * 1024 * 1024;
+
+
+        if (
+            image.size > maxSize
+        ) {
+
+            showToast(
+                "Course thumbnail must not exceed 5 MB.",
+                "warning"
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    // ----------------------------
+    // BUILD FORM DATA
+    // ----------------------------
+
+    const formData =
+        new FormData();
+
+
+    formData.append(
+        "title",
+        title
+    );
+
+
+    formData.append(
+        "description",
+        description
+    );
+
+
+    // Only send image if the instructor
+    // selected a replacement
+    if (image) {
+
+        formData.append(
+            "image",
+            image
+        );
+
+    }
+
+
     const button =
         e.target.querySelector(
             "button[type='submit']"
         );
 
 
-    button.disabled = true;
+    button.disabled =
+        true;
 
     button.textContent =
         "Saving...";
@@ -183,23 +337,26 @@ async function updateCourse(e) {
 
     try {
 
-        const response = await fetch(
-            apiUrl(
-                `/courses/${courseId}`
-            ),
-            {
-                method: "PUT",
+        const response =
+            await fetch(
+                apiUrl(
+                    `/courses/${courseId}`
+                ),
+                {
+                    method: "PUT",
 
-                headers:
-                    authHeaders(),
+                    // Do NOT use authHeaders()
+                    // because FormData needs the
+                    // browser-generated Content-Type.
+                    headers: {
+                        Authorization:
+                            `Bearer ${token}`
+                    },
 
-                body:
-                    JSON.stringify({
-                        title,
-                        description
-                    })
-            }
-        );
+                    body:
+                        formData
+                }
+            );
 
 
         await handleApiResponse(
@@ -240,7 +397,8 @@ async function updateCourse(e) {
 
     finally {
 
-        button.disabled = false;
+        button.disabled =
+            false;
 
         button.textContent =
             "Save Changes";
@@ -263,5 +421,7 @@ document
 
 // Load current values
 if (courseId) {
+
     loadCourse();
+
 }

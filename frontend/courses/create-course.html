@@ -38,42 +38,61 @@ Back to Dashboard
 
 <main class="container">
 
-<div class="card">
+        <div class="card">
 
-<h1>Create Course</h1>
+        <h1>Create Course</h1>
 
-<form id="courseForm">
+        <form id="courseForm">
 
-<label for="title">
-    Course Title
-</label>
+            <label for="title">
+                Course Title
+            </label>
 
-<input
-    type="text"
-    id="title"
-    required
->
+            <input
+                type="text"
+                id="title"
+                required
+            >
 
 
-<label for="description">
-    Description
-</label>
+            <label for="description">
+                Description
+            </label>
 
-<textarea
-    id="description"
-    rows="6"
-></textarea>
+            <textarea
+                id="description"
+                rows="6"
+            ></textarea>
 
-<button
-    type="submit"
-    class="btn btn-primary"
->
-    Create Course
-</button>
 
-</form>
+            <div class="form-group">
 
-</div>
+            <label for="courseImage">
+                Course Thumbnail
+            </label>
+
+            <input
+                type="file"
+                id="courseImage"
+                accept="image/jpeg,image/png,image/webp"
+            >
+
+            <small>
+                JPG, PNG or WEBP. Maximum size: 5 MB.
+            </small>
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Create Course
+            </button>
+
+        </form>
+
+    </div>
 
 </main>
 

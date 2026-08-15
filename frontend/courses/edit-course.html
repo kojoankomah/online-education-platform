@@ -47,54 +47,88 @@
 
 <main class="dashboard-container">
 
-<section class="card">
+    <section class="card">
 
-<h1>
-    Edit Course
-</h1>
-
-
-<form id="editCourseForm">
-
-<div class="form-group">
-
-<label for="courseTitle">
-    Course Title
-</label>
-
-<input
-    type="text"
-    id="courseTitle"
-    required
->
-
-</div>
+        <h1>
+            Edit Course
+        </h1>
 
 
-<div class="form-group">
+        <form id="editCourseForm">
 
-<label for="courseDescription">
-    Course Description
-</label>
+            <div class="form-group">
 
-<textarea
-    id="courseDescription"
-    rows="6"
-></textarea>
+                <label for="courseTitle">
+                    Course Title
+                </label>
 
-</div>
+                <input
+                    type="text"
+                    id="courseTitle"
+                    required
+                >
+
+            </div>
 
 
-<button
-    type="submit"
-    class="btn btn-primary"
->
-    Save Changes
-</button>
+            <div class="form-group">
 
-</form>
+                <label for="courseDescription">
+                    Course Description
+                </label>
 
-</section>
+                <textarea
+                    id="courseDescription"
+                    rows="6"
+                ></textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Current Thumbnail
+                </label>
+
+                <div
+                    id="currentThumbnail"
+                    class="course-thumbnail-preview"
+                >
+                    No thumbnail uploaded.
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="courseImage">
+                    Replace Thumbnail
+                </label>
+
+                <input
+                    type="file"
+                    id="courseImage"
+                    accept="image/jpeg,image/png,image/webp"
+                >
+
+                <small>
+                    JPG, PNG or WEBP. Maximum size: 5 MB.
+                </small>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Save Changes
+            </button>
+        </form>
+
+    </section>
 
 </main>
 

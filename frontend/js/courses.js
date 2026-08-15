@@ -97,10 +97,32 @@ function displayCourses(courses) {
 
 
         card.className =
-            "card";
+            "card course-browser-card";
 
 
         card.innerHTML = `
+
+        <div class="course-thumbnail">
+
+            ${
+                course.image_url
+                    ? `
+                        <img
+                            src="${course.image_url}"
+                            alt="${course.title} course thumbnail"
+                        >
+                    `
+                    : `
+                        <div class="course-thumbnail-placeholder">
+                            📚
+                        </div>
+                    `
+            }
+
+        </div>
+
+
+        <div class="course-card-body">
 
             <h2>
                 ${course.title}
@@ -126,8 +148,9 @@ function displayCourses(courses) {
                 Enroll
             </button>
 
-        `;
+        </div>
 
+    `;
 
         courseList.appendChild(card);
 

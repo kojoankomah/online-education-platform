@@ -761,6 +761,63 @@ TOAST NOTIFICATIONS
 }
 
 
+
+/* =====================================
+   COURSE BROWSER CARDS
+===================================== */
+
+.course-browser-card {
+    padding: 0;
+    overflow: hidden;
+}
+
+
+.course-thumbnail {
+    width: 100%;
+    height: 190px;
+    overflow: hidden;
+    background: #e2e8f0;
+}
+
+
+.course-thumbnail img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+
+.course-thumbnail-placeholder {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 3rem;
+    background: #f1f5f9;
+}
+
+
+.course-card-body {
+    padding: 20px;
+}
+
+
+.course-card-body h2 {
+    margin-top: 0;
+}
+
+
+.course-card-body .btn {
+    margin-top: 10px;
+}
+
+
+
+
 /* =========================================
    FOOTER
 ========================================= */
@@ -958,6 +1015,14 @@ RESPONSIVE DESIGN
 
     .toast {
         width: 100%;
+    }
+
+        .course-thumbnail {
+        height: 160px;
+    }
+
+    .course-card-body {
+        padding: 16px;
     }
 }
 
