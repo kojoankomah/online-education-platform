@@ -46,51 +46,14 @@ router.get(
 /**
  * PROTECTED: Create course (instructor only)
  */
-/*router.post(
-  "/",
-  authMiddleware,
-  roleMiddleware("instructor"),
-  upload.single("image"),
-  createCourse
-);*/
 router.post(
   "/",
   authMiddleware,
   roleMiddleware("instructor"),
   upload.single("image"),
-
-  (req, res, next) => {
-
-    console.log("=== CREATE COURSE DEBUG ===");
-
-    console.log(
-      "Content-Type:",
-      req.headers["content-type"]
-    );
-
-    console.log(
-      "Body:",
-      req.body
-    );
-
-    console.log(
-      "File:",
-      req.file
-        ? {
-            fieldname: req.file.fieldname,
-            mimetype: req.file.mimetype,
-            size: req.file.size
-          }
-        : null
-    );
-
-    console.log("===========================");
-
-    next();
-  },
-
   createCourse
 );
+
 /**
  * Update course
  * Instructor owner only
