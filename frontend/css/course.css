@@ -1,0 +1,25 @@
+#courseList {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    align-items: stretch;
+}
+
+#courseList .course-browser-card {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+
+
+
+
+
+
+@media (max-width: 600px) {
+    #courseList {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+}
