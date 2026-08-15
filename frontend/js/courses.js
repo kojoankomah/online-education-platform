@@ -121,7 +121,7 @@ function displayCourses(courses) {
             <button
                 type="button"
                 class="btn btn-primary"
-                onclick="enroll(${course.id}, this)"
+                onclick="enrollCourse(${course.id}, this)"
             >
                 Enroll
             </button>
