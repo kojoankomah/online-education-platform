@@ -107,6 +107,180 @@
 }
 
 
+
+/* =========================
+   COURSE CARDS
+========================= */
+
+.courses-page .course-browser-card {
+    display: flex;
+    flex-direction: column;
+
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+
+    overflow: hidden;
+
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+/* Subtle desktop hover effect */
+.courses-page .course-browser-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+    border-color: #cbd5e1;
+}
+
+
+/* Thumbnail */
+.courses-page .course-thumbnail {
+    width: 100%;
+    height: 190px;
+
+    overflow: hidden;
+
+    background: #f1f5f9;
+}
+
+.courses-page .course-thumbnail img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    transition: transform 0.3s ease;
+}
+
+.courses-page .course-browser-card:hover .course-thumbnail img {
+    transform: scale(1.03);
+}
+
+
+/* Placeholder when course has no image */
+.courses-page .course-thumbnail-placeholder {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 3rem;
+
+    background: #f1f5f9;
+}
+
+
+/* Course information */
+.courses-page .course-card-body {
+    display: flex;
+    flex-direction: column;
+
+    flex: 1;
+
+    padding: 22px;
+}
+
+
+/* Course title */
+.courses-page .course-card-body h2 {
+    margin: 0 0 10px;
+
+    font-size: 1.25rem;
+    line-height: 1.35;
+
+    color: #0f172a;
+}
+
+
+/* Course description / instructor */
+.courses-page .course-card-body p {
+    margin: 0 0 12px;
+
+    color: #64748b;
+
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+
+/* Keep button toward bottom of equal-height cards */
+.courses-page .course-card-body .btn {
+    margin-top: auto;
+
+    width: 100%;
+
+    text-align: center;
+}
+
+
+
+
+
+
+
+
+/* =========================
+   BALANCED COURSE CARD TEXT
+========================= */
+
+/* Keep course titles to a maximum of 2 lines */
+.courses-page .course-card-body h2 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    overflow: hidden;
+
+    min-height: 3.4rem;
+}
+
+
+/* Keep descriptions to a maximum of 3 lines */
+.courses-page .course-description {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+
+    overflow: hidden;
+
+    min-height: 4.6rem;
+}
+
+
+/* Keep instructor name neat */
+.courses-page .course-instructor {
+    margin-top: 6px;
+    margin-bottom: 18px;
+
+    font-weight: 500;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* Keep action buttons aligned */
+.courses-page .course-card-body .btn {
+    margin-top: auto;
+}
+
+
+
+
+
+
+
 /* =========================
    RESPONSIVE
 ========================= */
@@ -149,5 +323,17 @@
     #courseList {
         grid-template-columns: 1fr;
         gap: 18px;
+    }
+
+        .courses-page .course-thumbnail {
+        height: 170px;
+    }
+
+    .courses-page .course-card-body {
+        padding: 18px;
+    }
+
+    .courses-page .course-card-body h2 {
+        font-size: 1.15rem;
     }
 }

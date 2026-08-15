@@ -128,16 +128,12 @@ function displayCourses(courses) {
                 ${course.title}
             </h2>
 
-            <p>
-                ${
-                    course.description ||
-                    "No description available."
-                }
+            <p class="course-description">
+                ${course.description || "No description available."}
             </p>
 
-            <p>
-                Instructor:
-                ${course.instructor_name}
+            <p class="course-instructor">
+                Instructor: ${course.instructor_name}
             </p>
 
             <button
