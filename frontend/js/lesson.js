@@ -245,7 +245,6 @@ async function loadStudentChapters() {
                         "div"
                     );
 
-
                 card.className =
                     "card";
 
@@ -286,58 +285,148 @@ async function loadStudentChapters() {
                 }
 
 
-                card.innerHTML = `
+                // Chapter title
+                const title =
+                    document.createElement(
+                        "h3"
+                    );
 
-                    <h3>
-                        Chapter ${chapter.chapter_order}:
-                        ${chapter.title}
-                    </h3>
+                title.textContent =
+                    `Chapter ${chapter.chapter_order}: ${chapter.title}`;
 
-                    <p>
-                        ${
-                            chapter.description ||
-                            "No description available."
+
+                // Description
+                const description =
+                    document.createElement(
+                        "p"
+                    );
+
+                description.textContent =
+                    chapter.description ||
+                    "No description available.";
+
+
+                // Estimated time
+                const estimatedTime =
+                    document.createElement(
+                        "p"
+                    );
+
+                estimatedTime.textContent =
+                    chapter.estimated_minutes
+                        ? `${chapter.estimated_minutes} minutes`
+                        : "Estimated time not specified";
+
+
+                // Status
+                const status =
+                    document.createElement(
+                        "p"
+                    );
+
+                status.textContent =
+                    `Status: ${statusText}`;
+
+
+                // Requirement
+                const requirement =
+                    document.createElement(
+                        "p"
+                    );
+
+                requirement.textContent =
+                    chapter.is_required
+                        ? "Required"
+                        : "Optional";
+
+
+                // Chapter button
+                const button =
+                    document.createElement(
+                        "button"
+                    );
+
+                button.type =
+                    "button";
+
+                button.className =
+                    "btn btn-primary";
+
+                button.disabled =
+                    Boolean(
+                        chapter.is_locked
+                    );
+
+
+                if (
+                    chapter.is_locked
+                ) {
+
+                    button.textContent =
+                        "Locked";
+
+                }
+
+                else if (
+                    chapter.progress_status ===
+                    "completed"
+                ) {
+
+                    button.textContent =
+                        "Review Chapter";
+
+                }
+
+                else {
+
+                    button.textContent =
+                        "Open Chapter";
+
+                }
+
+
+                if (
+                    !chapter.is_locked
+                ) {
+
+                    button.addEventListener(
+                        "click",
+                        () => {
+
+                            openChapter(
+                                chapter.id,
+                                data.lesson.course_id
+                            );
+
                         }
-                    </p>
+                    );
 
-                    <p>
-                        ${
-                            chapter.estimated_minutes
-                                ? chapter.estimated_minutes + " minutes"
-                                : "Estimated time not specified"
-                        }
-                    </p>
-
-                    <p>
-                        Status:
-                        ${statusText}
-                    </p>
-
-                    <p>
-                        ${
-                            chapter.is_required
-                                ? "Required"
-                                : "Optional"
-                        }
-                    </p>
-
-                    <button
-                        type="button"
-                        class="btn btn-primary"
-                        onclick="openChapter(${chapter.id}, ${data.lesson.course_id})"
-                        ${chapter.is_locked ? "disabled" : ""}
-                    >
-                        ${
-                            chapter.is_locked
-                                ? "Locked"
-                                : chapter.progress_status === "completed"
-                                    ? "Review Chapter"
-                                    : "Open Chapter"
-                        }
-                    </button>
+                }
 
 
-                `;
+                card.appendChild(
+                    title
+                );
+
+                card.appendChild(
+                    description
+                );
+
+                card.appendChild(
+                    estimatedTime
+                );
+
+                card.appendChild(
+                    status
+                );
+
+                card.appendChild(
+                    requirement
+                );
+
+                card.appendChild(
+                    button
+                );
 
 
                 chapterList.appendChild(
