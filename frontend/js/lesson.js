@@ -44,6 +44,22 @@ const completeBtn =
     );
 
 
+const chapterSection =
+    document.getElementById(
+        "chapterSection"
+    );
+
+const chapterList =
+    document.getElementById(
+        "chapterList"
+    );
+
+const chapterProgress =
+    document.getElementById(
+        "chapterProgress"
+    );
+
+
 // Do not allow completion until
 // the backend confirms eligibility
 completeBtn.disabled = true;
@@ -94,6 +110,8 @@ async function loadLesson() {
         ).textContent =
             lesson.content;
 
+
+        await loadStudentChapters();
 
         // Only check these after
         // lesson access succeeds
@@ -153,6 +171,227 @@ async function loadLesson() {
 
 }
 
+
+
+/**
+ * Load chapters for the student
+ */
+async function loadStudentChapters() {
+
+    try {
+
+        const response =
+            await fetch(
+                apiUrl(
+                    API.endpoints.chapters +
+                    "/student/lesson/" +
+                    lessonId
+                ),
+                {
+                    headers:
+                        authHeaders()
+                }
+            );
+
+
+        const data =
+            await handleApiResponse(
+                response
+            );
+
+
+        const chapters =
+            data.chapters || [];
+
+
+        // Legacy lesson with no chapters
+        if (
+            chapters.length === 0
+        ) {
+
+            chapterSection.style.display =
+                "none";
+
+            return;
+
+        }
+
+
+        // Chapter-based lesson
+        chapterSection.style.display =
+            "block";
+
+
+        // Hide old lesson-level content
+        document.getElementById(
+            "lessonContent"
+        ).style.display =
+            "none";
+
+
+        chapterProgress.textContent =
+            `${data.completed_required_chapters} of ${data.required_chapter_count} required chapters completed`;
+
+
+        chapterList.innerHTML =
+            "";
+
+
+        chapters.forEach(
+            chapter => {
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                card.className =
+                    "card";
+
+
+                let statusText =
+                    "Not Started";
+
+
+                if (
+                    chapter.progress_status ===
+                    "in_progress"
+                ) {
+
+                    statusText =
+                        "In Progress";
+
+                }
+
+
+                if (
+                    chapter.progress_status ===
+                    "completed"
+                ) {
+
+                    statusText =
+                        "Completed";
+
+                }
+
+
+                if (
+                    chapter.is_locked
+                ) {
+
+                    statusText =
+                        "Locked";
+
+                }
+
+
+                card.innerHTML = `
+
+                    <h3>
+                        Chapter ${chapter.chapter_order}:
+                        ${chapter.title}
+                    </h3>
+
+                    <p>
+                        ${
+                            chapter.description ||
+                            "No description available."
+                        }
+                    </p>
+
+                    <p>
+                        ${
+                            chapter.estimated_minutes
+                                ? chapter.estimated_minutes + " minutes"
+                                : "Estimated time not specified"
+                        }
+                    </p>
+
+                    <p>
+                        Status:
+                        ${statusText}
+                    </p>
+
+                    <p>
+                        ${
+                            chapter.is_required
+                                ? "Required"
+                                : "Optional"
+                        }
+                    </p>
+
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        onclick="openChapter(${chapter.id}, ${data.lesson.course_id})"
+                        ${chapter.is_locked ? "disabled" : ""}
+                    >
+                        ${
+                            chapter.is_locked
+                                ? "Locked"
+                                : chapter.progress_status === "completed"
+                                    ? "Review Chapter"
+                                    : "Open Chapter"
+                        }
+                    </button>
+
+
+                `;
+
+
+                chapterList.appendChild(
+                    card
+                );
+
+            }
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Chapter loading error:",
+            error
+        );
+
+
+        chapterSection.style.display =
+            "none";
+
+
+        if (
+            error.message !==
+            "Authentication required"
+        ) {
+
+            showToast(
+                error.message ||
+                "Unable to load lesson chapters.",
+                "error"
+            );
+
+        }
+
+    }
+
+}
+
+
+
+/**
+ * Open an available chapter
+ */
+function openChapter(
+    chapterId,
+    courseId
+) {
+
+    window.location.href =
+        `../chapters/chapter.html?chapterId=${chapterId}&lessonId=${lessonId}&courseId=${courseId}`;
+
+}
 
 
 /**
