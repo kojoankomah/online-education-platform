@@ -150,6 +150,11 @@ async function loadCourse() {
             courseProgress
         );
 
+        await setupContinueLearning(
+            data.lessons || [],
+            completedLessons || []
+        );
+
     }
 
     catch (error) {
@@ -199,6 +204,194 @@ async function loadCourse() {
 
 }
 
+
+
+/**
+ * Set up Continue Learning
+ */
+async function setupContinueLearning(
+    lessons,
+    completedLessons
+) {
+
+    const section =
+        document.getElementById(
+            "continueLearningSection"
+        );
+
+    const text =
+        document.getElementById(
+            "continueLearningText"
+        );
+
+    const button =
+        document.getElementById(
+            "continueLearningBtn"
+        );
+
+
+    section.style.display =
+        "none";
+
+
+    if (
+        lessons.length === 0
+    ) {
+
+        return;
+
+    }
+
+
+    const completedIds =
+        completedLessons.map(
+            item =>
+                Number(item.lesson_id)
+        );
+
+
+    // First unfinished lesson
+    const nextLesson =
+        lessons.find(
+            lesson =>
+                !completedIds.includes(
+                    Number(lesson.id)
+                )
+        );
+
+
+    // Entire course completed
+    if (!nextLesson) {
+
+        return;
+
+    }
+
+
+    let destination =
+        `../lessons/lesson.html?lessonId=${nextLesson.id}`;
+
+
+    let destinationText =
+        `Continue with Lesson ${nextLesson.lesson_order}: ${nextLesson.title}`;
+
+
+    try {
+
+        const response =
+            await fetch(
+                apiUrl(
+                    API.endpoints.chapters +
+                    "/student/lesson/" +
+                    nextLesson.id
+                ),
+                {
+                    headers:
+                        authHeaders()
+                }
+            );
+
+
+        const chapterData =
+            await handleApiResponse(
+                response
+            );
+
+
+        const chapters =
+            chapterData.chapters || [];
+
+
+        // Resume something already started first
+        const inProgressChapter =
+            chapters.find(
+                chapter =>
+                    !chapter.is_locked &&
+                    chapter.progress_status ===
+                        "in_progress"
+            );
+
+
+        // Otherwise continue with the next
+        // incomplete required chapter
+        const nextRequiredChapter =
+            chapters.find(
+                chapter =>
+                    !chapter.is_locked &&
+                    chapter.is_required &&
+                    chapter.progress_status !==
+                        "completed"
+            );
+
+
+        const targetChapter =
+            inProgressChapter ||
+            nextRequiredChapter;
+
+
+        if (targetChapter) {
+
+            destination =
+                `../chapters/chapter.html?chapterId=${targetChapter.id}&lessonId=${nextLesson.id}&courseId=${courseId}`;
+
+
+            destinationText =
+                targetChapter.progress_status ===
+                    "in_progress"
+                    ? `Resume Chapter ${targetChapter.chapter_order}: ${targetChapter.title}`
+                    : `Continue with Chapter ${targetChapter.chapter_order}: ${targetChapter.title}`;
+
+        }
+
+        /*
+         * If all required chapters are complete
+         * but the lesson itself is unfinished,
+         * destination remains the lesson page.
+         * This lets the student continue to
+         * the quiz/completion step.
+         */
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Continue learning error:",
+            error
+        );
+
+
+        if (
+            error.message ===
+            "Authentication required"
+        ) {
+
+            return;
+
+        }
+
+
+        // Fall back safely to the lesson page.
+    }
+
+
+    text.textContent =
+        destinationText;
+
+
+    button.onclick =
+        () => {
+
+            window.location.href =
+                destination;
+
+        };
+
+
+    section.style.display =
+        "block";
+
+}
 
 
 /**
