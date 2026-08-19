@@ -84,6 +84,19 @@ const completeChapterBtn =
     );
 
 
+const previousChapterBtn =
+    document.getElementById(
+        "previousChapterBtn"
+    );
+
+
+const nextChapterBtn =
+    document.getElementById(
+        "nextChapterBtn"
+    );
+
+
+
 // =========================
 // BACK TO LESSON
 // =========================
@@ -391,13 +404,22 @@ async function loadChapterProgress() {
             );
 
 
+        const chapters =
+            data.chapters || [];
+
+
+        const currentIndex =
+            chapters.findIndex(
+                item =>
+                    Number(item.id) ===
+                    Number(chapterId)
+            );
+
+
         const chapter =
-            (data.chapters || [])
-                .find(
-                    item =>
-                        Number(item.id) ===
-                        Number(chapterId)
-                );
+            currentIndex !== -1
+                ? chapters[currentIndex]
+                : null;
 
 
         if (!chapter) {
@@ -407,6 +429,13 @@ async function loadChapterProgress() {
             );
 
         }
+
+
+        setupChapterNavigation(
+            chapters,
+            currentIndex
+        );
+
 
 
         if (
@@ -467,6 +496,128 @@ async function loadChapterProgress() {
     }
 
 }
+
+
+
+// =========================
+// CHAPTER NAVIGATION
+// =========================
+
+function setupChapterNavigation(
+    chapters,
+    currentIndex
+) {
+
+    previousChapterBtn.style.display =
+        "none";
+
+    nextChapterBtn.style.display =
+        "none";
+
+
+    // Previous chapter
+    if (
+        currentIndex > 0
+    ) {
+
+        const previousChapter =
+            chapters[currentIndex - 1];
+
+
+        previousChapterBtn.style.display =
+            "inline-flex";
+
+        previousChapterBtn.disabled =
+            previousChapter.is_locked;
+
+
+        previousChapterBtn.textContent =
+            "Previous Chapter";
+
+
+        previousChapterBtn.onclick =
+            () => {
+
+                if (
+                    previousChapter.is_locked
+                ) {
+
+                    return;
+
+                }
+
+
+                openChapter(
+                    previousChapter.id
+                );
+
+            };
+
+    }
+
+
+    // Next chapter
+    if (
+        currentIndex <
+        chapters.length - 1
+    ) {
+
+        const nextChapter =
+            chapters[currentIndex + 1];
+
+
+        nextChapterBtn.style.display =
+            "inline-flex";
+
+
+        if (
+            nextChapter.is_locked
+        ) {
+
+            nextChapterBtn.disabled =
+                true;
+
+            nextChapterBtn.textContent =
+                "Complete Current Chapter to Unlock Next";
+
+        }
+
+        else {
+
+            nextChapterBtn.disabled =
+                false;
+
+            nextChapterBtn.textContent =
+                "Next Chapter";
+
+
+            nextChapterBtn.onclick =
+                () => {
+
+                    openChapter(
+                        nextChapter.id
+                    );
+
+                };
+
+        }
+
+    }
+
+}
+
+
+// =========================
+// OPEN CHAPTER
+// =========================
+
+function openChapter(targetChapterId) {
+
+    window.location.href =
+        `chapter.html?chapterId=${targetChapterId}&lessonId=${lessonId}&courseId=${courseId}`;
+
+}
+
 
 
 // =========================
@@ -561,6 +712,8 @@ async function completeChapter() {
             "Chapter completed successfully!",
             "success"
         );
+
+        await loadChapterProgress();
 
     }
 
