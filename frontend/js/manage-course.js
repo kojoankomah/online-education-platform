@@ -184,6 +184,13 @@ function displayLessons(lessons){
                 Edit Lesson
             </button>
 
+            <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="manageChapters(${lesson.id})"
+            >
+                Manage Chapters
+            </button>
         `;
 
 
@@ -248,6 +255,13 @@ function editLesson(lessonId) {
 
 }
 
+// Manage chapters
+function manageChapters(lessonId) {
+
+    window.location.href =
+        `manage-chapters.html?lessonId=${lessonId}&courseId=${courseId}`;
+
+}
 
 
 

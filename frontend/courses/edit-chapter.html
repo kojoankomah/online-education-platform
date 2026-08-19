@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Edit Chapter</title>
+
+<link
+    rel="stylesheet"
+    href="../css/global.css"
+>
+
+</head>
+
+<body>
+
+<header class="dashboard-header">
+
+    <a href="javascript:history.back()">
+        Back
+    </a>
+
+    <a
+        id="backToChapters"
+        href="#"
+    >
+        Back to Chapters
+    </a>
+
+</header>
+
+
+<main class="container">
+
+<div class="card">
+
+    <h1>
+        Edit Chapter
+    </h1>
+
+
+    <form id="chapterForm">
+
+        <label for="title">
+            Chapter Title
+        </label>
+
+        <input
+            type="text"
+            id="title"
+            required
+        >
+
+
+        <label for="description">
+            Description
+        </label>
+
+        <textarea
+            id="description"
+            rows="5"
+        ></textarea>
+
+
+        <label for="chapterOrder">
+            Chapter Order
+        </label>
+
+        <input
+            type="number"
+            id="chapterOrder"
+            min="1"
+            step="1"
+            required
+        >
+
+
+        <label for="estimatedMinutes">
+            Estimated Minutes
+        </label>
+
+        <input
+            type="number"
+            id="estimatedMinutes"
+            min="1"
+            step="1"
+        >
+
+
+        <label for="isRequired">
+            Required Chapter
+        </label>
+
+        <select id="isRequired">
+
+            <option value="true">
+                Yes
+            </option>
+
+            <option value="false">
+                No
+            </option>
+
+        </select>
+
+
+        <label for="status">
+            Status
+        </label>
+
+        <select id="status">
+
+            <option value="published">
+                Published
+            </option>
+
+            <option value="draft">
+                Draft
+            </option>
+
+        </select>
+
+
+        <button
+            type="submit"
+            class="btn btn-primary"
+        >
+            Save Changes
+        </button>
+
+    </form>
+
+</div>
+
+</main>
+
+
+<script src="../js/notifications.js"></script>
+
+<script src="../js/api.js"></script>
+
+<script src="../js/edit-chapter.js"></script>
+
+</body>
+
+</html>

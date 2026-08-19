@@ -37,7 +37,13 @@ const API = {
             "/quizzes",
 
         progress:
-            "/progress"
+            "/progress",
+
+        chapters:
+            "/chapters",
+
+        chapterContent:
+            "/chapter-content"
 
     }
 
