@@ -468,22 +468,45 @@ async function loadQuizButton() {
         );
 
 
+        if (
+            error.message ===
+            "Authentication required"
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            error.status === 403 &&
+            error.message ===
+            "Complete all required chapters before accessing this quiz"
+        ) {
+
+            quizBtn.style.display =
+                "inline-flex";
+
+            quizBtn.disabled =
+                true;
+
+            quizBtn.textContent =
+                "Complete Required Chapters to Unlock Quiz";
+
+            return;
+
+        }
+
+
         quizBtn.style.display =
             "none";
 
 
-        if (
-            error.message !==
-            "Authentication required"
-        ) {
-
-            showToast(
-                error.message ||
-                "Unable to load lesson quiz.",
-                "error"
-            );
-
-        }
+        showToast(
+            error.message ||
+            "Unable to load lesson quiz.",
+            "error"
+        );
 
     }
 
