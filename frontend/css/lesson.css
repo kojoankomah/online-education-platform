@@ -30,3 +30,148 @@ display:none;
     cursor:pointer;
 
 }
+
+
+
+
+
+/* =========================
+   CHAPTER SECTION
+========================= */
+
+#chapterSection {
+    margin-top: 28px;
+}
+
+#chapterSection h2 {
+    margin-bottom: 8px;
+}
+
+#chapterProgress {
+    margin-bottom: 18px;
+    font-weight: 600;
+    color: #475569;
+}
+
+
+/* =========================
+   CHAPTER LIST
+========================= */
+
+#chapterList {
+    display: grid;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+#chapterList .card {
+    margin: 0;
+    padding: 20px;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+}
+
+#chapterList h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+#chapterList p {
+    margin: 8px 0;
+    line-height: 1.6;
+}
+
+
+/* =========================
+   CHAPTER CONTENT
+========================= */
+
+.chapter-content-block {
+    padding: 20px 0;
+    border-bottom: 1px solid #E2E8F0;
+    line-height: 1.8;
+}
+
+.chapter-content-block:last-child {
+    border-bottom: none;
+}
+
+.chapter-content-block p {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.8;
+}
+
+.chapter-content-block img {
+    display: block;
+    width: 100%;
+    max-width: 800px;
+    height: auto;
+    margin: 10px auto;
+    border-radius: 10px;
+}
+
+.chapter-content-block a {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    color: #2563EB;
+}
+
+.chapter-content-block a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================
+   CHAPTER READER
+========================= */
+
+#chapterDescription {
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+
+#chapterMeta {
+    font-weight: 600;
+    color: #64748B;
+}
+
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+
+#completeChapterBtn {
+    padding: 12px 20px;
+}
+
+.btn:disabled,
+#completeBtn:disabled,
+#completeChapterBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 600px) {
+
+    #chapterList .card {
+        padding: 16px;
+    }
+
+    .chapter-content-block {
+        padding: 16px 0;
+    }
+
+    .chapter-content-block p {
+        font-size: 16px;
+    }
+
+}

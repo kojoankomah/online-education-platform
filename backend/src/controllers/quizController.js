@@ -284,6 +284,72 @@ const getLessonQuizzes = async (req, res) => {
 
       }
 
+
+      // =========================
+      // CHECK CHAPTER COMPLETION
+      // =========================
+
+      const chapterProgressResult =
+        await pool.query(
+          `
+            SELECT
+
+              COUNT(c.id) FILTER (
+                WHERE
+                  c.is_required = TRUE
+                  AND c.status = 'published'
+              )::INTEGER
+              AS required_count,
+
+              COUNT(c.id) FILTER (
+                WHERE
+                  c.is_required = TRUE
+                  AND c.status = 'published'
+                  AND cp.status = 'completed'
+              )::INTEGER
+              AS completed_count
+
+            FROM chapters c
+
+            LEFT JOIN chapter_progress cp
+              ON cp.chapter_id = c.id
+              AND cp.student_id = $1
+
+            WHERE c.lesson_id = $2
+          `,
+          [
+            req.user.id,
+            lessonId
+          ]
+        );
+
+
+      const requiredCount =
+        Number(
+          chapterProgressResult.rows[0]
+            .required_count
+        );
+
+
+      const completedCount =
+        Number(
+          chapterProgressResult.rows[0]
+            .completed_count
+        );
+
+
+      if (
+        requiredCount > 0 &&
+        completedCount < requiredCount
+      ) {
+
+        return res.status(403).json({
+          message:
+            "Complete all required chapters before accessing this quiz"
+        });
+
+      }
+
     }
 
 
