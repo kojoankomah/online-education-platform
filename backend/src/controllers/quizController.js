@@ -119,32 +119,216 @@ const createQuiz = async (req, res) => {
 
 /**
  * Get quizzes for a lesson
+ * Instructor owner only
+ * Student must be enrolled and lesson unlocked
  */
 const getLessonQuizzes = async (req, res) => {
 
   try {
 
-    const { lessonId } = req.params;
+    const lessonId =
+      Number(req.params.lessonId);
 
 
-    const quizzes = await pool.query(
-      `
-      SELECT *
-      FROM quizzes
-      WHERE lesson_id = $1
-      ORDER BY created_at ASC
-      `,
-      [lessonId]
+    if (
+      !Number.isInteger(lessonId) ||
+      lessonId <= 0
+    ) {
+
+      return res.status(400).json({
+        message: "Invalid lesson ID"
+      });
+
+    }
+
+
+    // =========================
+    // GET LESSON + COURSE
+    // =========================
+
+    const lessonResult =
+      await pool.query(
+        `
+        SELECT
+          lessons.id,
+          lessons.course_id,
+          lessons.lesson_order,
+          courses.instructor_id
+
+        FROM lessons
+
+        JOIN courses
+          ON courses.id =
+          lessons.course_id
+
+        WHERE lessons.id = $1
+        `,
+        [lessonId]
+      );
+
+
+    if (
+      lessonResult.rows.length === 0
+    ) {
+
+      return res.status(404).json({
+        message: "Lesson not found"
+      });
+
+    }
+
+
+    const lesson =
+      lessonResult.rows[0];
+
+
+    // =========================
+    // INSTRUCTOR AUTHORIZATION
+    // =========================
+
+    if (
+      req.user.role === "instructor"
+    ) {
+
+      if (
+        Number(lesson.instructor_id) !==
+        Number(req.user.id)
+      ) {
+
+        return res.status(403).json({
+          message:
+            "You can only view quizzes from your own courses"
+        });
+
+      }
+
+    }
+
+
+    // =========================
+    // STUDENT AUTHORIZATION
+    // =========================
+
+    else if (
+      req.user.role === "student"
+    ) {
+
+      const enrollmentResult =
+        await pool.query(
+          `
+          SELECT id
+          FROM enrollments
+
+          WHERE student_id = $1
+          AND course_id = $2
+          `,
+          [
+            req.user.id,
+            lesson.course_id
+          ]
+        );
+
+
+      if (
+        enrollmentResult.rows.length === 0
+      ) {
+
+        return res.status(403).json({
+          message:
+            "You are not enrolled in this course"
+        });
+
+      }
+
+
+      // =========================
+      // CHECK LESSON LOCK
+      // =========================
+
+      const previousLessonsResult =
+        await pool.query(
+          `
+          SELECT
+            l.id
+
+          FROM lessons l
+
+          LEFT JOIN lesson_progress lp
+            ON lp.lesson_id = l.id
+            AND lp.student_id = $1
+
+          WHERE l.course_id = $2
+
+          AND l.lesson_order < $3
+
+          AND lp.lesson_id IS NULL
+
+          LIMIT 1
+          `,
+          [
+            req.user.id,
+            lesson.course_id,
+            lesson.lesson_order
+          ]
+        );
+
+
+      if (
+        previousLessonsResult.rows.length > 0
+      ) {
+
+        return res.status(403).json({
+          message:
+            "Complete the previous lessons before accessing this quiz"
+        });
+
+      }
+
+    }
+
+
+    else {
+
+      return res.status(403).json({
+        message: "Access denied"
+      });
+
+    }
+
+
+    // =========================
+    // GET QUIZZES
+    // =========================
+
+    const quizzes =
+      await pool.query(
+        `
+        SELECT *
+        FROM quizzes
+
+        WHERE lesson_id = $1
+
+        ORDER BY created_at ASC
+        `,
+        [lessonId]
+      );
+
+
+    res.json(
+      quizzes.rows
     );
 
 
-    res.json(quizzes.rows);
+  } catch (error) {
 
+    console.error(
+      "Get lesson quizzes error:",
+      error
+    );
 
-  } catch(error){
 
     res.status(500).json({
-      error:error.message
+      error: error.message
     });
 
   }
@@ -264,21 +448,27 @@ const getQuizQuestions = async (req, res) => {
     /*
      * Find the quiz together with its course
      */
-    const quizResult = await pool.query(
-      `
-      SELECT
-        quizzes.id,
-        courses.id AS course_id,
-        courses.instructor_id
-      FROM quizzes
-      JOIN lessons
-        ON quizzes.lesson_id = lessons.id
-      JOIN courses
-        ON lessons.course_id = courses.id
-      WHERE quizzes.id = $1
-      `,
-      [quizId]
-    );
+const quizResult = await pool.query(
+  `
+  SELECT
+    quizzes.id,
+    quizzes.lesson_id,
+    lessons.lesson_order,
+    courses.id AS course_id,
+    courses.instructor_id
+
+  FROM quizzes
+
+  JOIN lessons
+    ON quizzes.lesson_id = lessons.id
+
+  JOIN courses
+    ON lessons.course_id = courses.id
+
+  WHERE quizzes.id = $1
+  `,
+  [quizId]
+);
 
     if (quizResult.rows.length === 0) {
 
@@ -288,84 +478,194 @@ const getQuizQuestions = async (req, res) => {
 
     }
 
-const quiz = quizResult.rows[0];
+  const quiz = quizResult.rows[0];
 
 
-// Instructor authorization
-if (req.user.role === "instructor") {
+  // Instructor authorization
+  if (req.user.role === "instructor") {
+
+    if (
+      Number(quiz.instructor_id) !== Number(req.user.id)
+    ) {
+
+      return res.status(403).json({
+        message:
+        "You can only view questions for your own quizzes"
+      });
+
+    }
+
+}
+
+
+  // Student authorization
+  else if (req.user.role === "student") {
+
+
+    const enrollmentResult = await pool.query(
+      `
+      SELECT *
+      FROM enrollments
+      WHERE student_id = $1
+      AND course_id = $2
+      `,
+      [
+        req.user.id,
+        quiz.course_id
+      ]
+    );
+
+
+    if (enrollmentResult.rows.length === 0) {
+
+      return res.status(403).json({
+        message:
+        "You are not enrolled in this course"
+      });
+
+    }
+
+
+
+
+  // =========================
+  // CHECK LESSON LOCK
+  // =========================
+
+  const previousLessonsResult =
+    await pool.query(
+      `
+      SELECT
+        l.id
+
+      FROM lessons l
+
+      LEFT JOIN lesson_progress lp
+        ON lp.lesson_id = l.id
+        AND lp.student_id = $1
+
+      WHERE l.course_id = $2
+
+      AND l.lesson_order < $3
+
+      AND lp.lesson_id IS NULL
+
+      LIMIT 1
+      `,
+      [
+        req.user.id,
+        quiz.course_id,
+        quiz.lesson_order
+      ]
+    );
+
 
   if (
-    Number(quiz.instructor_id) !== Number(req.user.id)
+    previousLessonsResult.rows.length > 0
   ) {
 
     return res.status(403).json({
       message:
-      "You can only view questions for your own quizzes"
+        "Complete the previous lessons before accessing this quiz"
     });
 
   }
 
+
+
+    // =========================
+    // CHECK CHAPTER COMPLETION
+    // =========================
+
+    const chapterProgressResult =
+      await pool.query(
+        `
+        SELECT
+
+          COUNT(c.id) FILTER (
+            WHERE
+              c.is_required = TRUE
+              AND c.status = 'published'
+          )::INTEGER
+          AS required_count,
+
+          COUNT(c.id) FILTER (
+            WHERE
+              c.is_required = TRUE
+              AND c.status = 'published'
+              AND cp.status = 'completed'
+          )::INTEGER
+          AS completed_count
+
+        FROM chapters c
+
+        LEFT JOIN chapter_progress cp
+          ON cp.chapter_id = c.id
+          AND cp.student_id = $1
+
+        WHERE c.lesson_id = $2
+        `,
+        [
+          req.user.id,
+          quiz.lesson_id
+        ]
+      );
+
+
+    const requiredCount =
+      Number(
+        chapterProgressResult.rows[0]
+          .required_count
+      );
+
+    const completedCount =
+      Number(
+        chapterProgressResult.rows[0]
+          .completed_count
+      );
+
+
+    if (
+      requiredCount > 0 &&
+      completedCount < requiredCount
+    ) {
+
+      return res.status(403).json({
+        message:
+          "Complete all required chapters before taking the quiz"
+      });
+
+    }
+
 }
 
-
-// Student authorization
-else if (req.user.role === "student") {
-
-
-  const enrollmentResult = await pool.query(
+  // Get questions after authorization passes
+  const questions = await pool.query(
     `
-    SELECT *
-    FROM enrollments
-    WHERE student_id = $1
-    AND course_id = $2
+    SELECT
+      id,
+      question,
+      option_a,
+      option_b,
+      option_c,
+      option_d
+    FROM quiz_questions
+    WHERE quiz_id = $1
     `,
-    [
-      req.user.id,
-      quiz.course_id
-    ]
+    [quizId]
   );
 
 
-  if (enrollmentResult.rows.length === 0) {
+  res.json(questions.rows);
 
-    return res.status(403).json({
-      message:
-      "You are not enrolled in this course"
+
+  } catch (error) {
+
+    res.status(500).json({
+      error: error.message
     });
 
   }
-
-}
-
-
-
-// Get questions after authorization passes
-const questions = await pool.query(
-  `
-  SELECT
-    id,
-    question,
-    option_a,
-    option_b,
-    option_c,
-    option_d
-  FROM quiz_questions
-  WHERE quiz_id = $1
-  `,
-  [quizId]
-);
-
-
-res.json(questions.rows);
-
-
-} catch (error) {
-
-  res.status(500).json({
-    error: error.message
-  });
-
-}
 
 };
 
@@ -381,7 +681,9 @@ const submitQuiz = async (req, res) => {
       `
       SELECT
         q.id,
-        l.course_id
+        q.lesson_id,
+        l.course_id,
+        l.lesson_order
       FROM quizzes q
       JOIN lessons l
         ON q.lesson_id = l.id
@@ -398,8 +700,11 @@ const submitQuiz = async (req, res) => {
 
     }
 
+    const quiz =
+      quizResult.rows[0];
+
     const courseId =
-    quizResult.rows[0].course_id;
+      quiz.course_id;
 
 
     // Verify that the student is enrolled
@@ -426,6 +731,112 @@ const submitQuiz = async (req, res) => {
     }
 
 
+
+    // =========================
+    // CHECK LESSON LOCK
+    // =========================
+
+    const previousLessonsResult =
+      await pool.query(
+        `
+        SELECT
+          l.id
+
+        FROM lessons l
+
+        LEFT JOIN lesson_progress lp
+          ON lp.lesson_id = l.id
+          AND lp.student_id = $1
+
+        WHERE l.course_id = $2
+
+        AND l.lesson_order < $3
+
+        AND lp.lesson_id IS NULL
+
+        LIMIT 1
+        `,
+        [
+          studentId,
+          courseId,
+          quiz.lesson_order
+        ]
+      );
+
+
+    if (
+      previousLessonsResult.rows.length > 0
+    ) {
+
+      return res.status(403).json({
+        message:
+          "Complete the previous lessons before submitting this quiz"
+      });
+
+    }
+    // =========================
+    // CHECK CHAPTER COMPLETION
+    // =========================
+
+    const chapterProgressResult =
+      await pool.query(
+        `
+        SELECT
+
+          COUNT(c.id) FILTER (
+            WHERE
+              c.is_required = TRUE
+              AND c.status = 'published'
+          )::INTEGER
+          AS required_count,
+
+          COUNT(c.id) FILTER (
+            WHERE
+              c.is_required = TRUE
+              AND c.status = 'published'
+              AND cp.status = 'completed'
+          )::INTEGER
+          AS completed_count
+
+        FROM chapters c
+
+        LEFT JOIN chapter_progress cp
+          ON cp.chapter_id = c.id
+          AND cp.student_id = $1
+
+        WHERE c.lesson_id = $2
+        `,
+        [
+          studentId,
+          quiz.lesson_id
+        ]
+      );
+
+
+    const requiredCount =
+      Number(
+        chapterProgressResult.rows[0]
+          .required_count
+      );
+
+    const completedCount =
+      Number(
+        chapterProgressResult.rows[0]
+          .completed_count
+      );
+
+
+    if (
+      requiredCount > 0 &&
+      completedCount < requiredCount
+    ) {
+
+      return res.status(403).json({
+        message:
+          "Complete all required chapters before submitting the quiz"
+      });
+
+    }
 
     // Get all correct answers
     const questionsResult = await pool.query(

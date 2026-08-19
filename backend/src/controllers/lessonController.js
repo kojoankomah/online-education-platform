@@ -338,7 +338,7 @@ const getCourseLessons = async (req, res) => {
     }
 
     // Authorization passed
-    const lessons = await pool.query(
+    const lessonsResult = await pool.query(
       `
       SELECT *
       FROM lessons
@@ -348,12 +348,110 @@ const getCourseLessons = async (req, res) => {
       [courseId]
     );
 
+
+    let lessons =
+      lessonsResult.rows;
+
+
+    // =========================
+    // STUDENT LESSON LOCKING
+    // =========================
+
+    if (req.user.role === "student") {
+
+      const progressResult =
+        await pool.query(
+          `
+          SELECT lesson_id
+          FROM lesson_progress
+
+          WHERE student_id = $1
+
+          AND lesson_id IN (
+            SELECT id
+            FROM lessons
+            WHERE course_id = $2
+          )
+          `,
+          [
+            req.user.id,
+            courseId
+          ]
+        );
+
+
+      const completedLessonIds =
+        new Set(
+          progressResult.rows.map(
+            row => Number(row.lesson_id)
+          )
+        );
+
+
+      /*
+      * First lesson is available.
+      *
+      * Each later lesson becomes available
+      * only when every lesson before it
+      * has been completed.
+      */
+      let allPreviousCompleted =
+        true;
+
+
+      lessons =
+        lessons.map(
+          lesson => {
+
+            const completed =
+              completedLessonIds.has(
+                Number(lesson.id)
+              );
+
+
+            const isLocked =
+              !allPreviousCompleted;
+
+
+            /*
+            * Once an incomplete lesson is
+            * encountered, every lesson after
+            * it remains locked.
+            */
+            if (!completed) {
+
+              allPreviousCompleted =
+                false;
+
+            }
+
+
+            return {
+              ...lesson,
+
+              completed,
+
+              is_locked:
+                isLocked
+            };
+
+          }
+        );
+
+    }
+
+
     res.json({
       courseId,
-      lessons: lessons.rows
+      lessons
     });
 
   } catch (error) {
+
+    console.error(
+      "Get course lessons error:",
+      error
+    );
 
     res.status(500).json({
       error: error.message
@@ -435,6 +533,49 @@ const getLessonById = async (req, res) => {
         return res.status(403).json({
           message:
             "You must be enrolled in this course to access this lesson"
+        });
+
+      }
+
+      // =========================
+      // CHECK LESSON LOCK
+      // =========================
+
+      const previousLessonsResult =
+        await pool.query(
+          `
+          SELECT
+            l.id
+
+          FROM lessons l
+
+          LEFT JOIN lesson_progress lp
+            ON lp.lesson_id = l.id
+            AND lp.student_id = $1
+
+          WHERE l.course_id = $2
+
+          AND l.lesson_order < $3
+
+          AND lp.lesson_id IS NULL
+
+          LIMIT 1
+          `,
+          [
+            req.user.id,
+            lesson.course_id,
+            lesson.lesson_order
+          ]
+        );
+
+
+      if (
+        previousLessonsResult.rows.length > 0
+      ) {
+
+        return res.status(403).json({
+          message:
+            "Complete the previous lessons before accessing this lesson"
         });
 
       }

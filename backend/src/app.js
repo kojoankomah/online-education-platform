@@ -43,10 +43,25 @@ app.use(
   require("./routes/enrollmentRoutes")
 );
 
+
 // Lessons routes
 app.use(
   "/api/lessons",
   require("./routes/lessonRoutes")
+);
+
+
+// Chapter routes
+app.use(
+  "/api/chapters",
+  require("./routes/chapterRoutes")
+);
+
+
+// Chapter content routes
+app.use(
+  "/api/chapter-content",
+  require("./routes/chapterContentRoutes")
 );
 
 

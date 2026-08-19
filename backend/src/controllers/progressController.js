@@ -13,7 +13,10 @@ const completeLesson = async (req, res) => {
     // Find lesson and its course
     const lessonResult = await pool.query(
       `
-      SELECT id, course_id
+      SELECT
+        id,
+        course_id,
+        lesson_order
       FROM lessons
       WHERE id = $1
       `,
@@ -30,6 +33,11 @@ const completeLesson = async (req, res) => {
 
     const courseId =
       lessonResult.rows[0].course_id;
+
+    
+    const lessonOrder =
+      lessonResult.rows[0].lesson_order;
+
 
     // Verify enrollment
     const enrollmentResult = await pool.query(
@@ -54,6 +62,116 @@ const completeLesson = async (req, res) => {
 
     }
 
+
+
+    // =========================
+    // CHECK LESSON LOCK
+    // =========================
+
+    const previousLessonsResult =
+      await pool.query(
+        `
+        SELECT
+          l.id
+
+        FROM lessons l
+
+        LEFT JOIN lesson_progress lp
+          ON lp.lesson_id = l.id
+          AND lp.student_id = $1
+
+        WHERE l.course_id = $2
+
+        AND l.lesson_order < $3
+
+        AND lp.lesson_id IS NULL
+
+        LIMIT 1
+        `,
+        [
+          studentId,
+          courseId,
+          lessonOrder
+        ]
+      );
+
+
+    if (
+      previousLessonsResult.rows.length > 0
+    ) {
+
+      return res.status(403).json({
+        message:
+          "Complete the previous lessons before completing this lesson"
+      });
+
+    }
+
+    
+    // =========================
+    // CHECK REQUIRED CHAPTERS
+    // =========================
+
+    const chapterProgressResult =
+      await pool.query(
+        `
+        SELECT
+
+          COUNT(c.id) FILTER (
+            WHERE
+              c.is_required = TRUE
+              AND c.status = 'published'
+          )::INTEGER
+          AS required_count,
+
+          COUNT(c.id) FILTER (
+            WHERE
+              c.is_required = TRUE
+              AND c.status = 'published'
+              AND cp.status = 'completed'
+          )::INTEGER
+          AS completed_count
+
+        FROM chapters c
+
+        LEFT JOIN chapter_progress cp
+          ON cp.chapter_id = c.id
+          AND cp.student_id = $1
+
+        WHERE c.lesson_id = $2
+        `,
+        [
+          studentId,
+          lessonId
+        ]
+      );
+
+
+    const requiredChapterCount =
+      Number(
+        chapterProgressResult.rows[0]
+          .required_count
+      );
+
+    const completedChapterCount =
+      Number(
+        chapterProgressResult.rows[0]
+          .completed_count
+      );
+
+
+    if (
+      requiredChapterCount > 0 &&
+      completedChapterCount <
+        requiredChapterCount
+    ) {
+
+      return res.status(400).json({
+        message:
+          "You must complete all required chapters before completing this lesson."
+      });
+
+    }
 
     // Find the quiz belonging to this lesson
     const quizResult = await pool.query(
@@ -226,6 +344,72 @@ const checkLessonCompletion = async (req, res) => {
             completionResult.rows.length > 0;
 
 
+
+        // =========================
+        // CHECK CHAPTER COMPLETION
+        // =========================
+
+        const chapterProgressResult =
+            await pool.query(
+                `
+                SELECT
+
+                    COUNT(c.id) FILTER (
+                        WHERE
+                            c.is_required = TRUE
+                            AND c.status = 'published'
+                    )::INTEGER
+                    AS required_count,
+
+                    COUNT(c.id) FILTER (
+                        WHERE
+                            c.is_required = TRUE
+                            AND c.status = 'published'
+                            AND cp.status = 'completed'
+                    )::INTEGER
+                    AS completed_count
+
+                FROM chapters c
+
+                LEFT JOIN chapter_progress cp
+                    ON cp.chapter_id = c.id
+                    AND cp.student_id = $1
+
+                WHERE c.lesson_id = $2
+                `,
+                [
+                    studentId,
+                    lessonId
+                ]
+            );
+
+
+        const requiredChapterCount =
+            Number(
+                chapterProgressResult.rows[0]
+                    .required_count
+            );
+
+
+        const completedRequiredChapters =
+            Number(
+                chapterProgressResult.rows[0]
+                    .completed_count
+            );
+
+
+        /*
+        * Lessons with no chapters keep
+        * the old LMS behavior.
+        */
+        const chaptersCompleted =
+            requiredChapterCount === 0 ||
+            completedRequiredChapters ===
+                requiredChapterCount;
+
+
+
+
         // Find quiz belonging to lesson
         const quizResult = await pool.query(
             `
@@ -240,12 +424,18 @@ const checkLessonCompletion = async (req, res) => {
         // Lesson has no quiz
         if (quizResult.rows.length === 0) {
 
-            return res.json({
-                completed,
-                quizExists: false,
-                quizPassed: false,
-                canComplete: false
-            });
+           return res.json({
+              completed,
+
+              chaptersCompleted,
+              requiredChapterCount,
+              completedRequiredChapters,
+
+              quizExists: false,
+              quizPassed: false,
+
+              canComplete: false
+          });
 
         }
 
@@ -275,11 +465,21 @@ const checkLessonCompletion = async (req, res) => {
 
 
         res.json({
-            completed,
-            quizExists: true,
-            quizPassed,
-            canComplete:
-                completed || quizPassed
+          completed,
+
+          chaptersCompleted,
+          requiredChapterCount,
+          completedRequiredChapters,
+
+          quizExists: true,
+          quizPassed,
+
+          canComplete:
+              completed ||
+              (
+                  chaptersCompleted &&
+                  quizPassed
+              )
         });
 
     }
@@ -346,6 +546,69 @@ const getCourseProgress = async (req, res) => {
     const lessonPercent =
       totalLessons === 0 ? 0 : Math.round((completedLessons / totalLessons) * 100);
 
+
+    // ---------------- CHAPTERS ----------------
+
+    const chapterProgressResult =
+      await pool.query(
+        `
+        SELECT
+
+          COUNT(c.id)::INTEGER
+          AS total_required,
+
+          COUNT(c.id) FILTER (
+            WHERE cp.status = 'completed'
+          )::INTEGER
+          AS completed_required
+
+        FROM chapters c
+
+        JOIN lessons l
+          ON l.id = c.lesson_id
+
+        LEFT JOIN chapter_progress cp
+          ON cp.chapter_id = c.id
+          AND cp.student_id = $2
+
+        WHERE l.course_id = $1
+
+        AND c.is_required = TRUE
+
+        AND c.status = 'published'
+        `,
+        [
+          courseId,
+          studentId
+        ]
+      );
+
+
+    const totalRequiredChapters =
+      Number(
+        chapterProgressResult.rows[0]
+          .total_required
+      );
+
+
+    const completedRequiredChapters =
+      Number(
+        chapterProgressResult.rows[0]
+          .completed_required
+      );
+
+
+    const chapterPercent =
+      totalRequiredChapters === 0
+        ? 0
+        : Math.round(
+            (
+              completedRequiredChapters /
+              totalRequiredChapters
+            ) * 100
+          );
+
+
     // ---------------- QUIZZES ----------------
     const totalQuizzesResult = await pool.query(
       `
@@ -385,24 +648,67 @@ const getCourseProgress = async (req, res) => {
     const quizPercent =
       totalQuizzes === 0 ? 0 : Math.round((passedQuizzes / totalQuizzes) * 100);
 
-    
-      // ---------------- OVERALL ----------------
+      
+  // ---------------- OVERALL ----------------
 
-// Calculate overall progress as the average of lesson and quiz progress
-let overallProgress;
+  let overallProgress;
 
 
-if(totalQuizzes === 0){
-
-    overallProgress = lessonPercent;
-
-}
-else{
+  // Course uses chapters and quizzes
+  if (
+    totalRequiredChapters > 0 &&
+    totalQuizzes > 0
+  ) {
 
     overallProgress =
+      Math.round(
+        (
+          lessonPercent +
+          chapterPercent +
+          quizPercent
+        ) / 3
+      );
+
+  }
+
+
+  // Course uses chapters but has no quizzes
+  else if (
+    totalRequiredChapters > 0
+  ) {
+
+    overallProgress =
+      Math.round(
+        (
+          lessonPercent +
+          chapterPercent
+        ) / 2
+      );
+
+  }
+
+
+// Legacy course with quizzes but no chapters
+else if (
+  totalQuizzes > 0
+) {
+
+  overallProgress =
     Math.round(
-        (lessonPercent + quizPercent) / 2
+      (
+        lessonPercent +
+        quizPercent
+      ) / 2
     );
+
+}
+
+
+// Legacy course with lessons only
+else {
+
+  overallProgress =
+    lessonPercent;
 
 }
 
@@ -410,11 +716,19 @@ else{
 // Send the response
     res.json({
       courseId,
+
       lessonProgress: {
         total: totalLessons,
         completed: completedLessons,
         percent: lessonPercent
       },
+
+      chapterProgress: {
+        total: totalRequiredChapters,
+        completed: completedRequiredChapters,
+        percent: chapterPercent
+      },
+
       quizProgress: {
         total: totalQuizzes,
         passed: passedQuizzes,
