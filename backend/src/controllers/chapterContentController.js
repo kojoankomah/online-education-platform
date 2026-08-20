@@ -2,6 +2,32 @@ const pool = require("../db/connection");
 
 
 /**
+ * Allow only normal web URLs
+ */
+const isValidMediaUrl = (value) => {
+
+    try {
+
+        const parsedUrl =
+            new URL(value);
+
+        return [
+            "http:",
+            "https:"
+        ].includes(
+            parsedUrl.protocol
+        );
+
+    }
+
+    catch {
+
+        return false;
+
+    }
+
+};
+/**
  * Create content block
  * Instructor owner only
  */
@@ -116,6 +142,19 @@ const createContentBlock = async (req, res) => {
                 return res.status(400).json({
                     message:
                         "Media URL is required for this content type"
+                });
+
+            }
+
+            if (
+                !isValidMediaUrl(
+                    cleanMediaUrl
+                )
+            ) {
+
+                return res.status(400).json({
+                    message:
+                        "Media URL must be a valid HTTP or HTTPS URL"
                 });
 
             }
@@ -635,6 +674,8 @@ const updateContentBlock = async (req, res) => {
 
             }
 
+            
+
         }
 
         else {
@@ -660,6 +701,19 @@ const updateContentBlock = async (req, res) => {
                 return res.status(400).json({
                     message:
                         "Media URL is required for this content type"
+                });
+
+            }
+
+            if (
+                !isValidMediaUrl(
+                    finalMediaUrl
+                )
+            ) {
+
+                return res.status(400).json({
+                    message:
+                        "Media URL must be a valid HTTP or HTTPS URL"
                 });
 
             }

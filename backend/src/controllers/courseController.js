@@ -11,6 +11,8 @@ const {
  */
 const createCourse = async (req, res) => {
 
+  let uploadedImagePublicId = null;
+
   try {
 
     const {
@@ -74,6 +76,9 @@ const createCourse = async (req, res) => {
       image_public_id =
         uploadResult.public_id;
 
+
+      uploadedImagePublicId =
+        uploadResult.public_id;
     }
 
 
@@ -130,6 +135,28 @@ const createCourse = async (req, res) => {
       "Create course error:",
       error
     );
+
+
+    if (uploadedImagePublicId) {
+
+      try {
+
+        await deleteImage(
+          uploadedImagePublicId
+        );
+
+      }
+
+      catch (cleanupError) {
+
+        console.error(
+          "Failed course thumbnail cleanup error:",
+          cleanupError
+        );
+
+      }
+
+    }
 
 
     res.status(500).json({
@@ -655,6 +682,27 @@ const deleteCourse = async (req, res) => {
       "DELETE FROM courses WHERE id = $1",
       [id]
     );
+
+    if (course.image_public_id) {
+
+      try {
+
+        await deleteImage(
+          course.image_public_id
+        );
+
+      }
+
+      catch (deleteError) {
+
+        console.error(
+          "Course thumbnail cleanup error:",
+          deleteError
+        );
+
+      }
+
+    }
 
     res.json({
       message: "Course deleted successfully"
