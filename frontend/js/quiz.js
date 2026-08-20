@@ -120,20 +120,39 @@ async function loadQuiz() {
             questions.length === 0
         ) {
 
-            document.getElementById(
-                "quizContainer"
-            ).innerHTML = `
+            const container =
+                document.getElementById(
+                    "quizContainer"
+                );
 
-                <div class="card">
+            container.textContent = "";
 
-                    <p>
-                        No questions are available
-                        for this quiz.
-                    </p>
 
-                </div>
+            const card =
+                document.createElement(
+                    "div"
+                );
 
-            `;
+            card.className =
+                "card";
+
+
+            const message =
+                document.createElement(
+                    "p"
+                );
+
+            message.textContent =
+                "No questions are available for this quiz.";
+
+
+            card.appendChild(
+                message
+            );
+
+            container.appendChild(
+                card
+            );
 
 
             submitQuizBtn.style.display =
@@ -171,22 +190,40 @@ async function loadQuiz() {
         }
 
 
-        document.getElementById(
-            "quizContainer"
-        ).innerHTML = `
+        const container =
+            document.getElementById(
+                "quizContainer"
+            );
 
-            <div class="card">
+        container.textContent = "";
 
-                <p>
-                    ${
-                        error.message ||
-                        "Unable to load quiz."
-                    }
-                </p>
 
-            </div>
+        const card =
+            document.createElement(
+                "div"
+            );
 
-        `;
+        card.className =
+            "card";
+
+
+        const message =
+            document.createElement(
+                "p"
+            );
+
+        message.textContent =
+            error.message ||
+            "Unable to load quiz.";
+
+
+        card.appendChild(
+            message
+        );
+
+        container.appendChild(
+            card
+        );
 
 
         showToast(
@@ -212,7 +249,7 @@ function displayQuestions() {
         );
 
 
-    container.innerHTML = "";
+    container.textContent = "";
 
 
     questions.forEach(
@@ -223,70 +260,90 @@ function displayQuestions() {
                     "div"
                 );
 
-
             card.className =
                 "card";
 
 
-            card.innerHTML = `
+            // Question text
+            const heading =
+                document.createElement(
+                    "h3"
+                );
 
-                <h3>
-                    ${index + 1}.
-                    ${question.question}
-                </h3>
-
-
-                <label>
-
-                    <input
-                        type="radio"
-                        name="question${question.id}"
-                        value="A">
-
-                    ${question.option_a}
-
-                </label>
+            heading.textContent =
+                `${index + 1}. ${question.question}`;
 
 
-
-                <label>
-
-                    <input
-                        type="radio"
-                        name="question${question.id}"
-                        value="B">
-
-                    ${question.option_b}
-
-                </label>
-
-
-
-                <label>
-
-                    <input
-                        type="radio"
-                        name="question${question.id}"
-                        value="C">
-
-                    ${question.option_c}
-
-                </label>
+            const options = [
+                {
+                    value: "A",
+                    text: question.option_a
+                },
+                {
+                    value: "B",
+                    text: question.option_b
+                },
+                {
+                    value: "C",
+                    text: question.option_c
+                },
+                {
+                    value: "D",
+                    text: question.option_d
+                }
+            ];
 
 
+            card.appendChild(
+                heading
+            );
 
-                <label>
 
-                    <input
-                        type="radio"
-                        name="question${question.id}"
-                        value="D">
+            options.forEach(
+                option => {
 
-                    ${question.option_d}
+                    const label =
+                        document.createElement(
+                            "label"
+                        );
 
-                </label>
 
-            `;
+                    const input =
+                        document.createElement(
+                            "input"
+                        );
+
+                    input.type =
+                        "radio";
+
+                    input.name =
+                        `question${question.id}`;
+
+                    input.value =
+                        option.value;
+
+
+                    const optionText =
+                        document.createTextNode(
+                            ` ${option.text}`
+                        );
+
+
+                    label.appendChild(
+                        input
+                    );
+
+                    label.appendChild(
+                        optionText
+                    );
+
+
+                    card.appendChild(
+                        label
+                    );
+
+                }
+            );
 
 
             container.appendChild(
@@ -464,80 +521,124 @@ function displayResult(data) {
         );
 
 
-    if (data.passed) {
+    result.textContent = "";
 
-        result.innerHTML = `
 
-            <div class="card">
+    const card =
+        document.createElement(
+            "div"
+        );
 
-                <h2>
-                    Quiz Completed ✅
-                </h2>
+    card.className =
+        "card";
 
-                <p>
-                    Score:
-                    ${data.score}/${data.totalQuestions}
-                </p>
 
-                <p>
-                    Percentage:
-                    ${data.percentage}%
-                </p>
+    const heading =
+        document.createElement(
+            "h2"
+        );
 
-                <h3>
-                    Status: Passed
-                </h3>
+    heading.textContent =
+        data.passed
+            ? "Quiz Completed ✅"
+            : "Quiz Completed";
 
-                <p>
-                    You can now return to the lesson
-                    and mark it as completed.
-                </p>
 
-            </div>
+    const score =
+        document.createElement(
+            "p"
+        );
 
-        `;
+    score.textContent =
+        `Score: ${data.score}/${data.totalQuestions}`;
+
+
+    const percentage =
+        document.createElement(
+            "p"
+        );
+
+    percentage.textContent =
+        `Percentage: ${data.percentage}%`;
+
+
+    const status =
+        document.createElement(
+            "h3"
+        );
+
+    status.textContent =
+        data.passed
+            ? "Status: Passed"
+            : "Status: Failed";
+
+
+    const message =
+        document.createElement(
+            "p"
+        );
+
+
+    if (
+        data.passed
+    ) {
+
+        message.textContent =
+            "You can now return to the lesson and mark it as completed.";
 
     }
 
     else {
 
-        result.innerHTML = `
-
-            <div class="card">
-
-                <h2>
-                    Quiz Completed
-                </h2>
-
-                <p>
-                    Score:
-                    ${data.score}/${data.totalQuestions}
-                </p>
-
-                <p>
-                    Percentage:
-                    ${data.percentage}%
-                </p>
-
-                <h3>
-                    Status: Failed
-                </h3>
-
-                <p>
-                    You need 70% or higher
-                    to pass this quiz.
-                </p>
-
-                <p>
-                    You must pass the quiz before
-                    completing the lesson.
-                </p>
-
-            </div>
-
-        `;
+        message.textContent =
+            "You need 70% or higher to pass this quiz.";
 
     }
+
+
+    card.appendChild(
+        heading
+    );
+
+    card.appendChild(
+        score
+    );
+
+    card.appendChild(
+        percentage
+    );
+
+    card.appendChild(
+        status
+    );
+
+    card.appendChild(
+        message
+    );
+
+
+    if (
+        !data.passed
+    ) {
+
+        const requirement =
+            document.createElement(
+                "p"
+            );
+
+        requirement.textContent =
+            "You must pass the quiz before completing the lesson.";
+
+        card.appendChild(
+            requirement
+        );
+
+    }
+
+
+    result.appendChild(
+        card
+    );
 
 }
 

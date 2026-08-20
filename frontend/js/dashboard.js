@@ -149,118 +149,218 @@ function displayCourses(courses) {
         );
 
 
-    courseList.innerHTML = "";
+    courseList.textContent = "";
 
 
-    if (courses.length === 0) {
+    if (
+        courses.length === 0
+    ) {
 
-        courseList.innerHTML =
-            "<p>You are not enrolled in any courses yet.</p>";
+        const message =
+            document.createElement(
+                "p"
+            );
+
+        message.textContent =
+            "You are not enrolled in any courses yet.";
+
+        courseList.appendChild(
+            message
+        );
 
         return;
 
     }
 
 
-    courses.forEach(course => {
+    courses.forEach(
+        course => {
 
-        const totalLessons =
-            Number(
-                course.total_lessons
-            ) || 0;
-
-
-        const completedLessons =
-            Number(
-                course.completed_lessons
-            ) || 0;
+            const totalLessons =
+                Number(
+                    course.total_lessons
+                ) || 0;
 
 
-        const progress =
-            totalLessons === 0
-                ? 0
-                : Math.round(
-                    (
-                        completedLessons /
-                        totalLessons
-                    ) * 100
+            const completedLessons =
+                Number(
+                    course.completed_lessons
+                ) || 0;
+
+
+            const progress =
+                totalLessons === 0
+                    ? 0
+                    : Math.round(
+                        (
+                            completedLessons /
+                            totalLessons
+                        ) * 100
+                    );
+
+
+            const card =
+                document.createElement(
+                    "div"
                 );
 
+            card.className =
+                "course-card";
 
-        const card =
-            document.createElement(
-                "div"
+
+            const image =
+                document.createElement(
+                    "div"
+                );
+
+            image.className =
+                "course-image";
+
+            image.textContent =
+                "📚";
+
+
+            const body =
+                document.createElement(
+                    "div"
+                );
+
+            body.className =
+                "course-body";
+
+
+            const title =
+                document.createElement(
+                    "h3"
+                );
+
+            title.textContent =
+                course.title;
+
+
+            const description =
+                document.createElement(
+                    "p"
+                );
+
+            description.textContent =
+                course.description ||
+                "No description available.";
+
+
+            const progressContainer =
+                document.createElement(
+                    "div"
+                );
+
+            progressContainer.className =
+                "course-progress";
+
+
+            const progressBar =
+                document.createElement(
+                    "div"
+                );
+
+            progressBar.className =
+                "progress-bar";
+
+
+            const progressFill =
+                document.createElement(
+                    "div"
+                );
+
+            progressFill.className =
+                "progress";
+
+            progressFill.style.width =
+                `${progress}%`;
+
+
+            const progressText =
+                document.createElement(
+                    "small"
+                );
+
+            progressText.textContent =
+                `${completedLessons}/${totalLessons} lessons completed (${progress}%)`;
+
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+            button.type =
+                "button";
+
+            button.className =
+                "btn btn-primary continue-btn";
+
+            button.textContent =
+                "Continue Learning";
+
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    openCourse(
+                        course.id
+                    );
+
+                }
             );
 
 
-        card.className =
-            "course-card";
+            progressBar.appendChild(
+                progressFill
+            );
+
+            progressContainer.appendChild(
+                progressBar
+            );
+
+            progressContainer.appendChild(
+                progressText
+            );
 
 
-        card.innerHTML = `
+            body.appendChild(
+                title
+            );
 
-            <div class="course-image">
-                📚
-            </div>
+            body.appendChild(
+                description
+            );
 
+            body.appendChild(
+                progressContainer
+            );
 
-            <div class="course-body">
-
-                <h3>
-                    ${course.title}
-                </h3>
-
-
-                <p>
-                    ${
-                        course.description ||
-                        "No description available."
-                    }
-                </p>
+            body.appendChild(
+                button
+            );
 
 
-                <div class="course-progress">
+            card.appendChild(
+                image
+            );
 
-                    <div class="progress-bar">
-
-                        <div
-                            class="progress"
-                            style="width: ${progress}%">
-                        </div>
-
-                    </div>
+            card.appendChild(
+                body
+            );
 
 
-                    <small>
-                        ${completedLessons}/${totalLessons}
-                        lessons completed
-                        (${progress}%)
-                    </small>
+            courseList.appendChild(
+                card
+            );
 
-                </div>
-
-
-                <button
-                    type="button"
-                    class="btn btn-primary continue-btn"
-                    onclick="openCourse(${course.id})"
-                >
-                    Continue Learning
-                </button>
-
-            </div>
-
-        `;
-
-
-        courseList.appendChild(
-            card
-        );
-
-    });
+        }
+    );
 
 }
-
 
 
 /**
@@ -286,99 +386,149 @@ function displayQuizHistory(attempts) {
         );
 
 
-    container.innerHTML = "";
+    container.textContent = "";
 
 
-    if (attempts.length === 0) {
+    if (
+        attempts.length === 0
+    ) {
 
-        container.innerHTML =
-            "<p>No quiz attempts yet.</p>";
+        const message =
+            document.createElement(
+                "p"
+            );
+
+        message.textContent =
+            "No quiz attempts yet.";
+
+        container.appendChild(
+            message
+        );
 
         return;
 
     }
 
 
-    attempts.forEach(attempt => {
+    attempts.forEach(
+        attempt => {
 
-        const card =
-            document.createElement(
-                "div"
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "quiz-card";
+
+
+            const score =
+                Number(
+                    attempt.score
+                ) || 0;
+
+
+            const totalQuestions =
+                Number(
+                    attempt.total_questions
+                ) || 0;
+
+
+            const percentage =
+                totalQuestions === 0
+                    ? 0
+                    : Math.round(
+                        (
+                            score /
+                            totalQuestions
+                        ) * 100
+                    );
+
+
+            const statusText =
+                attempt.passed
+                    ? "Passed ✅"
+                    : "Failed ❌";
+
+
+            const date =
+                new Date(
+                    attempt.submitted_at
+                ).toLocaleDateString();
+
+
+            const title =
+                document.createElement(
+                    "h3"
+                );
+
+            title.textContent =
+                attempt.quiz_title;
+
+
+            const scoreText =
+                document.createElement(
+                    "p"
+                );
+
+            scoreText.textContent =
+                `Score: ${score}/${totalQuestions}`;
+
+
+            const percentageText =
+                document.createElement(
+                    "p"
+                );
+
+            percentageText.textContent =
+                `Percentage: ${percentage}%`;
+
+
+            const status =
+                document.createElement(
+                    "p"
+                );
+
+            status.textContent =
+                `Status: ${statusText}`;
+
+
+            const dateText =
+                document.createElement(
+                    "small"
+                );
+
+            dateText.textContent =
+                date;
+
+
+            card.appendChild(
+                title
+            );
+
+            card.appendChild(
+                scoreText
+            );
+
+            card.appendChild(
+                percentageText
+            );
+
+            card.appendChild(
+                status
+            );
+
+            card.appendChild(
+                dateText
             );
 
 
-        card.className =
-            "quiz-card";
+            container.appendChild(
+                card
+            );
 
-
-        const score =
-            Number(attempt.score) || 0;
-
-
-        const totalQuestions =
-            Number(
-                attempt.total_questions
-            ) || 0;
-
-
-        const percentage =
-            totalQuestions === 0
-                ? 0
-                : Math.round(
-                    (
-                        score /
-                        totalQuestions
-                    ) * 100
-                );
-
-
-        const status =
-            attempt.passed
-                ? "Passed ✅"
-                : "Failed ❌";
-
-
-        const date =
-            new Date(
-                attempt.submitted_at
-            ).toLocaleDateString();
-
-
-        card.innerHTML = `
-
-            <h3>
-                ${attempt.quiz_title}
-            </h3>
-
-            <p>
-                Score:
-                ${score}/${totalQuestions}
-            </p>
-
-            <p>
-                Percentage:
-                ${percentage}%
-            </p>
-
-            <p>
-                Status:
-                <strong>
-                    ${status}
-                </strong>
-            </p>
-
-            <small>
-                ${date}
-            </small>
-
-        `;
-
-
-        container.appendChild(
-            card
-        );
-
-    });
+        }
+    );
 
 }
 

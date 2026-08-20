@@ -116,52 +116,106 @@ function displayDashboard(data) {
         );
 
 
-    courseList.innerHTML = "";
+    courseList.textContent = "";
 
 
-    if (courseStats.length === 0) {
+    if (
+        courseStats.length === 0
+    ) {
 
-        courseList.innerHTML =
-            "<p>No courses created yet.</p>";
+        const message =
+            document.createElement(
+                "p"
+            );
+
+        message.textContent =
+            "No courses created yet.";
+
+        courseList.appendChild(
+            message
+        );
 
         return;
 
     }
 
 
-    courseStats.forEach(course => {
+    courseStats.forEach(
+        course => {
 
-        const card =
-            document.createElement("div");
+            const card =
+                document.createElement(
+                    "div"
+                );
 
-        card.className = "card";
-
-
-        card.innerHTML = `
-
-            <h3>
-                ${course.title}
-            </h3>
-
-            <p>
-                Students Enrolled:
-                ${course.students}
-            </p>
-
-            <button
-                type="button"
-                class="btn btn-primary"
-                onclick="manageCourse(${course.id})"
-            >
-                Manage Course
-            </button>
-
-        `;
+            card.className =
+                "card";
 
 
-        courseList.appendChild(card);
+            const title =
+                document.createElement(
+                    "h3"
+                );
 
-    });
+            title.textContent =
+                course.title;
+
+
+            const students =
+                document.createElement(
+                    "p"
+                );
+
+            students.textContent =
+                `Students Enrolled: ${course.students}`;
+
+
+            const manageBtn =
+                document.createElement(
+                    "button"
+                );
+
+            manageBtn.type =
+                "button";
+
+            manageBtn.className =
+                "btn btn-primary";
+
+            manageBtn.textContent =
+                "Manage Course";
+
+
+            manageBtn.addEventListener(
+                "click",
+                () => {
+
+                    manageCourse(
+                        course.id
+                    );
+
+                }
+            );
+
+
+            card.appendChild(
+                title
+            );
+
+            card.appendChild(
+                students
+            );
+
+            card.appendChild(
+                manageBtn
+            );
+
+
+            courseList.appendChild(
+                card
+            );
+
+        }
+    );
 
 }
 

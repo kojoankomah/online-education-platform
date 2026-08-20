@@ -75,82 +75,202 @@ function displayCourses(courses) {
         );
 
 
-    courseList.innerHTML = "";
+    courseList.textContent = "";
 
 
-    if (courses.length === 0) {
+    if (
+        courses.length === 0
+    ) {
 
-        courseList.innerHTML =
-            "<p>No courses available yet.</p>";
+        const message =
+            document.createElement(
+                "p"
+            );
+
+        message.textContent =
+            "No courses available yet.";
+
+        courseList.appendChild(
+            message
+        );
 
         return;
 
     }
 
 
-    courses.forEach(course => {
+    courses.forEach(
+        course => {
 
-        const card =
-            document.createElement(
-                "div"
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "card course-browser-card";
+
+
+            // Thumbnail container
+            const thumbnail =
+                document.createElement(
+                    "div"
+                );
+
+            thumbnail.className =
+                "course-thumbnail";
+
+
+            if (
+                course.image_url
+            ) {
+
+                const image =
+                    document.createElement(
+                        "img"
+                    );
+
+                image.src =
+                    course.image_url;
+
+                image.alt =
+                    `${course.title} course thumbnail`;
+
+                image.loading =
+                    "lazy";
+
+
+                thumbnail.appendChild(
+                    image
+                );
+
+            }
+
+            else {
+
+                const placeholder =
+                    document.createElement(
+                        "div"
+                    );
+
+                placeholder.className =
+                    "course-thumbnail-placeholder";
+
+                placeholder.textContent =
+                    "📚";
+
+
+                thumbnail.appendChild(
+                    placeholder
+                );
+
+            }
+
+
+            // Course body
+            const body =
+                document.createElement(
+                    "div"
+                );
+
+            body.className =
+                "course-card-body";
+
+
+            const title =
+                document.createElement(
+                    "h2"
+                );
+
+            title.textContent =
+                course.title;
+
+
+            const description =
+                document.createElement(
+                    "p"
+                );
+
+            description.className =
+                "course-description";
+
+            description.textContent =
+                course.description ||
+                "No description available.";
+
+
+            const instructor =
+                document.createElement(
+                    "p"
+                );
+
+            instructor.className =
+                "course-instructor";
+
+            instructor.textContent =
+                `Instructor: ${course.instructor_name}`;
+
+
+            const enrollBtn =
+                document.createElement(
+                    "button"
+                );
+
+            enrollBtn.type =
+                "button";
+
+            enrollBtn.className =
+                "btn btn-primary";
+
+            enrollBtn.textContent =
+                "Enroll";
+
+
+            enrollBtn.addEventListener(
+                "click",
+                () => {
+
+                    enrollCourse(
+                        course.id,
+                        enrollBtn
+                    );
+
+                }
             );
 
 
-        card.className =
-            "card course-browser-card";
+            body.appendChild(
+                title
+            );
+
+            body.appendChild(
+                description
+            );
+
+            body.appendChild(
+                instructor
+            );
+
+            body.appendChild(
+                enrollBtn
+            );
 
 
-        card.innerHTML = `
+            card.appendChild(
+                thumbnail
+            );
 
-        <div class="course-thumbnail">
-
-            ${
-                course.image_url
-                    ? `
-                        <img
-                            src="${course.image_url}"
-                            alt="${course.title} course thumbnail"
-                        >
-                    `
-                    : `
-                        <div class="course-thumbnail-placeholder">
-                            📚
-                        </div>
-                    `
-            }
-
-        </div>
+            card.appendChild(
+                body
+            );
 
 
-        <div class="course-card-body">
+            courseList.appendChild(
+                card
+            );
 
-            <h2>
-                ${course.title}
-            </h2>
-
-            <p class="course-description">
-                ${course.description || "No description available."}
-            </p>
-
-            <p class="course-instructor">
-                Instructor: ${course.instructor_name}
-            </p>
-
-            <button
-                type="button"
-                class="btn btn-primary"
-                onclick="enrollCourse(${course.id}, this)"
-            >
-                Enroll
-            </button>
-
-        </div>
-
-    `;
-
-        courseList.appendChild(card);
-
-    });
+        }
+    );
 
 }
 
