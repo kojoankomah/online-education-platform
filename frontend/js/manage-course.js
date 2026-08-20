@@ -273,6 +273,33 @@ function displayLessons(lessons) {
             );
 
 
+
+            // Delete Lesson button
+            const deleteBtn =
+                document.createElement(
+                    "button"
+                );
+
+            deleteBtn.type =
+                "button";
+
+            deleteBtn.className =
+                "btn btn-danger";
+
+            deleteBtn.textContent =
+                "Delete Lesson";
+
+            deleteBtn.addEventListener(
+                "click",
+                () => {
+
+                    deleteLesson(
+                        lesson.id,
+                        lesson.title
+                    );
+
+                }
+            );
             card.appendChild(
                 heading
             );
@@ -293,6 +320,10 @@ function displayLessons(lessons) {
                 chaptersBtn
             );
 
+
+            card.appendChild(
+                deleteBtn
+            );
 
             list.appendChild(
                 card
@@ -363,6 +394,81 @@ function manageChapters(lessonId) {
 
     window.location.href =
         `manage-chapters.html?lessonId=${lessonId}&courseId=${courseId}`;
+
+}
+
+
+// Delete lesson
+async function deleteLesson(
+    lessonId,
+    lessonTitle
+) {
+
+    const confirmed =
+        window.confirm(
+            `Delete "${lessonTitle}"?\n\nThis will also remove its chapters, content, quizzes, and related progress. This action cannot be undone.`        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                apiUrl(
+                    API.endpoints.lessons +
+                    "/" +
+                    lessonId
+                ),
+                {
+                    method: "DELETE",
+                    headers:
+                        authHeaders()
+                }
+            );
+
+
+        await handleApiResponse(
+            response
+        );
+
+
+        showToast(
+            "Lesson deleted successfully.",
+            "success"
+        );
+
+
+        await loadCourse();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Delete lesson error:",
+            error
+        );
+
+
+        if (
+            error.message ===
+            "Authentication required"
+        ) {
+            return;
+        }
+
+
+        showToast(
+            error.message ||
+            "Unable to delete lesson.",
+            "error"
+        );
+
+    }
 
 }
 

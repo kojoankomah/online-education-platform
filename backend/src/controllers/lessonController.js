@@ -613,9 +613,118 @@ const getLessonById = async (req, res) => {
   }
 };
 
+
+
+/**
+ * Delete lesson
+ * Instructor must own the course
+ */
+const deleteLesson = async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+
+        // Find lesson and course owner
+        const lessonResult =
+            await pool.query(
+                `
+                SELECT
+                    lessons.id,
+                    lessons.course_id,
+                    courses.instructor_id
+
+                FROM lessons
+
+                JOIN courses
+                    ON lessons.course_id = courses.id
+
+                WHERE lessons.id = $1
+                `,
+                [id]
+            );
+
+
+        if (
+            lessonResult.rows.length === 0
+        ) {
+
+            return res.status(404).json({
+                message:
+                    "Lesson not found"
+            });
+
+        }
+
+
+        const lesson =
+            lessonResult.rows[0];
+
+
+        // Verify ownership
+        if (
+            Number(
+                lesson.instructor_id
+            ) !==
+            Number(
+                req.user.id
+            )
+        ) {
+
+            return res.status(403).json({
+                message:
+                    "You can only delete lessons from your own courses"
+            });
+
+        }
+
+
+        // Delete lesson
+        await pool.query(
+            `
+            DELETE FROM lessons
+            WHERE id = $1
+            `,
+            [id]
+        );
+
+
+        return res.json({
+            message:
+                "Lesson deleted successfully",
+
+            lesson_id:
+                Number(id)
+        });
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Delete lesson error:",
+            error
+        );
+
+
+        return res.status(500).json({
+            error:
+                "Unable to delete lesson"
+        });
+
+    }
+
+};
+
+
+
+
+
 module.exports = {
     createLesson,
     updateLesson,
+    deleteLesson,
     getCourseLessons,
     getLessonById
 };

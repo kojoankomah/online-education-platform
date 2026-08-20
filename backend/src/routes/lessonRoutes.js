@@ -7,6 +7,7 @@ const roleMiddleware = require("../middleware/roleMiddleware");
 const {
     createLesson,
     updateLesson,
+    deleteLesson,
     getCourseLessons,
     getLessonById
 } = require("../controllers/lessonController");
@@ -38,6 +39,16 @@ router.put(
     authMiddleware,
     roleMiddleware("instructor"),
     updateLesson
+);
+
+/**
+ * Delete lesson
+ */
+router.delete(
+    "/:id",
+    authMiddleware,
+    roleMiddleware("instructor"),
+    deleteLesson
 );
 
 
