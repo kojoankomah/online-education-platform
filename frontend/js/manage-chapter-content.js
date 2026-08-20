@@ -275,15 +275,24 @@ function displayContentBlocks(blocks) {
         );
 
 
-    list.innerHTML = "";
+    list.textContent = "";
 
 
     if (
         blocks.length === 0
     ) {
 
-        list.innerHTML =
-            "<p>No content has been added to this chapter yet.</p>";
+        const message =
+            document.createElement(
+                "p"
+            );
+
+        message.textContent =
+            "No content has been added to this chapter yet.";
+
+        list.appendChild(
+            message
+        );
 
         return;
 
@@ -298,12 +307,13 @@ function displayContentBlocks(blocks) {
                     "div"
                 );
 
-
             card.className =
                 "card";
 
 
-            let contentPreview = "";
+            // Content preview
+            let contentPreview =
+                "";
 
 
             if (
@@ -312,7 +322,8 @@ function displayContentBlocks(blocks) {
             ) {
 
                 const text =
-                    block.text_content || "";
+                    block.text_content ||
+                    "";
 
 
                 contentPreview =
@@ -334,58 +345,180 @@ function displayContentBlocks(blocks) {
             }
 
 
-            card.innerHTML = `
+            // Block heading
+            const title =
+                document.createElement(
+                    "h3"
+                );
 
-                <h3>
-                    Block ${block.block_order}
-                </h3>
-
-                <p>
-                    Type:
-                    ${block.block_type}
-                </p>
-
-                <p>
-                    ${contentPreview}
-                </p>
+            title.textContent =
+                `Block ${block.block_order}`;
 
 
-                <button
-                    type="button"
-                    class="btn btn-secondary"
-                    onclick="moveContentBlock(${index}, -1)"
-                    ${index === 0 ? "disabled" : ""}
-                >
-                    Move Up
-                </button>
+            // Type
+            const type =
+                document.createElement(
+                    "p"
+                );
 
-                <button
-                    type="button"
-                    class="btn btn-secondary"
-                    onclick="moveContentBlock(${index}, 1)"
-                    ${index === blocks.length - 1 ? "disabled" : ""}
-                >
-                    Move Down
-                </button>
+            type.textContent =
+                `Type: ${block.block_type}`;
 
 
-                <button
-                    type="button"
-                    class="btn btn-primary"
-                    onclick="editContentBlock(${block.id})"
-                >
-                    Edit
-                </button>
+            // Preview
+            const preview =
+                document.createElement(
+                    "p"
+                );
 
-                <button
-                    type="button"
-                    class="btn btn-secondary"
-                    onclick="deleteContentBlock(${block.id})"
-                >
-                    Delete
-                </button>
+            preview.textContent =
+                contentPreview;
 
-            `;
+
+            // Move Up
+            const moveUpBtn =
+                document.createElement(
+                    "button"
+                );
+
+            moveUpBtn.type =
+                "button";
+
+            moveUpBtn.className =
+                "btn btn-secondary";
+
+            moveUpBtn.textContent =
+                "Move Up";
+
+            moveUpBtn.disabled =
+                index === 0;
+
+            moveUpBtn.addEventListener(
+                "click",
+                () => {
+
+                    moveContentBlock(
+                        index,
+                        -1
+                    );
+
+                }
+            );
+
+
+            // Move Down
+            const moveDownBtn =
+                document.createElement(
+                    "button"
+                );
+
+            moveDownBtn.type =
+                "button";
+
+            moveDownBtn.className =
+                "btn btn-secondary";
+
+            moveDownBtn.textContent =
+                "Move Down";
+
+            moveDownBtn.disabled =
+                index ===
+                blocks.length - 1;
+
+            moveDownBtn.addEventListener(
+                "click",
+                () => {
+
+                    moveContentBlock(
+                        index,
+                        1
+                    );
+
+                }
+            );
+
+
+            // Edit
+            const editBtn =
+                document.createElement(
+                    "button"
+                );
+
+            editBtn.type =
+                "button";
+
+            editBtn.className =
+                "btn btn-primary";
+
+            editBtn.textContent =
+                "Edit";
+
+            editBtn.addEventListener(
+                "click",
+                () => {
+
+                    editContentBlock(
+                        block.id
+                    );
+
+                }
+            );
+
+
+            // Delete
+            const deleteBtn =
+                document.createElement(
+                    "button"
+                );
+
+            deleteBtn.type =
+                "button";
+
+            deleteBtn.className =
+                "btn btn-secondary";
+
+            deleteBtn.textContent =
+                "Delete";
+
+            deleteBtn.addEventListener(
+                "click",
+                () => {
+
+                    deleteContentBlock(
+                        block.id
+                    );
+
+                }
+            );
+
+
+            card.appendChild(
+                title
+            );
+
+            card.appendChild(
+                type
+            );
+
+            card.appendChild(
+                preview
+            );
+
+            card.appendChild(
+                moveUpBtn
+            );
+
+            card.appendChild(
+                moveDownBtn
+            );
+
+            card.appendChild(
+                editBtn
+            );
+
+            card.appendChild(
+                deleteBtn
+            );
 
 
             list.appendChild(
