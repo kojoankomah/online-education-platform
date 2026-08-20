@@ -219,6 +219,48 @@ async function loadChapter() {
 }
 
 
+
+// Allow only normal web URLs
+function getSafeMediaUrl(value) {
+
+    if (
+        typeof value !== "string" ||
+        !value.trim()
+    ) {
+        return null;
+    }
+
+
+    try {
+
+        const parsedUrl =
+            new URL(
+                value.trim()
+            );
+
+
+        if (
+            parsedUrl.protocol !== "http:" &&
+            parsedUrl.protocol !== "https:"
+        ) {
+            return null;
+        }
+
+
+        return parsedUrl.href;
+
+    }
+
+    catch {
+
+        return null;
+
+    }
+
+}
+
+
+
 // =========================
 // DISPLAY CONTENT
 // =========================
@@ -281,25 +323,51 @@ function displayContentBlocks(blocks) {
                 "image"
             ) {
 
-                const image =
-                    document.createElement(
-                        "img"
+                const safeUrl =
+                    getSafeMediaUrl(
+                        block.media_url
                     );
 
 
-                image.src =
-                    block.media_url;
+                if (!safeUrl) {
 
-                image.alt =
-                    "Chapter content image";
+                    const message =
+                        document.createElement(
+                            "p"
+                        );
 
-                image.loading =
-                    "lazy";
+                    message.textContent =
+                        "Image unavailable.";
+
+                    container.appendChild(
+                        message
+                    );
+
+                }
+
+                else {
+
+                    const image =
+                        document.createElement(
+                            "img"
+                        );
 
 
-                container.appendChild(
-                    image
-                );
+                    image.src =
+                        safeUrl;
+
+                    image.alt =
+                        "Chapter content image";
+
+                    image.loading =
+                        "lazy";
+
+
+                    container.appendChild(
+                        image
+                    );
+
+                }
 
             }
 
@@ -309,28 +377,54 @@ function displayContentBlocks(blocks) {
                 "video"
             ) {
 
-                const link =
-                    document.createElement(
-                        "a"
+                const safeUrl =
+                    getSafeMediaUrl(
+                        block.media_url
                     );
 
 
-                link.href =
-                    block.media_url;
+                if (!safeUrl) {
 
-                link.target =
-                    "_blank";
+                    const message =
+                        document.createElement(
+                            "p"
+                        );
 
-                link.rel =
-                    "noopener noreferrer";
+                    message.textContent =
+                        "Video unavailable.";
 
-                link.textContent =
-                    "Open Video";
+                    container.appendChild(
+                        message
+                    );
+
+                }
+
+                else {
+
+                    const link =
+                        document.createElement(
+                            "a"
+                        );
 
 
-                container.appendChild(
-                    link
-                );
+                    link.href =
+                        safeUrl;
+
+                    link.target =
+                        "_blank";
+
+                    link.rel =
+                        "noopener noreferrer";
+
+                    link.textContent =
+                        "Open Video";
+
+
+                    container.appendChild(
+                        link
+                    );
+
+                }
 
             }
 
@@ -340,28 +434,54 @@ function displayContentBlocks(blocks) {
                 "resource"
             ) {
 
-                const link =
-                    document.createElement(
-                        "a"
+                const safeUrl =
+                    getSafeMediaUrl(
+                        block.media_url
                     );
 
 
-                link.href =
-                    block.media_url;
+                if (!safeUrl) {
 
-                link.target =
-                    "_blank";
+                    const message =
+                        document.createElement(
+                            "p"
+                        );
 
-                link.rel =
-                    "noopener noreferrer";
+                    message.textContent =
+                        "Learning resource unavailable.";
 
-                link.textContent =
-                    "Open Learning Resource";
+                    container.appendChild(
+                        message
+                    );
+
+                }
+
+                else {
+
+                    const link =
+                        document.createElement(
+                            "a"
+                        );
 
 
-                container.appendChild(
-                    link
-                );
+                    link.href =
+                        safeUrl;
+
+                    link.target =
+                        "_blank";
+
+                    link.rel =
+                        "noopener noreferrer";
+
+                    link.textContent =
+                        "Open Learning Resource";
+
+
+                    container.appendChild(
+                        link
+                    );
+
+                }
 
             }
 
