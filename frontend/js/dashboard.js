@@ -216,8 +216,35 @@ function displayCourses(courses) {
             image.className =
                 "course-image";
 
-            image.textContent =
-                "📚";
+
+            if (course.image_url) {
+
+                const thumbnail =
+                    document.createElement(
+                        "img"
+                    );
+
+                thumbnail.src =
+                    course.image_url;
+
+                thumbnail.alt =
+                    `${course.title} thumbnail`;
+
+                thumbnail.loading =
+                    "lazy";
+
+                image.appendChild(
+                    thumbnail
+                );
+
+            }
+
+            else {
+
+                image.textContent =
+                    "📚";
+
+            }
 
 
             const body =

@@ -11,9 +11,10 @@ const getStudentDashboard = async (req, res) => {
     const courses = await pool.query(
     `
     SELECT 
-        c.id,
-        c.title,
-        c.description,
+      c.id,
+      c.title,
+      c.description,
+      c.image_url,
 
         COUNT(l.id) AS total_lessons,
 
@@ -120,6 +121,7 @@ const getInstructorDashboard = async (req, res) => {
       SELECT 
         c.id,
         c.title,
+        c.image_url,
         COUNT(e.student_id) AS students
       FROM courses c
       LEFT JOIN enrollments e ON c.id = e.course_id

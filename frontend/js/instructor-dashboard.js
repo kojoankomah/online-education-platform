@@ -149,8 +149,46 @@ function displayDashboard(data) {
                 );
 
             card.className =
-                "card";
+                "card course-card";
 
+
+            const image =
+                document.createElement(
+                    "div"
+                );
+
+            image.className =
+                "course-image";
+
+
+            if (course.image_url) {
+
+                const thumbnail =
+                    document.createElement(
+                        "img"
+                    );
+
+                thumbnail.src =
+                    course.image_url;
+
+                thumbnail.alt =
+                    `${course.title} thumbnail`;
+
+                thumbnail.loading =
+                    "lazy";
+
+                image.appendChild(
+                    thumbnail
+                );
+
+            }
+
+            else {
+
+                image.textContent =
+                    "📚";
+
+            }
 
             const title =
                 document.createElement(
@@ -196,6 +234,10 @@ function displayDashboard(data) {
                 }
             );
 
+
+            card.appendChild(
+                image
+            );
 
             card.appendChild(
                 title
