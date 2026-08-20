@@ -431,19 +431,20 @@ function setupDashboardActiveNavigation() {
      */
     function updateActiveLink() {
 
-        const position =
-            window.scrollY + 220;
-
-
         let currentSection =
             "dashboardTop";
 
 
         sections.forEach(section => {
 
+            const sectionTop =
+                section
+                    .getBoundingClientRect()
+                    .top;
+
+
             if (
-                section.offsetTop <=
-                position
+                sectionTop <= 220
             ) {
 
                 currentSection =
