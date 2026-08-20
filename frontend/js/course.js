@@ -408,7 +408,7 @@ function displayLessons(
         );
 
 
-    lessonList.innerHTML =
+    lessonList.textContent =
         "";
 
 
@@ -416,15 +416,23 @@ function displayLessons(
         lessons.length === 0
     ) {
 
-        lessonList.innerHTML =
-            "<p>No lessons are available yet.</p>";
+        const message =
+            document.createElement(
+                "p"
+            );
+
+        message.textContent =
+            "No lessons are available yet.";
+
+        lessonList.appendChild(
+            message
+        );
 
         return;
 
     }
 
 
-    // Extract completed lesson IDs
     const completedLessonIds =
         completedLessons.map(
             lesson =>
@@ -434,56 +442,81 @@ function displayLessons(
         );
 
 
-    lessons.forEach(lesson => {
+    lessons.forEach(
+        lesson => {
 
-        const item =
-            document.createElement(
-                "div"
-            );
+            const item =
+                document.createElement(
+                    "div"
+                );
 
-
-        item.className =
-            "card";
-
-
-        const isCompleted =
-            completedLessonIds.includes(
-                Number(
-                    lesson.id
-                )
-            );
+            item.className =
+                "card";
 
 
-        item.innerHTML = `
+            const isCompleted =
+                completedLessonIds.includes(
+                    Number(
+                        lesson.id
+                    )
+                );
 
-            <h3>
-                ${isCompleted ? "✅" : "📖"}
-                Lesson ${lesson.lesson_order}:
-                ${lesson.title}
-            </h3>
 
-            <button
-                type="button"
-                class="btn btn-primary"
-                onclick="openLesson(${lesson.id})"
-            >
+            const title =
+                document.createElement(
+                    "h3"
+                );
 
-                ${
-                    isCompleted
-                        ? "Review Lesson"
-                        : "Open Lesson"
+            title.textContent =
+                `${isCompleted ? "✅" : "📖"} ` +
+                `Lesson ${lesson.lesson_order}: ` +
+                lesson.title;
+
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+            button.type =
+                "button";
+
+            button.className =
+                "btn btn-primary";
+
+            button.textContent =
+                isCompleted
+                    ? "Review Lesson"
+                    : "Open Lesson";
+
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    openLesson(
+                        lesson.id
+                    );
+
                 }
-
-            </button>
-
-        `;
+            );
 
 
-        lessonList.appendChild(
-            item
-        );
+            item.appendChild(
+                title
+            );
 
-    });
+            item.appendChild(
+                button
+            );
+
+
+            lessonList.appendChild(
+                item
+            );
+
+        }
+    );
 
 }
 
