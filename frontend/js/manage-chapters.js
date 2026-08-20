@@ -248,15 +248,24 @@ function displayChapters(chapters) {
         );
 
 
-    list.innerHTML = "";
+    list.textContent = "";
 
 
     if (
         chapters.length === 0
     ) {
 
-        list.innerHTML =
-            "<p>No chapters yet.</p>";
+        const message =
+            document.createElement(
+                "p"
+            );
+
+        message.textContent =
+            "No chapters yet.";
+
+        list.appendChild(
+            message
+        );
 
         return;
 
@@ -271,91 +280,250 @@ function displayChapters(chapters) {
                     "div"
                 );
 
-
             card.className =
                 "card";
 
 
-            card.innerHTML = `
+            // Chapter title
+            const title =
+                document.createElement(
+                    "h3"
+                );
 
-                <h3>
-                    Chapter ${chapter.chapter_order}:
-                    ${chapter.title}
-                </h3>
+            title.textContent =
+                `Chapter ${chapter.chapter_order}: ${chapter.title}`;
 
-                <p>
-                    ${
-                        chapter.description ||
-                        "No description."
-                    }
-                </p>
 
-                <p>
-                    Estimated time:
-                    ${
-                        chapter.estimated_minutes
-                            ? chapter.estimated_minutes + " minutes"
-                            : "Not specified"
-                    }
-                </p>
+            // Description
+            const description =
+                document.createElement(
+                    "p"
+                );
 
-                <p>
-                    Required:
-                    ${
-                        chapter.is_required
-                            ? "Yes"
-                            : "No"
-                    }
-                </p>
+            description.textContent =
+                chapter.description ||
+                "No description.";
 
-                <p>
-                    Status:
-                    ${chapter.status}
-                </p>
 
-                <button
-                    type="button"
-                    class="btn btn-secondary"
-                    onclick="moveChapter(${index}, -1)"
-                    ${index === 0 ? "disabled" : ""}
-                >
-                    Move Up
-                </button>
+            // Estimated time
+            const estimatedTime =
+                document.createElement(
+                    "p"
+                );
 
-                <button
-                    type="button"
-                    class="btn btn-secondary"
-                    onclick="moveChapter(${index}, 1)"
-                    ${index === chapters.length - 1 ? "disabled" : ""}
-                >
-                    Move Down
-                </button>
+            estimatedTime.textContent =
+                chapter.estimated_minutes
+                    ? `Estimated time: ${chapter.estimated_minutes} minutes`
+                    : "Estimated time: Not specified";
 
-                <button
-                    type="button"
-                    class="btn btn-primary"
-                    onclick="manageChapterContent(${chapter.id})"
-                >
-                    Manage Content
-                </button>
 
-                <button
-                    type="button"
-                    class="btn btn-secondary"
-                    onclick="editChapter(${chapter.id})"
-                >
-                    Edit Chapter
-                </button>
+            // Required status
+            const required =
+                document.createElement(
+                    "p"
+                );
 
-                <button
-                    type="button"
-                    class="btn btn-secondary"
-                    onclick="deleteChapter(${chapter.id})"
-                >
-                    Delete Chapter
-                </button>
+            required.textContent =
+                `Required: ${
+                    chapter.is_required
+                        ? "Yes"
+                        : "No"
+                }`;
 
-            `;
+
+            // Publication status
+            const status =
+                document.createElement(
+                    "p"
+                );
+
+            status.textContent =
+                `Status: ${chapter.status}`;
+
+
+            // Move Up
+            const moveUpBtn =
+                document.createElement(
+                    "button"
+                );
+
+            moveUpBtn.type =
+                "button";
+
+            moveUpBtn.className =
+                "btn btn-secondary";
+
+            moveUpBtn.textContent =
+                "Move Up";
+
+            moveUpBtn.disabled =
+                index === 0;
+
+            moveUpBtn.addEventListener(
+                "click",
+                () => {
+
+                    moveChapter(
+                        index,
+                        -1
+                    );
+
+                }
+            );
+
+
+            // Move Down
+            const moveDownBtn =
+                document.createElement(
+                    "button"
+                );
+
+            moveDownBtn.type =
+                "button";
+
+            moveDownBtn.className =
+                "btn btn-secondary";
+
+            moveDownBtn.textContent =
+                "Move Down";
+
+            moveDownBtn.disabled =
+                index ===
+                chapters.length - 1;
+
+            moveDownBtn.addEventListener(
+                "click",
+                () => {
+
+                    moveChapter(
+                        index,
+                        1
+                    );
+
+                }
+            );
+
+
+            // Manage Content
+            const manageContentBtn =
+                document.createElement(
+                    "button"
+                );
+
+            manageContentBtn.type =
+                "button";
+
+            manageContentBtn.className =
+                "btn btn-primary";
+
+            manageContentBtn.textContent =
+                "Manage Content";
+
+            manageContentBtn.addEventListener(
+                "click",
+                () => {
+
+                    manageChapterContent(
+                        chapter.id
+                    );
+
+                }
+            );
+
+
+            // Edit Chapter
+            const editBtn =
+                document.createElement(
+                    "button"
+                );
+
+            editBtn.type =
+                "button";
+
+            editBtn.className =
+                "btn btn-secondary";
+
+            editBtn.textContent =
+                "Edit Chapter";
+
+            editBtn.addEventListener(
+                "click",
+                () => {
+
+                    editChapter(
+                        chapter.id
+                    );
+
+                }
+            );
+
+
+            // Delete Chapter
+            const deleteBtn =
+                document.createElement(
+                    "button"
+                );
+
+            deleteBtn.type =
+                "button";
+
+            deleteBtn.className =
+                "btn btn-secondary";
+
+            deleteBtn.textContent =
+                "Delete Chapter";
+
+            deleteBtn.addEventListener(
+                "click",
+                () => {
+
+                    deleteChapter(
+                        chapter.id
+                    );
+
+                }
+            );
+
+
+            card.appendChild(
+                title
+            );
+
+            card.appendChild(
+                description
+            );
+
+            card.appendChild(
+                estimatedTime
+            );
+
+            card.appendChild(
+                required
+            );
+
+            card.appendChild(
+                status
+            );
+
+            card.appendChild(
+                moveUpBtn
+            );
+
+            card.appendChild(
+                moveDownBtn
+            );
+
+            card.appendChild(
+                manageContentBtn
+            );
+
+            card.appendChild(
+                editBtn
+            );
+
+            card.appendChild(
+                deleteBtn
+            );
 
 
             list.appendChild(
@@ -366,7 +534,6 @@ function displayChapters(chapters) {
     );
 
 }
-
 
 
 // =========================
