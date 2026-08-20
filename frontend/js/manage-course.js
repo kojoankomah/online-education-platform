@@ -130,73 +130,176 @@ async function loadCourse(){
 
 
 // Display lessons
-function displayLessons(lessons){
+// Display lessons
+function displayLessons(lessons) {
 
     const list =
-    document.getElementById(
-        "lessonList"
-    );
+        document.getElementById(
+            "lessonList"
+        );
 
-    list.innerHTML="";
 
-    if(lessons.length===0){
+    list.textContent = "";
 
-        list.innerHTML=
-        "<p>No lessons yet.</p>";
+
+    if (
+        lessons.length === 0
+    ) {
+
+        const message =
+            document.createElement(
+                "p"
+            );
+
+        message.textContent =
+            "No lessons yet.";
+
+        list.appendChild(
+            message
+        );
 
         return;
 
     }
 
-    lessons.forEach(lesson => {
 
-        const card =
-            document.createElement("div");
+    lessons.forEach(
+        lesson => {
 
-        card.className = "card";
+            const card =
+                document.createElement(
+                    "div"
+                );
 
-
-        const preview =
-            lesson.content.length > 100
-                ? lesson.content.substring(0, 100) + "..."
-                : lesson.content;
-
-
-        card.innerHTML = `
-
-            <h3>
-                Lesson ${lesson.lesson_order}
-            </h3>
-
-            <p>
-                ${lesson.title}
-            </p>
-
-            <p>
-                ${preview}
-            </p>
-
-            <button
-                type="button"
-                class="btn btn-primary"
-                onclick="editLesson(${lesson.id})"
-            >
-                Edit Lesson
-            </button>
-
-            <button
-                type="button"
-                class="btn btn-secondary"
-                onclick="manageChapters(${lesson.id})"
-            >
-                Manage Chapters
-            </button>
-        `;
+            card.className =
+                "card";
 
 
-        list.appendChild(card);
+            const content =
+                lesson.content || "";
 
-    });
+
+            const preview =
+                content.length > 100
+                    ? content.substring(
+                        0,
+                        100
+                    ) + "..."
+                    : content;
+
+
+            // Lesson number
+            const heading =
+                document.createElement(
+                    "h3"
+                );
+
+            heading.textContent =
+                `Lesson ${lesson.lesson_order}`;
+
+
+            // Lesson title
+            const title =
+                document.createElement(
+                    "p"
+                );
+
+            title.textContent =
+                lesson.title;
+
+
+            // Lesson content preview
+            const previewText =
+                document.createElement(
+                    "p"
+                );
+
+            previewText.textContent =
+                preview ||
+                "No lesson content available.";
+
+
+            // Edit Lesson button
+            const editBtn =
+                document.createElement(
+                    "button"
+                );
+
+            editBtn.type =
+                "button";
+
+            editBtn.className =
+                "btn btn-primary";
+
+            editBtn.textContent =
+                "Edit Lesson";
+
+            editBtn.addEventListener(
+                "click",
+                () => {
+
+                    editLesson(
+                        lesson.id
+                    );
+
+                }
+            );
+
+
+            // Manage Chapters button
+            const chaptersBtn =
+                document.createElement(
+                    "button"
+                );
+
+            chaptersBtn.type =
+                "button";
+
+            chaptersBtn.className =
+                "btn btn-secondary";
+
+            chaptersBtn.textContent =
+                "Manage Chapters";
+
+            chaptersBtn.addEventListener(
+                "click",
+                () => {
+
+                    manageChapters(
+                        lesson.id
+                    );
+
+                }
+            );
+
+
+            card.appendChild(
+                heading
+            );
+
+            card.appendChild(
+                title
+            );
+
+            card.appendChild(
+                previewText
+            );
+
+            card.appendChild(
+                editBtn
+            );
+
+            card.appendChild(
+                chaptersBtn
+            );
+
+
+            list.appendChild(
+                card
+            );
+
+        }
+    );
 
 }
 
