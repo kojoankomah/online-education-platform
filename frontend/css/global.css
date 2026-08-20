@@ -1027,6 +1027,10 @@ RESPONSIVE DESIGN
 }
 
 
+.chapter-content-block p {
+    white-space: pre-wrap;
+}
+
 
 
 /* =========================================
