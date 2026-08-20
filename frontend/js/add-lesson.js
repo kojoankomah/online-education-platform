@@ -86,10 +86,10 @@ async function createLesson(e) {
     // VALIDATION
     // ----------------------------
 
-    if (!title || !content) {
+    if (!title) {
 
         showToast(
-            "Title and lesson content are required.",
+            "Lesson title is required.",
             "warning"
         );
 

@@ -98,7 +98,7 @@ async function loadLesson() {
         document.getElementById(
             "content"
         ).value =
-            lesson.content;
+            lesson.content || "";
 
 
         document.getElementById(
@@ -181,14 +181,10 @@ async function updateLesson(event) {
 
 
     // Validate fields
-    if (
-        !title ||
-        !content ||
-        !lessonOrder
-    ) {
+    if (!title) {
 
         showToast(
-            "Title, content, and lesson order are required.",
+            "Lesson title is required.",
             "warning"
         );
 

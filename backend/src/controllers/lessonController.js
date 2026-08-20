@@ -11,18 +11,21 @@ const createLesson = async (req, res) => {
 
 
   if (
-  !title ||
-  !title.trim() ||
-  !content ||
-  !content.trim()
+    typeof title !== "string" ||
+    !title.trim()
   ) {
 
       return res.status(400).json({
           message:
-              "Lesson title and content are required"
+              "Lesson title is required"
       });
 
   }
+
+  const cleanContent =
+  typeof content === "string"
+    ? content.trim()
+    : "";
 
 
   const lessonOrder =
@@ -66,7 +69,12 @@ const createLesson = async (req, res) => {
       (course_id, title, content, lesson_order)
       VALUES ($1, $2, $3, $4)
       RETURNING *`,
-      [courseId, title.trim(), content.trim(), lesson_order]
+      [
+        courseId,
+        title.trim(),
+        cleanContent,
+        lessonOrder
+      ]    
     );
 
     res.status(201).json({
@@ -103,20 +111,24 @@ const updateLesson = async (req, res) => {
          * Validate input
          */
         if (
-            !title ||
+            typeof title !== "string" ||
             !title.trim() ||
-            !content ||
-            !content.trim() ||
-            !lesson_order
+            lesson_order === undefined ||
+            lesson_order === null ||
+            lesson_order === ""
         ) {
 
             return res.status(400).json({
                 message:
-                    "Title, content, and lesson order are required"
+                    "Title and lesson order are required"
             });
 
         }
 
+        const cleanContent =
+          typeof content === "string"
+              ? content.trim()
+              : "";
 
         const lessonOrder =
             Number(lesson_order);
@@ -209,7 +221,7 @@ const updateLesson = async (req, res) => {
                 `,
                 [
                     title.trim(),
-                    content.trim(),
+                    cleanContent,
                     lessonOrder,
                     id
                 ]

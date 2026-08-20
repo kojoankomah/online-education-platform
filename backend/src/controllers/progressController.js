@@ -434,7 +434,7 @@ const checkLessonCompletion = async (req, res) => {
               quizExists: false,
               quizPassed: false,
 
-              canComplete: false
+              canComplete: completed
           });
 
         }

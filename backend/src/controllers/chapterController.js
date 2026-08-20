@@ -972,6 +972,10 @@ const reorderChapters = async (req, res) => {
     const client =
         await pool.connect();
 
+
+    let transactionStarted =
+        false;
+
     try {
 
         const lessonId =
@@ -1169,6 +1173,9 @@ const reorderChapters = async (req, res) => {
             "BEGIN"
         );
 
+        transactionStarted =
+            true;
+
 
         /*
          * Temporarily move all chapter
@@ -1245,6 +1252,8 @@ const reorderChapters = async (req, res) => {
             "COMMIT"
         );
 
+        transactionStarted =
+            false;
 
         // =========================
         // RETURN NEW ORDER
@@ -1291,9 +1300,15 @@ const reorderChapters = async (req, res) => {
 
     catch (error) {
 
-        await client.query(
-            "ROLLBACK"
-        );
+        if (
+            transactionStarted
+        ) {
+
+            await client.query(
+                "ROLLBACK"
+            );
+
+        }
 
 
         console.error(
@@ -1656,7 +1671,7 @@ const getStudentChaptersByLesson = async (req, res) => {
                 completedRequired,
 
             all_required_completed:
-                totalRequired > 0 &&
+                totalRequired === 0 ||
                 completedRequired ===
                     totalRequired,
 
