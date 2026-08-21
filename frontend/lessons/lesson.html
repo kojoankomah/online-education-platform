@@ -3,103 +3,147 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>Lesson</title>
+    <title>Lesson</title>
 
-<link rel="stylesheet" href="../css/global.css">
+    <link
+        rel="stylesheet"
+        href="../css/global.css"
+    >
 
-<link rel="stylesheet" href="../css/lesson.css">
+    <link
+        rel="stylesheet"
+        href="../css/lesson.css"
+    >
 
 </head>
 
-
 <body>
 
+<header class="page-header">
 
-<header class="dashboard-header">
+    <div class="container page-header-inner">
 
-    <h2>
-        <a href="../dashboard/student-dashboard.html">
+        <a
+            href="../dashboard/student-dashboard.html"
+            class="page-brand"
+        >
             EduPlatform
         </a>
-    </h2>
 
-    <a id="backToCourse" href="#">
-        Back to Course
-    </a>
+        <a
+            id="backToCourse"
+            href="#"
+            class="page-back-btn"
+        >
+            ← Back to Course
+        </a>
+
+    </div>
 
 </header>
 
 
+<main class="app-page">
 
-<main class="container">
+    <div class="container">
+
+        <div class="app-page-title">
+
+            <h1 id="lessonTitle">
+                Loading lesson...
+            </h1>
+
+            <p id="lessonContent">
+            </p>
+
+        </div>
 
 
-<section class="card">
+        <section
+            id="chapterSection"
+            class="card"
+            style="display: none;"
+        >
 
-<h1 id="lessonTitle">
-Loading lesson...
-</h1>
+            <div class="lesson-section-heading">
+
+                <div>
+
+                    <h2>
+                        Chapters
+                    </h2>
+
+                    <p>
+                        Complete the learning chapters in order
+                        before finishing this lesson.
+                    </p>
+
+                </div>
+
+                <p
+                    id="chapterProgress"
+                    class="lesson-progress-text"
+                >
+                </p>
+
+            </div>
 
 
-<p id="lessonContent">
+            <div id="chapterList">
+            </div>
 
-</p>
+        </section>
 
 
-<div
-    id="chapterSection"
-    style="display: none;"
->
+        <section class="card">
 
-    <h2>
-        Chapters
-    </h2>
+            <h2>
+                Lesson Actions
+            </h2>
 
-    <p id="chapterProgress">
+            <p>
+                Take the lesson quiz after studying the chapters,
+                then complete the lesson when all requirements are met.
+            </p>
 
-    </p>
 
-    <div id="chapterList">
+            <div class="course-actions">
+
+                <button
+                    type="button"
+                    id="quizBtn"
+                    class="btn btn-primary"
+                >
+                    Take Quiz
+                </button>
+
+                <button
+                    type="button"
+                    id="completeBtn"
+                    class="btn btn-secondary"
+                >
+                    Mark Lesson Complete
+                </button>
+
+            </div>
+
+        </section>
 
     </div>
-
-</div>
-
-
-<button
-    type="button"
-    id="quizBtn"
-    class="btn btn-primary"
->
-    Take Quiz
-</button>
-
-<button
-    type="button"
-    id="completeBtn"
-    class="btn btn-secondary"
->
-    Mark Lesson Complete
-</button>
-
-
-</section>
-
 
 </main>
 
 
-
 <script src="../js/notifications.js"></script>
-
 <script src="../js/api.js"></script>
-
 <script src="../js/lesson.js"></script>
-
 
 </body>
 

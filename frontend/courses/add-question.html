@@ -3,152 +3,230 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>Add Question</title>
+    <title>Add Question</title>
 
-<link rel="stylesheet"
-href="../css/global.css">
+    <link
+        rel="stylesheet"
+        href="../css/global.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/form.css"
+    >
 
 </head>
 
-
 <body>
 
+<header class="page-header">
 
-<header class="dashboard-header">
+    <div class="container page-header-inner">
 
-    <h2>
-        <a href="../dashboard/instructor-dashboard.html">
+        <a
+            href="../dashboard/instructor-dashboard.html"
+            class="page-brand"
+        >
             EduPlatform
         </a>
-    </h2>
 
-    <a id="backToCourse" href="#">
-        Back
-    </a>
+        <a
+            id="backToCourse"
+            href="#"
+            class="page-back-btn"
+        >
+            ← Back to Course
+        </a>
+
+    </div>
 
 </header>
 
 
-<main class="container">
+<main class="app-page">
+
+    <div class="container">
+
+        <div class="app-page-title">
+
+            <h1>
+                Add Quiz Question
+            </h1>
+
+            <p>
+                Add clear multiple-choice questions and select
+                the correct answer for each one.
+            </p>
+
+        </div>
 
 
-<div class="card">
+        <div class="card">
+
+            <div class="quiz-question-status">
+
+                <strong id="questionCount">
+                    Questions Added: 0
+                </strong>
+
+            </div>
 
 
-<h1>
-Add Quiz Question
-</h1>
+            <form id="questionForm">
 
-<p id="questionCount">
-    Questions Added: 0
-</p>
+                <div class="form-group">
 
-<form id="questionForm">
+                    <label for="question">
+                        Question
+                    </label>
 
+                    <textarea
+                        id="question"
+                        rows="5"
+                        required
+                    ></textarea>
 
-<label>
-Question
-</label>
+                    <small>
+                        Write a clear question based on material
+                        covered in the lesson.
+                    </small>
 
-<textarea
-id="question"
-required>
-</textarea>
-
-
-
-<label>
-Option A
-</label>
-
-<input
-id="option_a"
-required>
+                </div>
 
 
+                <div class="form-group">
 
-<label>
-Option B
-</label>
+                    <label for="option_a">
+                        Option A
+                    </label>
 
-<input
-id="option_b"
-required>
+                    <input
+                        type="text"
+                        id="option_a"
+                        required
+                    >
 
-
-
-<label>
-Option C
-</label>
-
-<input
-id="option_c"
-required>
+                </div>
 
 
+                <div class="form-group">
 
-<label>
-Option D
-</label>
+                    <label for="option_b">
+                        Option B
+                    </label>
 
-<input
-id="option_d"
-required>
+                    <input
+                        type="text"
+                        id="option_b"
+                        required
+                    >
 
-
-
-<label>
-Correct Answer
-</label>
-
-<select id="correct_answer">
-
-<option value="A">
-Option A
-</option>
-
-<option value="B">
-Option B
-</option>
-
-<option value="C">
-Option C
-</option>
-
-<option value="D">
-Option D
-</option>
-
-</select>
+                </div>
 
 
-<button type="submit" id="addQuestionBtn" class="btn btn-primary">
-    + Add Question
-</button>
+                <div class="form-group">
 
-<button type="button" id="finishQuizBtn" class="btn btn-secondary">
-    Finish Quiz
-</button>
+                    <label for="option_c">
+                        Option C
+                    </label>
 
-</form>
+                    <input
+                        type="text"
+                        id="option_c"
+                        required
+                    >
+
+                </div>
 
 
+                <div class="form-group">
 
-</div>
+                    <label for="option_d">
+                        Option D
+                    </label>
 
+                    <input
+                        type="text"
+                        id="option_d"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="correct_answer">
+                        Correct Answer
+                    </label>
+
+                    <select id="correct_answer">
+
+                        <option value="A">
+                            Option A
+                        </option>
+
+                        <option value="B">
+                            Option B
+                        </option>
+
+                        <option value="C">
+                            Option C
+                        </option>
+
+                        <option value="D">
+                            Option D
+                        </option>
+
+                    </select>
+
+                    <small>
+                        Select the option students must choose
+                        for this question to be marked correct.
+                    </small>
+
+                </div>
+
+
+                <div class="course-actions">
+
+                    <button
+                        type="submit"
+                        id="addQuestionBtn"
+                        class="btn btn-primary"
+                    >
+                        + Add Question
+                    </button>
+
+                    <button
+                        type="button"
+                        id="finishQuizBtn"
+                        class="btn btn-secondary"
+                    >
+                        Finish Quiz
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
 
 </main>
 
-<script src="../js/notifications.js"></script>
 
+<script src="../js/notifications.js"></script>
 <script src="../js/api.js"></script>
 <script src="../js/add-question.js"></script>
-
 
 </body>
 

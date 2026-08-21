@@ -3,127 +3,139 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>Course Details</title>
+    <title>Course Details</title>
 
+    <link
+        rel="stylesheet"
+        href="../css/global.css"
+    >
 
-<link rel="stylesheet"
-href="../css/global.css">
-
-<link rel="stylesheet"
-href="../css/course.css">
+    <link
+        rel="stylesheet"
+        href="../css/course.css"
+    >
 
 </head>
 
-
 <body>
 
+<header class="page-header">
 
-<header class="dashboard-header">
+    <div class="container page-header-inner">
 
-<h2>
-    <a href="../dashboard/student-dashboard.html">
-        EduPlatform
-    </a>
-</h2>
+        <a
+            href="../dashboard/student-dashboard.html"
+            class="page-brand"
+        >
+            EduPlatform
+        </a>
 
-<a href="../dashboard/student-dashboard.html">
-Back to Dashboard
-</a>
+        <a
+            href="../dashboard/student-dashboard.html"
+            class="page-back-btn"
+        >
+            ← Back to Dashboard
+        </a>
+
+    </div>
 
 </header>
 
 
+<main class="app-page">
 
-<main class="container">
+    <div class="container">
+
+        <div class="app-page-title">
+
+            <h1 id="courseTitle">
+                Loading course...
+            </h1>
+
+            <p id="courseDescription">
+            </p>
+
+        </div>
 
 
-<section class="card">
+        <section class="card progress-container">
+
+            <h2>
+                Course Progress
+            </h2>
+
+            <div class="progress-bar">
+
+                <div
+                    id="courseProgressBar"
+                    class="progress"
+                ></div>
+
+            </div>
+
+            <p id="courseProgressText">
+                Loading progress...
+            </p>
+
+        </section>
 
 
-<h1 id="courseTitle">
-Loading course...
-</h1>
+        <section
+            id="continueLearningSection"
+            class="card"
+            style="display: none;"
+        >
+
+            <h2>
+                Continue Learning
+            </h2>
+
+            <p id="continueLearningText">
+                Continue from where you left off.
+            </p>
+
+            <button
+                type="button"
+                id="continueLearningBtn"
+                class="btn btn-primary"
+            >
+                Continue Learning
+            </button>
+
+        </section>
 
 
-<p id="courseDescription">
+        <section class="card">
 
-</p>
+            <h2>
+                Lessons
+            </h2>
 
+            <div id="lessonList">
 
-</section>
+                <p>
+                    Loading lessons...
+                </p>
 
-<div class="progress-container">
+            </div>
 
-    <h3>Course Progress</h3>
+        </section>
 
-    <div class="progress-bar">
-        <div id="courseProgressBar" class="progress"></div>
     </div>
-
-    <p id="courseProgressText">
-        Loading progress...
-    </p>
-
-</div>
-
-
-<section
-    id="continueLearningSection"
-    class="card"
-    style="display: none;"
->
-
-    <h2>
-        Continue Learning
-    </h2>
-
-    <p id="continueLearningText">
-        Continue from where you left off.
-    </p>
-
-    <button
-        type="button"
-        id="continueLearningBtn"
-        class="btn btn-primary"
-    >
-        Continue Learning
-    </button>
-
-</section>
-
-<section class="card">
-
-
-    <h2>
-    Lessons
-    </h2>
-
-
-    <div id="lessonList">
-
-        <p>
-        Loading lessons...
-        </p>
-
-    </div>
-
-
-</section>
-
 
 </main>
 
 
 <script src="../js/notifications.js"></script>
-
 <script src="../js/api.js"></script>
 <script src="../js/course.js"></script>
-
 
 </body>
 

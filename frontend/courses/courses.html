@@ -3,81 +3,90 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>Available Courses</title>
+    <title>Available Courses</title>
 
-<link rel="stylesheet" href="../css/global.css">
+    <link
+        rel="stylesheet"
+        href="../css/global.css"
+    >
 
-<link rel="stylesheet" href="../css/course.css">
+    <link
+        rel="stylesheet"
+        href="../css/course.css"
+    >
 
 </head>
 
-
 <body class="courses-page">
 
-<header class="dashboard-header">
+<header class="page-header">
 
-<h2>
-    <a href="../dashboard/student-dashboard.html">
-        EduPlatform
-    </a>
-</h2>
+    <div class="container page-header-inner">
 
+        <a
+            href="../dashboard/student-dashboard.html"
+            class="page-brand"
+        >
+            EduPlatform
+        </a>
 
-<a href="../dashboard/student-dashboard.html">
-Back to Dashboard
-</a>
+        <a
+            href="../dashboard/student-dashboard.html"
+            class="page-back-btn"
+        >
+            ← Back to Dashboard
+        </a>
 
+    </div>
 
 </header>
 
 
+<main class="app-page">
 
-<main class="container">
+    <div class="container">
 
+        <div class="app-page-title">
 
-<section class="card courses-intro">
-        
-    <h1>
-    Available Courses
-    </h1>
+            <h1>
+                Available Courses
+            </h1>
 
+            <p>
+                Browse available courses, explore their content,
+                and enroll to begin learning.
+            </p>
 
-    <p>
-    Browse and enroll in courses to start learning.
-    </p>
-
-
-</section>
-
+        </div>
 
 
-<section class="courses-section">
-    <div id="courseList">
+        <section class="courses-section">
 
-    <p>
-    Loading courses...
-    </p>
+            <div id="courseList">
 
+                <p>
+                    Loading courses...
+                </p>
+
+            </div>
+
+        </section>
 
     </div>
-
-
-</section>
-
-
 
 </main>
 
 
 <script src="../js/notifications.js"></script>
-
 <script src="../js/api.js"></script>
 <script src="../js/courses.js"></script>
-
 
 </body>
 

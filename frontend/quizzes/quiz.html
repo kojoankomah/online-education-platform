@@ -19,53 +19,81 @@
 
 </head>
 
-<title>Quiz</title>
-
-<link rel="stylesheet" href="../css/global.css">
-
-</head>
-
-
 <body>
 
+<header class="page-header">
 
-<header class="dashboard-header">
+    <div class="container page-header-inner">
 
-    <h2 id="quizTitle">
-        Quiz
-    </h2>
+        <a
+            href="../dashboard/student-dashboard.html"
+            class="page-brand"
+        >
+            EduPlatform
+        </a>
 
-    <a id="backToLesson" href="#">
-        Back to Lesson
-    </a>
+        <a
+            id="backToLesson"
+            href="#"
+            class="page-back-btn"
+        >
+            ← Back to Lesson
+        </a>
+
+    </div>
 
 </header>
 
 
+<main class="app-page">
 
-<div class="container">
+    <div class="container">
 
-    <div id="quizContainer">
-        <p>
-            Loading quiz...
-        </p>
+        <div class="app-page-title">
+
+            <h1 id="quizTitle">
+                Quiz
+            </h1>
+
+            <p>
+                Answer each question carefully, then submit
+                your answers to view your result.
+            </p>
+
+        </div>
+
+
+        <div id="quizContainer">
+
+            <p>
+                Loading quiz...
+            </p>
+
+        </div>
+
+
+        <div class="course-actions">
+
+            <button
+                type="button"
+                id="submitQuizBtn"
+                class="btn btn-primary"
+            >
+                Submit Quiz
+            </button>
+
+        </div>
+
+
+        <div id="result">
+        </div>
+
     </div>
 
-<button
-    type="button"
-    id="submitQuizBtn"
-    class="btn btn-primary"
->
-    Submit Quiz
-</button>
-
-    <div id="result"></div>
-
-</div>
+</main>
 
 
 <script src="../js/notifications.js"></script>
-
 <script src="../js/api.js"></script>
 <script src="../js/quiz.js"></script>
 

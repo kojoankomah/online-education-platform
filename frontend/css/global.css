@@ -817,6 +817,157 @@ TOAST NOTIFICATIONS
 
 
 
+/* =========================================
+   APPLICATION PAGE HEADER
+========================================= */
+
+.page-header {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+
+    padding: 18px 0;
+
+    position: sticky;
+    top: 0;
+
+    z-index: 1000;
+}
+
+
+.page-header-inner {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+
+.page-brand {
+    color: #2563eb;
+
+    font-size: 1.5rem;
+    font-weight: 800;
+
+    text-decoration: none;
+}
+
+
+.page-brand:hover {
+    color: #1d4ed8;
+}
+
+
+/* Back / secondary page navigation */
+
+.page-back-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    width: auto;
+
+    min-height: 44px;
+
+    padding: 10px 18px;
+
+    background: transparent;
+
+    color: #2563eb;
+
+    border: 2px solid #2563eb;
+    border-radius: 8px;
+
+    font-weight: 600;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease;
+}
+
+
+.page-back-btn:hover {
+    background: #2563eb;
+    color: white;
+
+    transform: translateY(-1px);
+}
+
+
+.page-back-btn:focus-visible {
+    outline: 3px solid #93c5fd;
+    outline-offset: 3px;
+}
+
+
+/* =========================================
+   STANDARD APPLICATION PAGE
+========================================= */
+
+.app-page {
+    min-height: calc(100vh - 81px);
+
+    padding: 45px 0 70px;
+
+    background: #f8fafc;
+}
+
+
+.app-page-title {
+    margin-bottom: 30px;
+}
+
+
+.app-page-title h1 {
+    margin-bottom: 8px;
+
+    color: #0f172a;
+}
+
+
+.app-page-title p {
+    max-width: 720px;
+
+    color: #64748b;
+}
+
+
+/* =========================================
+   MOBILE PAGE HEADER
+========================================= */
+
+@media (max-width: 600px) {
+
+    .page-header-inner {
+        gap: 12px;
+    }
+
+
+    .page-brand {
+        font-size: 1.25rem;
+    }
+
+
+    .page-back-btn {
+        width: auto;
+
+        padding: 9px 13px;
+
+        font-size: 0.9rem;
+    }
+
+
+    .app-page {
+        padding-top: 30px;
+    }
+
+}
+
 
 /* =========================================
    FOOTER

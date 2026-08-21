@@ -3,69 +3,85 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>Enrolled Students</title>
+    <title>Enrolled Students</title>
 
-<link rel="stylesheet"
-href="../css/global.css">
+    <link
+        rel="stylesheet"
+        href="../css/global.css"
+    >
 
 </head>
 
-
 <body>
 
+<header class="page-header">
 
-<header class="dashboard-header">
+    <div class="container page-header-inner">
 
-    <h2>
-        <a href="../dashboard/instructor-dashboard.html">
+        <a
+            href="../dashboard/instructor-dashboard.html"
+            class="page-brand"
+        >
             EduPlatform
         </a>
-    </h2>
 
-    <a id="backToCourse" href="#">
-        Back
-    </a>
+        <a
+            id="backToCourse"
+            href="#"
+            class="page-back-btn"
+        >
+            ← Back to Course
+        </a>
+
+    </div>
 
 </header>
 
 
+<main class="app-page">
 
-<main class="container">
+    <div class="container">
 
+        <div class="app-page-title">
 
-<section class="card">
+            <h1>
+                Enrolled Students
+            </h1>
 
+            <p>
+                View the students currently enrolled in this course.
+            </p>
 
-<h1>
-Enrolled Students
-</h1>
-
-
-<div id="studentList">
-
-<p>
-Loading students...
-</p>
-
-</div>
+        </div>
 
 
-</section>
+        <section class="card">
 
+            <div id="studentList">
+
+                <p>
+                    Loading students...
+                </p>
+
+            </div>
+
+        </section>
+
+    </div>
 
 </main>
 
 
 <script src="../js/notifications.js"></script>
-
 <script src="../js/api.js"></script>
 <script src="../js/students.js"></script>
-
 
 </body>
 

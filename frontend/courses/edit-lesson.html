@@ -1,113 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>Edit Lesson</title>
+    <title>Edit Lesson</title>
 
-<link
-    rel="stylesheet"
-    href="../css/global.css"
->
+    <link
+        rel="stylesheet"
+        href="../css/global.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/form.css"
+    >
 
 </head>
 
-
 <body>
 
+<header class="page-header">
 
-<header class="dashboard-header">
+    <div class="container page-header-inner">
 
-<h2>
-    <a href="../dashboard/instructor-dashboard.html">
-        EduPlatform
-    </a>
-</h2>
+        <a
+            href="../dashboard/instructor-dashboard.html"
+            class="page-brand"
+        >
+            EduPlatform
+        </a>
 
+        <a
+            id="backToCourse"
+            href="#"
+            class="page-back-btn"
+        >
+            ← Back to Course
+        </a>
 
-<a id="backToCourse" href="#">
-    Back
-</a>
+    </div>
 
 </header>
 
 
-<main class="container">
+<main class="app-page">
+
+    <div class="container">
+
+        <div class="app-page-title">
+
+            <h1>
+                Edit Lesson
+            </h1>
+
+            <p>
+                Update the lesson details while keeping its position
+                within the course structure.
+            </p>
+
+        </div>
 
 
-<div class="card">
+        <div class="card">
+
+            <form id="lessonForm">
+
+                <div class="form-group">
+
+                    <label for="title">
+                        Lesson Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="title"
+                        required
+                    >
+
+                </div>
 
 
-<h1>Edit Lesson</h1>
+                <div class="form-group">
+
+                    <label for="content">
+                        Lesson Content (Optional)
+                    </label>
+
+                    <textarea
+                        id="content"
+                        rows="10"
+                    ></textarea>
+
+                </div>
 
 
-<form id="lessonForm">
+                <div class="form-group">
+
+                    <label for="lessonOrder">
+                        Lesson Order
+                    </label>
+
+                    <input
+                        type="number"
+                        id="lessonOrder"
+                        min="1"
+                        step="1"
+                        required
+                    >
+
+                    <small>
+                        Enter the position of this lesson within the course.
+                    </small>
+
+                </div>
 
 
-<label for="title">
-    Lesson Title
-</label>
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Save Changes
+                </button>
 
-<input
-    type="text"
-    id="title"
-    required
->
+            </form>
 
+        </div>
 
-<label for="content">
-    Lesson Content (Optional)
-</label>
-
-<textarea
-    id="content"
-    rows="10"
-></textarea>
-
-
-<label for="lessonOrder">
-    Lesson Order
-</label>
-
-<input
-    type="number"
-    id="lessonOrder"
-    min="1"
-    step="1"
-    required
->
-
-
-<button
-    type="submit"
-    class="btn btn-primary"
->
-    Save Changes
-</button>
-
-
-</form>
-
-
-</div>
-
+    </div>
 
 </main>
 
-<script src="../js/notifications.js"></script>
 
+<script src="../js/notifications.js"></script>
 <script src="../js/api.js"></script>
 <script src="../js/edit-lesson.js"></script>
 
 </body>
-
 
 </html>

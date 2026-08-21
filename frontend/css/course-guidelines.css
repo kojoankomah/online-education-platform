@@ -1,0 +1,245 @@
+/* =========================================
+   COURSE CREATION GUIDELINES
+========================================= */
+
+.guidelines-header {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 18px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.guidelines-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.guidelines-logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #2563eb;
+}
+
+.guidelines-page {
+    padding: 45px 0 70px;
+    background: #f8fafc;
+}
+
+.guidelines-page section {
+    padding: 0;
+}
+
+
+/* INTRO */
+
+.guidelines-intro {
+    max-width: 850px;
+    margin-bottom: 35px;
+}
+
+.guidelines-label {
+    color: #2563eb;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+}
+
+.guidelines-intro h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin-bottom: 15px;
+    color: #0f172a;
+}
+
+.guidelines-intro > p:last-child {
+    max-width: 720px;
+    font-size: 1.05rem;
+    color: #475569;
+}
+
+
+/* WORKFLOW */
+
+.guidelines-workflow {
+    background: #0f172a;
+    color: white;
+    padding: 25px !important;
+    border-radius: 14px;
+    margin-bottom: 35px;
+}
+
+.guidelines-workflow h2 {
+    font-size: 1.25rem;
+    margin-bottom: 18px;
+}
+
+.workflow-steps {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.workflow-steps span:nth-child(odd) {
+    background: #1e293b;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.workflow-steps span:nth-child(even) {
+    color: #93c5fd;
+    font-weight: 700;
+}
+
+
+/* GUIDELINE CARDS */
+
+.guidelines-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.guideline-card {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+
+    background: white;
+    padding: 24px;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+}
+
+.guideline-number {
+    width: 42px;
+    height: 42px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #2563eb;
+    color: white;
+
+    font-size: 1rem;
+    font-weight: 800;
+
+    border-radius: 50%;
+}
+
+.guideline-card h2 {
+    font-size: 1.15rem;
+    margin-bottom: 8px;
+    color: #0f172a;
+}
+
+.guideline-card p {
+    color: #475569;
+}
+
+.guideline-example {
+    margin-top: 10px;
+    padding: 10px 12px;
+
+    background: #eff6ff;
+
+    border-left: 4px solid #2563eb;
+    border-radius: 6px;
+
+    font-weight: 600;
+}
+
+
+/* CHECKLIST */
+
+.guidelines-checklist {
+    margin-top: 35px;
+    background: white;
+    padding: 30px !important;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+}
+
+.guidelines-checklist h2 {
+    margin-bottom: 18px;
+}
+
+.guidelines-checklist ul {
+    list-style: none;
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 12px 25px;
+}
+
+.guidelines-checklist li {
+    position: relative;
+    padding-left: 28px;
+    color: #334155;
+}
+
+.guidelines-checklist li::before {
+    content: "✓";
+
+    position: absolute;
+    left: 0;
+
+    color: #16a34a;
+    font-weight: 800;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 800px) {
+
+    .guidelines-list {
+        grid-template-columns: 1fr;
+    }
+
+    .guidelines-checklist ul {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .guidelines-page {
+        padding-top: 30px;
+    }
+
+    .guidelines-nav {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .guidelines-nav .btn {
+        width: auto;
+    }
+
+    .guideline-card {
+        padding: 20px;
+    }
+
+    .workflow-steps {
+        gap: 9px;
+    }
+
+}

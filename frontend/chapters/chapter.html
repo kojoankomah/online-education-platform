@@ -3,124 +3,132 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>Chapter</title>
+    <title>Chapter</title>
 
-<link
-    rel="stylesheet"
-    href="../css/global.css"
->
+    <link
+        rel="stylesheet"
+        href="../css/global.css"
+    >
 
-<link
-    rel="stylesheet"
-    href="../css/lesson.css"
->
+    <link
+        rel="stylesheet"
+        href="../css/lesson.css"
+    >
 
 </head>
 
 <body>
 
+<header class="page-header">
 
-<header class="dashboard-header">
+    <div class="container page-header-inner">
 
-    <h2>
-        <a href="../dashboard/student-dashboard.html">
+        <a
+            href="../dashboard/student-dashboard.html"
+            class="page-brand"
+        >
             EduPlatform
         </a>
-    </h2>
 
-    <a
-        id="backToLesson"
-        href="#"
-    >
-        Back to Lesson
-    </a>
+        <a
+            id="backToLesson"
+            href="#"
+            class="page-back-btn"
+        >
+            ← Back to Lesson
+        </a>
+
+    </div>
 
 </header>
 
 
-<main class="container">
+<main class="app-page">
 
-    <section class="card">
+    <div class="container">
 
-        <h1 id="chapterTitle">
-            Loading chapter...
-        </h1>
+        <div class="app-page-title">
 
-        <p id="chapterDescription">
-        </p>
+            <h1 id="chapterTitle">
+                Loading chapter...
+            </h1>
 
-        <p id="chapterMeta">
-        </p>
+            <p id="chapterDescription">
+            </p>
 
-    </section>
-
-
-    <section class="card">
-
-        <h2>
-            Chapter Content
-        </h2>
-
-        <div id="contentList">
-
-            <p>
-                Loading content...
+            <p id="chapterMeta">
             </p>
 
         </div>
 
-    </section>
+
+        <section class="card">
+
+            <h2>
+                Chapter Content
+            </h2>
+
+            <div id="contentList">
+
+                <p>
+                    Loading content...
+                </p>
+
+            </div>
+
+        </section>
 
 
-    <section class="card">
-
-        <button
-            type="button"
-            id="completeChapterBtn"
-            class="btn btn-primary"
-            disabled
-        >
-            Loading...
-        </button>
-
-
-        <div class="chapter-navigation">
-
-            <button
-                type="button"
-                id="previousChapterBtn"
-                class="btn btn-secondary"
-                style="display: none;"
-            >
-                Previous Chapter
-            </button>
+        <section class="card">
 
             <button
                 type="button"
-                id="nextChapterBtn"
+                id="completeChapterBtn"
                 class="btn btn-primary"
-                style="display: none;"
+                disabled
             >
-                Next Chapter
+                Loading...
             </button>
 
-        </div>
-    </section>
+
+            <div class="chapter-navigation">
+
+                <button
+                    type="button"
+                    id="previousChapterBtn"
+                    class="btn btn-secondary"
+                    style="display: none;"
+                >
+                    ← Previous Chapter
+                </button>
+
+                <button
+                    type="button"
+                    id="nextChapterBtn"
+                    class="btn btn-primary"
+                    style="display: none;"
+                >
+                    Next Chapter →
+                </button>
+
+            </div>
+
+        </section>
+
+    </div>
 
 </main>
 
 
 <script src="../js/notifications.js"></script>
-
 <script src="../js/api.js"></script>
-
 <script src="../js/chapter.js"></script>
 
 </body>

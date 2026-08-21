@@ -3,99 +3,107 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>Manage Chapter Content</title>
+    <title>Manage Chapter Content</title>
 
-<link
-    rel="stylesheet"
-    href="../css/global.css"
->
+    <link
+        rel="stylesheet"
+        href="../css/global.css"
+    >
 
-<link
-    rel="stylesheet"
-    href="../css/dashboard.css"
->
+    <link
+        rel="stylesheet"
+        href="../css/dashboard.css"
+    >
 
 </head>
 
 <body>
 
-<header class="dashboard-header">
+<header class="page-header">
 
-    <h2>
-        <a href="../dashboard/instructor-dashboard.html">
+    <div class="container page-header-inner">
+
+        <a
+            href="../dashboard/instructor-dashboard.html"
+            class="page-brand"
+        >
             EduPlatform
         </a>
-    </h2>
 
-    <a
-        href="#"
-        id="backToChaptersBtn"
-    >
-        Back to Chapters
-    </a>
+        <a
+            href="#"
+            id="backToChaptersBtn"
+            class="page-back-btn"
+        >
+            ← Back to Chapters
+        </a>
+
+    </div>
 
 </header>
 
 
-<main class="dashboard-container">
+<main class="app-page">
 
-    <section class="welcome-card">
+    <div class="container">
 
-        <h1 id="chapterTitle">
-            Loading chapter...
-        </h1>
+        <div class="app-page-title">
 
-        <p>
-            Add and manage the content blocks
-            students will see in this chapter.
-        </p>
-
-    </section>
-
-
-    <section class="card course-actions">
-
-        <button
-            type="button"
-            id="addContentBtn"
-            class="btn btn-primary"
-        >
-            + Add Content
-        </button>
-
-    </section>
-
-
-    <section class="card">
-
-        <h2>
-            Chapter Content
-        </h2>
-
-        <div id="contentList">
+            <h1 id="chapterTitle">
+                Loading chapter...
+            </h1>
 
             <p>
-                Loading content...
+                Add and manage the content blocks students
+                will see in this chapter.
             </p>
 
         </div>
 
-    </section>
+
+        <section class="card course-actions">
+
+            <button
+                type="button"
+                id="addContentBtn"
+                class="btn btn-primary"
+            >
+                + Add Content
+            </button>
+
+        </section>
+
+
+        <section class="card">
+
+            <h2>
+                Chapter Content
+            </h2>
+
+            <div id="contentList">
+
+                <p>
+                    Loading content...
+                </p>
+
+            </div>
+
+        </section>
+
+    </div>
 
 </main>
 
 
 <script src="../js/notifications.js"></script>
-
 <script src="../js/api.js"></script>
-
 <script src="../js/manage-chapter-content.js"></script>
 
 </body>

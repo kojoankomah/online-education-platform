@@ -3,132 +3,157 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>Edit Course</title>
+    <title>Edit Course</title>
 
-<link
-    rel="stylesheet"
-    href="../css/global.css"
->
+    <link
+        rel="stylesheet"
+        href="../css/global.css"
+    >
 
-<link
-    rel="stylesheet"
-    href="../css/form.css"
->
+    <link
+        rel="stylesheet"
+        href="../css/form.css"
+    >
 
 </head>
 
-
 <body>
 
-<header class="dashboard-header">
+<header class="page-header">
 
-<h2>
-    <a href="../dashboard/instructor-dashboard.html">
-        EduPlatform
-    </a>
-</h2>
+    <div class="container page-header-inner">
 
-<a
-    id="backToCourse"
-    href="#"
->
-    Back to Course
-</a>
+        <a
+            href="../dashboard/instructor-dashboard.html"
+            class="page-brand"
+        >
+            EduPlatform
+        </a>
+
+        <a
+            id="backToCourse"
+            href="#"
+            class="page-back-btn"
+        >
+            ← Back to Course
+        </a>
+
+    </div>
 
 </header>
 
 
-<main class="dashboard-container">
+<main class="app-page">
 
-    <section class="card">
+    <div class="container">
 
-        <h1>
-            Edit Course
-        </h1>
+        <div class="app-page-title">
 
+            <h1>
+                Edit Course
+            </h1>
 
-        <form id="editCourseForm">
+            <p>
+                Update the course information and replace the
+                thumbnail if necessary.
+            </p>
 
-            <div class="form-group">
-
-                <label for="courseTitle">
-                    Course Title
-                </label>
-
-                <input
-                    type="text"
-                    id="courseTitle"
-                    required
-                >
-
-            </div>
+        </div>
 
 
-            <div class="form-group">
+        <div class="card">
 
-                <label for="courseDescription">
-                    Course Description
-                </label>
+            <form id="editCourseForm">
 
-                <textarea
-                    id="courseDescription"
-                    rows="6"
-                ></textarea>
+                <div class="form-group">
 
-            </div>
+                    <label for="courseTitle">
+                        Course Title
+                    </label>
 
+                    <input
+                        type="text"
+                        id="courseTitle"
+                        required
+                    >
 
-            <div class="form-group">
-
-                <label>
-                    Current Thumbnail
-                </label>
-
-                <div
-                    id="currentThumbnail"
-                    class="course-thumbnail-preview"
-                >
-                    No thumbnail uploaded.
                 </div>
 
-            </div>
+
+                <div class="form-group">
+
+                    <label for="courseDescription">
+                        Course Description
+                    </label>
+
+                    <textarea
+                        id="courseDescription"
+                        rows="6"
+                    ></textarea>
+
+                    <small>
+                        Keep the description clear and focused on what
+                        students will learn.
+                    </small>
+
+                </div>
 
 
-            <div class="form-group">
+                <div class="form-group">
 
-                <label for="courseImage">
-                    Replace Thumbnail
-                </label>
+                    <label>
+                        Current Thumbnail
+                    </label>
 
-                <input
-                    type="file"
-                    id="courseImage"
-                    accept="image/jpeg,image/png,image/webp"
+                    <div
+                        id="currentThumbnail"
+                        class="course-thumbnail-preview"
+                    >
+                        No thumbnail uploaded.
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="courseImage">
+                        Replace Thumbnail
+                    </label>
+
+                    <input
+                        type="file"
+                        id="courseImage"
+                        accept="image/jpeg,image/png,image/webp"
+                    >
+
+                    <small>
+                        JPG, PNG or WEBP. Maximum size: 5 MB.
+                        Leave this empty to keep the current thumbnail.
+                    </small>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
                 >
+                    Save Changes
+                </button>
 
-                <small>
-                    JPG, PNG or WEBP. Maximum size: 5 MB.
-                </small>
+            </form>
 
-            </div>
+        </div>
 
-
-            <button
-                type="submit"
-                class="btn btn-primary"
-            >
-                Save Changes
-            </button>
-        </form>
-
-    </section>
+    </div>
 
 </main>
 

@@ -3,149 +3,217 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>Edit Chapter</title>
+    <title>Edit Chapter</title>
 
-<link
-    rel="stylesheet"
-    href="../css/global.css"
->
+    <link
+        rel="stylesheet"
+        href="../css/global.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/form.css"
+    >
 
 </head>
 
 <body>
 
-<header class="dashboard-header">
+<header class="page-header">
 
-    <a href="javascript:history.back()">
-        Back
-    </a>
+    <div class="container page-header-inner">
 
-    <a
-        id="backToChapters"
-        href="#"
-    >
-        Back to Chapters
-    </a>
+        <a
+            href="../dashboard/instructor-dashboard.html"
+            class="page-brand"
+        >
+            EduPlatform
+        </a>
+
+        <a
+            id="backToChapters"
+            href="#"
+            class="page-back-btn"
+        >
+            ← Back to Chapters
+        </a>
+
+    </div>
 
 </header>
 
 
-<main class="container">
+<main class="app-page">
 
-<div class="card">
+    <div class="container">
 
-    <h1>
-        Edit Chapter
-    </h1>
+        <div class="app-page-title">
 
+            <h1>
+                Edit Chapter
+            </h1>
 
-    <form id="chapterForm">
+            <p>
+                Update the chapter information, position,
+                requirements, and publishing status.
+            </p>
 
-        <label for="title">
-            Chapter Title
-        </label>
-
-        <input
-            type="text"
-            id="title"
-            required
-        >
+        </div>
 
 
-        <label for="description">
-            Description
-        </label>
+        <div class="card">
 
-        <textarea
-            id="description"
-            rows="5"
-        ></textarea>
+            <form id="chapterForm">
 
+                <div class="form-group">
 
-        <label for="chapterOrder">
-            Chapter Order
-        </label>
+                    <label for="title">
+                        Chapter Title
+                    </label>
 
-        <input
-            type="number"
-            id="chapterOrder"
-            min="1"
-            step="1"
-            required
-        >
+                    <input
+                        type="text"
+                        id="title"
+                        required
+                    >
+
+                </div>
 
 
-        <label for="estimatedMinutes">
-            Estimated Minutes
-        </label>
+                <div class="form-group">
 
-        <input
-            type="number"
-            id="estimatedMinutes"
-            min="1"
-            step="1"
-        >
+                    <label for="description">
+                        Description
+                    </label>
 
+                    <textarea
+                        id="description"
+                        rows="5"
+                    ></textarea>
 
-        <label for="isRequired">
-            Required Chapter
-        </label>
+                    <small>
+                        Briefly explain what students will learn in this chapter.
+                    </small>
 
-        <select id="isRequired">
-
-            <option value="true">
-                Yes
-            </option>
-
-            <option value="false">
-                No
-            </option>
-
-        </select>
+                </div>
 
 
-        <label for="status">
-            Status
-        </label>
+                <div class="form-group">
 
-        <select id="status">
+                    <label for="chapterOrder">
+                        Chapter Order
+                    </label>
 
-            <option value="published">
-                Published
-            </option>
+                    <input
+                        type="number"
+                        id="chapterOrder"
+                        min="1"
+                        step="1"
+                        required
+                    >
 
-            <option value="draft">
-                Draft
-            </option>
+                    <small>
+                        Enter the position of this chapter within the lesson.
+                    </small>
 
-        </select>
+                </div>
 
 
-        <button
-            type="submit"
-            class="btn btn-primary"
-        >
-            Save Changes
-        </button>
+                <div class="form-group">
 
-    </form>
+                    <label for="estimatedMinutes">
+                        Estimated Minutes
+                    </label>
 
-</div>
+                    <input
+                        type="number"
+                        id="estimatedMinutes"
+                        min="1"
+                        step="1"
+                    >
+
+                    <small>
+                        Estimate how long students may need to complete this chapter.
+                    </small>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="isRequired">
+                        Required Chapter
+                    </label>
+
+                    <select id="isRequired">
+
+                        <option value="true">
+                            Yes
+                        </option>
+
+                        <option value="false">
+                            No
+                        </option>
+
+                    </select>
+
+                    <small>
+                        Required chapters must be completed before students can progress.
+                    </small>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="status">
+                        Status
+                    </label>
+
+                    <select id="status">
+
+                        <option value="published">
+                            Published
+                        </option>
+
+                        <option value="draft">
+                            Draft
+                        </option>
+
+                    </select>
+
+                    <small>
+                        Draft chapters remain unavailable to students until published.
+                    </small>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Save Changes
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
 
 </main>
 
 
 <script src="../js/notifications.js"></script>
-
 <script src="../js/api.js"></script>
-
 <script src="../js/edit-chapter.js"></script>
 
 </body>

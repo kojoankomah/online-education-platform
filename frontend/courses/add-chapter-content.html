@@ -3,146 +3,200 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>Add Chapter Content</title>
+    <title>Add Chapter Content</title>
 
-<link
-    rel="stylesheet"
-    href="../css/global.css"
->
+    <link
+        rel="stylesheet"
+        href="../css/global.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/form.css"
+    >
 
 </head>
 
 <body>
 
-<header class="dashboard-header">
+<header class="page-header">
 
-    <a href="javascript:history.back()">
-        Back
-    </a>
+    <div class="container page-header-inner">
 
-    <a
-        id="backToContent"
-        href="#"
-    >
-        Back to Content
-    </a>
+        <a
+            href="../dashboard/instructor-dashboard.html"
+            class="page-brand"
+        >
+            EduPlatform
+        </a>
+
+        <a
+            id="backToContent"
+            href="#"
+            class="page-back-btn"
+        >
+            ← Back to Content
+        </a>
+
+    </div>
 
 </header>
 
 
-<main class="container">
+<main class="app-page">
 
-<div class="card">
+    <div class="container">
 
-    <h1>
-        Add Chapter Content
-    </h1>
+        <div class="app-page-title">
 
+            <h1>
+                Add Chapter Content
+            </h1>
 
-    <form id="contentForm">
-
-        <label for="blockType">
-            Content Type
-        </label>
-
-        <select
-            id="blockType"
-            required
-        >
-
-            <option value="">
-                Select content type
-            </option>
-
-            <option value="text">
-                Text
-            </option>
-
-            <option value="video">
-                Video
-            </option>
-
-            <option value="image">
-                Image
-            </option>
-
-            <option value="resource">
-                Resource
-            </option>
-
-        </select>
-
-
-        <div id="textField">
-
-            <label for="textContent">
-                Text Content
-            </label>
-
-            <textarea
-                id="textContent"
-                rows="10"
-            ></textarea>
+            <p>
+                Add text, images, videos, or learning resources
+                to build the content students will study in this chapter.
+            </p>
 
         </div>
 
 
-        <div
-            id="mediaField"
-            style="display: none;"
-        >
+        <div class="card">
 
-            <label for="mediaUrl">
-                Media URL
-            </label>
+            <form id="contentForm">
 
-            <input
-                type="url"
-                id="mediaUrl"
-                placeholder="https://example.com/..."
-            >
+
+                <div class="form-group">
+
+                    <label for="blockType">
+                        Content Type
+                    </label>
+
+                    <select
+                        id="blockType"
+                        required
+                    >
+
+                        <option value="">
+                            Select content type
+                        </option>
+
+                        <option value="text">
+                            Text
+                        </option>
+
+                        <option value="video">
+                            Video
+                        </option>
+
+                        <option value="image">
+                            Image
+                        </option>
+
+                        <option value="resource">
+                            Resource
+                        </option>
+
+                    </select>
+
+                    <small>
+                        Choose the type of learning material you want to add.
+                    </small>
+
+                </div>
+
+
+                <div
+                    id="textField"
+                    class="form-group"
+                >
+
+                    <label for="textContent">
+                        Text Content
+                    </label>
+
+                    <textarea
+                        id="textContent"
+                        rows="10"
+                    ></textarea>
+
+                    <small>
+                        Use clear paragraphs and spacing to keep the content easy to read.
+                    </small>
+
+                </div>
+
+
+                <div
+                    id="mediaField"
+                    class="form-group"
+                    style="display: none;"
+                >
+
+                    <label for="mediaUrl">
+                        Media URL
+                    </label>
+
+                    <input
+                        type="url"
+                        id="mediaUrl"
+                        placeholder="https://example.com/..."
+                    >
+
+                    <small>
+                        Enter a valid HTTP or HTTPS link to the image,
+                        video, or learning resource.
+                    </small>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="blockOrder">
+                        Block Order
+                    </label>
+
+                    <input
+                        type="number"
+                        id="blockOrder"
+                        min="1"
+                        step="1"
+                        required
+                    >
+
+                    <small>
+                        Enter where this content should appear within the chapter.
+                    </small>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Add Content
+                </button>
+
+            </form>
 
         </div>
 
-
-        <label for="blockOrder">
-            Block Order
-        </label>
-
-        <input
-            type="number"
-            id="blockOrder"
-            min="1"
-            step="1"
-            required
-        >
-
-
-        <button
-            type="submit"
-            class="btn btn-primary"
-        >
-            Add Content
-        </button>
-
-    </form>
-
-</div>
+    </div>
 
 </main>
 
 
 <script src="../js/notifications.js"></script>
-
 <script src="../js/api.js"></script>
-
 <script src="../js/add-chapter-content.js"></script>
 
 </body>

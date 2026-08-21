@@ -3,121 +3,158 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>Instructor Dashboard</title>
+    <title>Instructor Dashboard</title>
 
-<link rel="stylesheet"
-href="../css/global.css">
+    <link
+        rel="stylesheet"
+        href="../css/global.css"
+    >
 
-<link rel="stylesheet"
-href="../css/dashboard.css">
+    <link
+        rel="stylesheet"
+        href="../css/dashboard.css"
+    >
 
 </head>
 
 <body>
 
-<header class="dashboard-header">
+<header class="page-header">
 
-<h2>
-    <a href="instructor-dashboard.html">
-        EduPlatform
-    </a>
-</h2>
+    <div class="container page-header-inner">
 
-<button
-    type="button"
-    id="logoutBtn"
-    class="btn btn-danger"
->
-    Logout
-</button>
+        <a
+            href="instructor-dashboard.html"
+            class="page-brand"
+        >
+            EduPlatform
+        </a>
+
+        <button
+            type="button"
+            id="logoutBtn"
+            class="btn btn-danger"
+        >
+            Logout
+        </button>
+
+    </div>
 
 </header>
 
-<main class="dashboard-container">
 
-<section class="welcome-card">
+<main class="app-page">
 
-<h1>
+    <div class="container">
 
-Welcome,
+        <section class="welcome-card">
 
-<span id="instructorName">
-Instructor
-</span>
+            <h1>
+                Welcome,
+                <span id="instructorName">
+                    Instructor
+                </span>
+            </h1>
 
-</h1>
+            <p>
+                Manage your courses, lessons, learning content,
+                quizzes, and enrolled students.
+            </p>
 
-<p>
-
-Manage your courses and students.
-
-</p>
-
-</section>
-
-<section class="dashboard-grid">
-
-<div class="dashboard-card">
-
-<h3>
-Courses Created
-</h3>
-
-<p id="courseCount">
-0
-</p>
-
-</div>
-
-<div class="dashboard-card">
-
-<h3>
-Total Students
-</h3>
-
-<p id="studentCount">
-0
-</p>
-
-</div>
-
-</section>
-
-<section class="card">
-
-<button
-    type="button"
-    class="btn btn-primary"
-    onclick="window.location.href='../courses/create-course.html'"
->
-    + Create New Course
-</button>
-
-</section>
+        </section>
 
 
-<section class="card">
+        <section class="dashboard-grid">
 
-<h2>
-My Courses
-</h2>
+            <div class="dashboard-card">
 
-<div id="courseList">
-</div>
+                <h3>
+                    Courses Created
+                </h3>
 
-</section>
+                <p id="courseCount">
+                    0
+                </p>
+
+            </div>
+
+
+            <div class="dashboard-card">
+
+                <h3>
+                    Total Students
+                </h3>
+
+                <p id="studentCount">
+                    0
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <section class="card">
+
+            <h2>
+                Course Management
+            </h2>
+
+            <p>
+                Create a new course or review the recommended
+                guidelines before building your course content.
+            </p>
+
+
+            <div class="course-actions">
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    onclick="window.location.href='../courses/create-course.html'"
+                >
+                    + Create New Course
+                </button>
+
+
+                <a
+                    href="../courses/course-guidelines.html"
+                    class="page-back-btn"
+                >
+                    Course Creation Guide
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <section class="card">
+
+            <h2>
+                My Courses
+            </h2>
+
+            <div id="courseList">
+            </div>
+
+        </section>
+
+    </div>
 
 </main>
+
 
 <script src="../js/api.js"></script>
 <script src="../js/instructor-dashboard.js"></script>
 <script src="../js/notifications.js"></script>
-
 
 </body>
 
