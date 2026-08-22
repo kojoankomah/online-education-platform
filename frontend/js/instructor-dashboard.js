@@ -143,6 +143,20 @@ function displayDashboard(data) {
     courseStats.forEach(
         course => {
 
+            /*
+            * Find the full course record.
+            * courseStats contains enrollment
+            * statistics, while courses contains
+            * the main course information.
+            */
+            const courseDetails =
+                courses.find(
+                    item =>
+                        Number(item.id) ===
+                        Number(course.id)
+                ) || course;
+
+
             const card =
                 document.createElement(
                     "div"
@@ -151,6 +165,10 @@ function displayDashboard(data) {
             card.className =
                 "card course-card";
 
+
+            // =========================
+            // COURSE IMAGE
+            // =========================
 
             const image =
                 document.createElement(
@@ -161,7 +179,12 @@ function displayDashboard(data) {
                 "course-image";
 
 
-            if (course.image_url) {
+            const imageUrl =
+                course.image_url ||
+                courseDetails.image_url;
+
+
+            if (imageUrl) {
 
                 const thumbnail =
                     document.createElement(
@@ -169,7 +192,7 @@ function displayDashboard(data) {
                     );
 
                 thumbnail.src =
-                    course.image_url;
+                    imageUrl;
 
                 thumbnail.alt =
                     `${course.title} thumbnail`;
@@ -190,6 +213,20 @@ function displayDashboard(data) {
 
             }
 
+
+            // =========================
+            // COURSE BODY
+            // =========================
+
+            const body =
+                document.createElement(
+                    "div"
+                );
+
+            body.className =
+                "course-body";
+
+
             const title =
                 document.createElement(
                     "h3"
@@ -197,6 +234,17 @@ function displayDashboard(data) {
 
             title.textContent =
                 course.title;
+
+
+            const description =
+                document.createElement(
+                    "p"
+                );
+
+            description.textContent =
+                course.description ||
+                courseDetails.description ||
+                "No course description available.";
 
 
             const students =
@@ -235,20 +283,33 @@ function displayDashboard(data) {
             );
 
 
+            // =========================
+            // BUILD CARD
+            // =========================
+
+            body.appendChild(
+                title
+            );
+
+            body.appendChild(
+                description
+            );
+
+            body.appendChild(
+                students
+            );
+
+            body.appendChild(
+                manageBtn
+            );
+
+
             card.appendChild(
                 image
             );
 
             card.appendChild(
-                title
-            );
-
-            card.appendChild(
-                students
-            );
-
-            card.appendChild(
-                manageBtn
+                body
             );
 
 

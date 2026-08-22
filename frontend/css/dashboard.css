@@ -200,23 +200,32 @@
 }
 
 
-.course-card{
-    display:flex;
-    gap:20px;
-    align-items:center;
-    background:white;
-    padding:20px;
-    border-radius:12px;
-    box-shadow:0 5px 15px rgba(0,0,0,.08);
-    margin-bottom:20px;
+.course-card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+
+    background: white;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 5px 15px
+        rgba(0, 0, 0, 0.08);
+
+    margin-bottom: 20px;
+
+    overflow: hidden;
 }
 
 .course-image {
-    width: 120px;
-    height: 120px;
+    width: 100%;
+    height: 190px;
+
     flex-shrink: 0;
 
-    background: #2563EB;
+    background: #E2E8F0;
 
     color: white;
 
@@ -225,8 +234,6 @@
     justify-content: center;
 
     font-size: 50px;
-
-    border-radius: 12px;
 
     overflow: hidden;
 }
@@ -241,9 +248,15 @@
     object-fit: cover;
 }
 
-.course-body{
-    flex:1;
-    padding:20px;
+.course-body {
+    flex: 1;
+
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
 }
 
 #courseList{
@@ -270,6 +283,144 @@
     color:#6b7280;
     min-height:50px;
 }
+
+/* =========================================
+   STUDENT DASHBOARD COURSE CARDS
+========================================= */
+
+.student-dashboard-page .course-card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+
+    background: white;
+    border-radius: 12px;
+
+    box-shadow:
+        0 5px 15px
+        rgba(0, 0, 0, 0.08);
+
+    overflow: hidden;
+}
+
+
+.student-dashboard-page .course-image {
+    width: 100%;
+    height: 190px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #E2E8F0;
+
+    border-radius: 0;
+
+    overflow: hidden;
+}
+
+
+.student-dashboard-page .course-image img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+}
+
+
+.student-dashboard-page .course-body {
+    width: 100%;
+    flex: 1;
+
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+/* =========================================
+   INSTRUCTOR DASHBOARD COURSE CARDS
+========================================= */
+
+.instructor-dashboard-page .course-card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+
+    background: white;
+    border-radius: 12px;
+
+    box-shadow:
+        0 5px 15px
+        rgba(0, 0, 0, 0.08);
+
+    overflow: hidden;
+}
+
+
+.instructor-dashboard-page .course-image {
+    width: 100%;
+    height: 190px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #E2E8F0;
+
+    border-radius: 0;
+
+    overflow: hidden;
+}
+
+
+.instructor-dashboard-page .course-image img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+}
+
+
+.instructor-dashboard-page .course-body {
+    width: 100%;
+    flex: 1;
+
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+.instructor-dashboard-page .course-actions {
+    margin-top: auto;
+    padding-top: 15px;
+}
+
+
+.instructor-dashboard-page #courseList {
+    grid-template-columns:
+        repeat(
+            auto-fill,
+            minmax(280px, 340px)
+        );
+
+    justify-content: start;
+}
+
 
 
 /* Progress */
